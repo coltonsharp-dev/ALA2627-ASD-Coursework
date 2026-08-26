@@ -2,88 +2,233 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Saving Up — App Design 1</title>
 <style>
-  :root { --navy:#002D62; --crimson:#AE2734; --silver:#D0D2D3; --ink:#1A1A1A; }
+  :root {
+    --navy:#002D62; --crimson:#AE2734; --silver:#D0D2D3; --ink:#1A1A1A;
+    /* Ground + surface neutrals — near-black rather than a tinted grey, per the
+       design brief ("navy/crimson/white/silver plus whatever neutral greys you
+       need"): navy and crimson stay reserved for actual brand accents, the
+       backdrop itself is genuinely neutral. */
+    --bg:#07090e; --panel:#101a2c; --panel-2:#0c1524; --panel-border:#223052;
+    --panel-border-soft:#182541; --text:#f3f5f9; --muted:rgba(208,210,211,.82);
+    color-scheme: dark;
+  }
   * { box-sizing:border-box }
-  body { margin:0; padding:0 0 4rem; background:#fff; color:var(--ink);
-         font:16px/1.6 Carlito,Calibri,Arial,sans-serif }
-  header { background:var(--navy); color:#fff; padding:1.5rem 1.25rem 1.15rem }
-  header .sm { font-size:11px; letter-spacing:.18em; text-transform:uppercase; opacity:.85 }
-  header h1 { margin:.25rem 0 0; font-size:1.7rem; font-family:Cinzel,Georgia,serif }
-  header p { margin:.45rem 0 0; opacity:.85; font-size:1rem }
-  .rule { height:5px; background:var(--crimson) }
+  html { background:var(--bg) }
+  body { margin:0; padding:0 0 5rem; color:var(--text);
+         font:16px/1.6 Carlito,Calibri,Arial,sans-serif;
+         background:
+           radial-gradient(1100px 460px at 10% -12%, rgba(0,45,98,.55), transparent 60%),
+           radial-gradient(900px 420px at 105% 0%, rgba(174,39,52,.16), transparent 55%),
+           var(--bg);
+         /* --progress (0..1) is set once, in one place, by RUNTIME's updateProgress()
+            — every visual that reflects "how far through the notebook" (the header
+            rail and the connecting thread beside the cards) reads this same value
+            rather than keeping its own copy in sync. */
+         --progress: 0; }
   /* Every place code appears uses this one token — the worked example, the box they
-     type into, the revealed answer, the output, and the option rows. The whole task is
-     comparing their typing against an example character by character, and that is
-     needlessly harder when the two render at different sizes. ui-monospace leads so a
-     Chromebook picks its own best mono rather than falling through a Windows-only name. */
+     type into, the revealed answer, the output, the option rows, and the collapsed
+     summary line. The whole task is comparing their typing against an example
+     character by character, and that is needlessly harder when they render at
+     different sizes. ui-monospace leads so a Chromebook picks its own best mono
+     rather than falling through a Windows-only name. */
   :root { --mono: ui-monospace, SFMono-Regular, Consolas, "DejaVu Sans Mono", Menlo, monospace;
           --code: 15px/1.5 var(--mono); }
-  main { max-width:44rem; margin:0 auto; padding:1.75rem 1.25rem }
-  .step { border:1px solid var(--silver); border-radius:8px; margin:0 0 1.1rem; padding:1.1rem 1.2rem }
-  .step[hidden] { display:none }
-  .step.done { border-color:#1b5e20; background:#f4faf5 }
-  .daytag { font-size:11px; letter-spacing:.14em; text-transform:uppercase;
-            color:var(--crimson); font-weight:700 }
-  .prompt { font-weight:700; margin:.4rem 0 .8rem; font-size:1.05rem }
-  textarea { width:100%; font:var(--code); padding:.65rem .7rem;
-             border:1px solid var(--silver); border-radius:5px; resize:vertical; min-height:3rem }
-  textarea:disabled { background:#f6f7f9; color:#333 }
-  .instruction { margin:0 0 .6rem; font-size:.9rem; color:#5a6472; font-style:italic }
-  .options { border:0; margin:0 0 .3rem; padding:0; display:flex; flex-direction:column; gap:.5rem }
-  .opt { display:flex; align-items:flex-start; gap:.6rem; padding:.6rem .75rem; border:1px solid var(--silver);
-         border-radius:6px; cursor:pointer; font:var(--code) }
-  .opt:hover { border-color:var(--navy) }
-  .opt input { flex:0 0 auto; width:1.05rem; height:1.05rem; margin-top:.15rem; cursor:pointer }
+
+  header.hero { position:relative; padding:2.75rem 1.25rem 2.15rem; border-bottom:1px solid var(--panel-border-soft) }
+  .kicker { font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted) }
+  .projweek { display:inline-block; margin-top:.75rem; font-size:12px; letter-spacing:.14em;
+              text-transform:uppercase; font-weight:700; color:#fff; padding:.32rem .75rem;
+              border:1px solid var(--crimson); border-radius:999px; background:rgba(174,39,52,.16) }
+  header.hero h1 { margin:.85rem 0 0; font-size:2rem; font-family:Cinzel,Georgia,serif; color:#fff }
+  header.hero .blurb { margin:.55rem 0 0; color:var(--muted); font-size:1.02rem; max-width:38rem }
+
+  /* Orientation without a finish line: a count and a filling rail, never a "you are
+     done for today" message — see the design brief. role=progressbar + the two
+     aria-value* attributes (kept current by RUNTIME's updateProgress()) give the
+     same information to a screen reader that the fill gives visually. */
+  .progress { margin-top:1.6rem; max-width:24rem }
+  .progress-rail { height:8px; border-radius:999px; background:rgba(255,255,255,.08);
+                    border:1px solid var(--panel-border-soft); overflow:hidden }
+  .progress-fill { height:100%; width:calc(var(--progress) * 100%);
+                    background:linear-gradient(90deg, var(--navy), var(--crimson));
+                    border-radius:999px; transition:width .5s ease }
+  .progress-count { margin-top:.55rem; font-size:12px; letter-spacing:.06em;
+                     text-transform:uppercase; color:var(--muted) }
+  .progress-count b { color:#fff }
+
+  main.board { max-width:48rem; margin:0 auto; padding:2.25rem 1.25rem 0 }
+
+  .howto { border:1px solid var(--panel-border); border-radius:14px; padding:1.3rem 1.4rem 1.4rem;
+           margin:0 0 2.25rem; background:linear-gradient(180deg, var(--panel), var(--panel-2));
+           box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 22px 40px -28px rgba(0,0,0,.75) }
+  .howto h2 { margin:0 0 .7rem; font-family:Cinzel,Georgia,serif; font-size:1.05rem; color:#fff }
+  .howto ul { margin:0; padding-left:1.2rem }
+  .howto li { margin:0 0 .55rem; font-size:.95rem }
+  .howto li:last-child { margin-bottom:0 }
+  .howto strong { color:#fff }
+
+  /* The connecting thread. A plain vertical line, not one woven through each
+     card's actual on-screen position — see the design brief's own "do not
+     over-engineer it." .rail stretches to match .cards's height for free
+     (position:absolute + top:0;bottom:0 inside .track, which is
+     position:relative and whose own height comes from .cards, its only
+     normal-flow child) — no JS layout math anywhere. pathLength="1" on both
+     paths normalises stroke-dasharray/-offset to a 0..1 scale regardless of
+     the SVG's actual rendered height, and vector-effect keeps the stroke a
+     constant visual width under the non-uniform viewBox stretch that
+     preserveAspectRatio="none" produces. The fill's dashoffset reads the same
+     --progress custom property as the header rail above — one number, two
+     renderings of it. */
+  .track { position:relative }
+  .rail { position:absolute; top:.2rem; bottom:.2rem; left:0; width:28px; pointer-events:none }
+  .rail-svg { width:100%; height:100%; display:block; overflow:visible }
+  .rail-base { fill:none; stroke:rgba(208,210,211,.16); stroke-width:2; vector-effect:non-scaling-stroke }
+  .rail-fill { fill:none; stroke:var(--crimson); stroke-width:2; stroke-linecap:round;
+               vector-effect:non-scaling-stroke; stroke-dasharray:1;
+               stroke-dashoffset:calc(1 - var(--progress)); transition:stroke-dashoffset .6s ease }
+  .cards { margin-left:44px; display:flex; flex-direction:column; gap:1.15rem;
+           position:relative; padding-bottom:.5rem }
+  @media (max-width:480px) { .rail{ width:18px } .cards{ margin-left:30px } }
+  /* Slight alternating offset, wide screens only — narrow/phone stays a single
+     flush column so nothing can overlap or overflow a Chromebook window. */
+  @media (min-width:900px) { .card:nth-of-type(even) { transform:translateX(20px) } }
+
+  .card { position:relative; border-radius:14px; border:1px solid var(--panel-border);
+          background:linear-gradient(165deg, var(--panel), var(--panel-2));
+          box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 26px 46px -30px rgba(0,0,0,.8);
+          padding:1.25rem 1.35rem 1.35rem; transition:opacity .35s ease, transform .35s ease }
+  .card[hidden] { display:none }
+  /* The reveal: openStep() adds .enter (transition:none, so the pre-transition
+     opacity/transform apply instantly with no animation) right as [hidden] comes
+     off, then removes it one frame later so the card's own transition — declared
+     above, unconditionally — is what the browser actually animates. */
+  .card.enter, #done.enter { opacity:0; transform:translateY(14px); transition:none }
+  @media (prefers-reduced-motion:reduce) {
+    .card, #done { transition:none !important }
+  }
+  /* The current card — open, not yet done — gets the prominent treatment; a
+     collapsed, completed card gets none of this. */
+  .card:not(.done):not([hidden]) { border-color:var(--crimson);
+    box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 0 0 1px rgba(174,39,52,.4),
+               0 30px 55px -30px rgba(0,0,0,.85) }
+  .now-badge { display:none; position:absolute; top:-11px; right:18px; font-size:10px;
+               letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#fff;
+               background:var(--crimson); border-radius:999px; padding:.25rem .6rem }
+  .card:not(.done):not([hidden]) .now-badge { display:inline-block }
+
+  /* Each card owns one node on the thread beside it, positioned relative to its
+     own box — no JS needed to know where the rail's line actually is on screen. */
+  .card::before { content:""; position:absolute; top:1.5rem; left:-30px; width:11px; height:11px;
+                   border-radius:50%; background:var(--bg); border:2px solid rgba(208,210,211,.4) }
+  @media (max-width:480px) { .card::before{ left:-21px; width:9px; height:9px } }
+  .card.done::before { border-color:var(--crimson); background:var(--crimson) }
+  .card:not(.done):not([hidden])::before { border-color:#fff; background:#fff;
+    box-shadow:0 0 0 4px rgba(174,39,52,.35) }
+
+  /* Completed steps collapse to this row and stay collapsed until clicked — see
+     the design brief. A real <button> (keyboard-operable, focusable) rather than
+     a clickable div; CSS alone decides whether it or .card-body is what's on
+     screen, based purely on .done/.peek, so RUNTIME never has to toggle a
+     display style directly. */
+  .card-summary { display:none; width:100%; align-items:center; gap:.65rem; background:transparent;
+                  border:0; margin:0; padding:0; color:var(--text); font:inherit; text-align:left;
+                  cursor:pointer }
+  .card.done .card-summary { display:flex }
+  .card.done .card-body { display:none }
+  .card.done.peek .card-body { display:block; margin-top:1rem; padding-top:1rem;
+                                border-top:1px dashed var(--panel-border) }
+  .card-summary:focus-visible { outline:2px solid #fff; outline-offset:3px; border-radius:6px }
+  .sum-tick { position:relative; flex:0 0 auto; width:1.1rem; height:1.1rem; border-radius:50%;
+              background:rgba(174,39,52,.18); border:1px solid var(--crimson) }
+  .sum-tick::after { content:""; position:absolute; left:4px; top:6px; width:6px; height:3px;
+                      border-left:2px solid var(--crimson); border-bottom:2px solid var(--crimson);
+                      transform:rotate(-45deg) }
+  .sum-index { flex:0 0 auto; font:600 12px var(--mono); color:var(--muted); min-width:1.5rem }
+  .sum-line { flex:1 1 auto; font:var(--code); color:var(--silver); overflow:hidden;
+              text-overflow:ellipsis; white-space:nowrap }
+  .sum-output { flex:0 1 auto; font:var(--code); font-size:13px; color:var(--muted);
+                overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:38% }
+  .sum-output:empty { display:none }
+  .sum-chev { flex:0 0 auto; width:.55rem; height:.55rem; border-right:2px solid var(--muted);
+              border-bottom:2px solid var(--muted); transform:rotate(45deg); transition:transform .2s ease }
+  .card.peek .sum-chev { transform:rotate(-135deg) }
+
+  .prompt { font-weight:700; margin:.4rem 0 .85rem; font-size:1.05rem; color:#fff }
+  textarea { width:100%; font:var(--code); color:var(--text); padding:.7rem .8rem; background:#060911;
+             border:1px solid var(--panel-border); border-radius:8px; resize:vertical; min-height:3.2rem }
+  textarea:focus-visible { outline:2px solid var(--crimson); outline-offset:1px }
+  textarea:disabled { background:#0a0e17; color:var(--muted) }
+  .instruction { margin:0 0 .6rem; font-size:.9rem; color:var(--muted); font-style:italic }
+  .options { border:0; margin:0 0 .3rem; padding:0; display:flex; flex-direction:column; gap:.55rem }
+  .opt { display:flex; align-items:flex-start; gap:.65rem; padding:.65rem .8rem; border:1px solid var(--panel-border);
+         border-radius:8px; cursor:pointer; font:var(--code); background:rgba(255,255,255,.02) }
+  .opt:hover { border-color:#fff }
+  .opt input { flex:0 0 auto; width:1.05rem; height:1.05rem; margin-top:.15rem; cursor:pointer; accent-color:var(--crimson) }
   .opt input:disabled { cursor:default }
-  .opt span { flex:1 1 auto; white-space:pre-wrap; word-break:break-word }
-  .opt.correct { border-color:#1b5e20; background:#f4faf5 }
-  .opt.wrong { border-color:var(--crimson); background:#fdf2f2; text-decoration:line-through; opacity:.8 }
-  .confirm { margin-top:.75rem; background:#12161d; color:#e8ecf3; padding:.75rem .85rem;
-             border-radius:5px; font:15px/1.5 Carlito,Calibri,Arial,sans-serif }
+  .opt span { flex:1 1 auto; white-space:pre-wrap; word-break:break-word; color:var(--text) }
+  .opt.correct { border-color:#fff; background:rgba(255,255,255,.07) }
+  .opt.correct::after { content:"\2713"; margin-left:auto; padding-left:.5rem; color:#fff; font-weight:700 }
+  .opt.wrong { border-color:var(--crimson); background:rgba(174,39,52,.14) }
+  .opt.wrong span { text-decoration:line-through; opacity:.75; color:var(--muted) }
+  .opt.wrong::after { content:"\2715"; margin-left:auto; padding-left:.5rem; color:var(--crimson); font-weight:700 }
+  .confirm { margin-top:.85rem; background:#060911; color:var(--text); padding:.75rem .9rem;
+             border-radius:8px; font:15px/1.5 Carlito,Calibri,Arial,sans-serif; border:1px solid var(--panel-border) }
   .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
              clip:rect(0,0,0,0); white-space:nowrap; border:0 }
-  button { font:600 14px Carlito,Calibri,Arial,sans-serif; background:var(--navy); color:#fff;
-           border:0; border-radius:5px; padding:.6rem 1.2rem; cursor:pointer; margin-top:.65rem }
-  button:hover { opacity:.9 }
-  .msg { margin-top:.65rem; font-size:.95rem; white-space:pre-wrap }
+  .check-btn { font:600 14px Carlito,Calibri,Arial,sans-serif; background:var(--crimson); color:#fff;
+               border:0; border-radius:8px; padding:.65rem 1.3rem; cursor:pointer; margin-top:.75rem;
+               box-shadow:0 10px 24px -12px rgba(174,39,52,.65) }
+  .check-btn:hover { background:#c22e3d }
+  .check-btn:focus-visible { outline:2px solid #fff; outline-offset:2px }
+  .msg { margin-top:.75rem; font-size:.95rem; white-space:pre-wrap; color:var(--text) }
   .msg:empty { margin-top:0 }
-  .msg.bad { color:var(--crimson); font-weight:600 }
-  .msg.reveal { color:var(--navy); background:#f3f5f9; padding:.65rem .75rem; border-radius:5px;
-                font:var(--code) }
-  .out { margin-top:.75rem; background:#12161d; color:#e8ecf3; padding:.75rem .85rem;
-         border-radius:5px; font:var(--code); white-space:pre-wrap }
-  .out .lbl { display:block; color:#8fa0bb; font-size:11px; letter-spacing:.12em;
-              text-transform:uppercase; margin-bottom:.3rem }
-  .none { color:#5a6472; font-style:italic; font-size:.92rem; margin-top:.75rem }
-  .teach { margin:0 0 1rem }
-  .teach .says { margin:.2rem 0 .7rem; font-size:.97rem }
+  .msg.bad { color:#fff; font-weight:600; border-left:3px solid var(--crimson); padding-left:.65rem }
+  .msg.reveal { color:var(--text); background:#0b1220; padding:.7rem .8rem; border-radius:8px;
+                font:var(--code); border:1px solid var(--panel-border) }
+  .out { margin-top:.85rem; background:#050810; color:var(--text); padding:.8rem .9rem;
+         border-radius:8px; font:var(--code); white-space:pre-wrap; border:1px solid var(--panel-border) }
+  .out .lbl { display:block; color:var(--muted); font-size:11px; letter-spacing:.14em;
+              text-transform:uppercase; margin-bottom:.35rem }
+  .none { color:var(--muted); font-style:italic; font-size:.92rem; margin-top:.85rem }
+  .teach { margin:0 0 1.1rem }
+  .teach .says { margin:.2rem 0 .8rem; font-size:.98rem; color:var(--text) }
   .teach .example { margin:0 0 .5rem }
-  .teach .code { margin:0; background:#f3f5f9; color:var(--navy); padding:.6rem .75rem;
-                 border-radius:5px 5px 0 0; font:var(--code);
-                 white-space:pre-wrap; word-break:break-word }
-  .teach .example .out, .teach .example .none { margin-top:0; border-radius:0 0 5px 5px }
-  .teach .watch { margin:.7rem 0 0; font-size:.88rem; color:var(--crimson) }
-  .teach .watch .tag { font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:.78rem }
-  .divider { border:0; border-top:1px dashed var(--silver); margin:1rem 0 .8rem }
-  .turn { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--navy);
-          font-weight:700; margin:0 0 .55rem }
-  .howto { border:1px solid var(--navy); border-radius:8px; padding:1.1rem 1.2rem 1.2rem;
-           margin:0 0 1.5rem; background:#f5f7fb }
-  .howto h2 { margin:0 0 .6rem; font-family:Cinzel,Georgia,serif; font-size:1.05rem; color:var(--navy) }
-  .howto ul { margin:0; padding-left:1.2rem }
-  .howto li { margin:0 0 .5rem; font-size:.95rem }
-  .howto li:last-child { margin-bottom:0 }
-  #done { border:2px solid #1b5e20; border-radius:8px; padding:1.3rem 1.2rem; margin-top:1.6rem;
-          background:#f4faf5 }
-  #done h2 { margin:0 0 .4rem; font-family:Cinzel,Georgia,serif; font-size:1.2rem }
-  #dl { background:#1b5e20 }
+  .teach .code { margin:0; background:#0b1220; color:var(--silver); padding:.65rem .8rem;
+                 border-radius:8px 8px 0 0; font:var(--code); white-space:pre-wrap; word-break:break-word;
+                 border:1px solid var(--panel-border); border-bottom:0 }
+  .teach .example .out, .teach .example .none { margin-top:0; border-radius:0 0 8px 8px; border-top:0 }
+  .teach .watch { margin:.85rem 0 0; font-size:.9rem; color:var(--text); padding-left:.75rem;
+                  border-left:3px solid var(--crimson) }
+  .teach .watch .tag { display:inline-block; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+                        font-size:.72rem; color:#fff; background:var(--crimson); border-radius:4px;
+                        padding:.15rem .45rem; margin-right:.4rem }
+  .divider { border:0; border-top:1px dashed var(--panel-border); margin:1.1rem 0 .9rem }
+  .turn { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
+          font-weight:700; margin:0 0 .6rem }
+
+  #done { border:1px solid var(--crimson); border-radius:14px; padding:1.5rem 1.4rem 1.6rem; margin:2rem 0 0;
+          background:linear-gradient(165deg, var(--panel), var(--panel-2));
+          box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 30px 60px -30px rgba(0,0,0,.85);
+          transition:opacity .35s ease, transform .35s ease }
+  #done[hidden] { display:none }
+  #done h2 { margin:0 0 .5rem; font-family:Cinzel,Georgia,serif; font-size:1.3rem; color:#fff }
+  #done p { color:var(--text); margin:0 0 1rem }
+  #dl { font:600 14px Carlito,Calibri,Arial,sans-serif; background:var(--navy); color:#fff; border:0;
+        border-radius:8px; padding:.75rem 1.4rem; cursor:pointer; box-shadow:0 10px 24px -12px rgba(0,45,98,.7) }
+  #dl:hover { background:#012a5c }
 </style></head><body>
-<header>
-  <div class="sm">AMERICAN LEADERSHIP ACADEMY — VISTANCIA</div>
+<header class="hero">
+  <div class="kicker">AMERICAN LEADERSHIP ACADEMY — VISTANCIA</div>
+  <div class="projweek">Project 1 &middot; Week 5</div>
   <h1>Saving Up</h1>
-  <p>Pick something you want. Work out how long it takes to afford it.</p>
-</header><div class="rule"></div>
-<main>
+  <p class="blurb">Pick something you want. Work out how long it takes to afford it.</p>
+  <div class="progress" id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="30"
+       aria-valuenow="0" aria-label="Steps completed">
+    <div class="progress-rail"><div class="progress-fill"></div></div>
+    <div class="progress-count"><b id="progress-done">0</b> of <b id="progress-total">30</b></div>
+  </div>
+</header>
+<main class="board">
   <section class="howto">
     <h2>How this works</h2>
     <ul>
@@ -93,8 +238,24 @@
       <li>When you finish, click <strong>Download my work</strong> and upload that file to Canvas.</li>
     </ul>
   </section>
-  <div class="step" id="step0">
-    <div class="daytag">Day 1 &middot; Numbers you can name</div>
+  <div class="track">
+    <div class="rail" aria-hidden="true">
+      <svg class="rail-svg" viewBox="0 0 2 100" preserveAspectRatio="none">
+        <path class="rail-base" d="M1,0 L1,100" pathLength="1"></path>
+        <path class="rail-fill" d="M1,0 L1,100" pathLength="1"></path>
+      </svg>
+    </div>
+    <div class="cards">
+  <div class="card" id="step0">
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step0-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">1</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step0-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">print() puts words on the screen. Whatever you put inside the quotes is what appears.</p>
       <div class="example">
@@ -105,14 +266,23 @@
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Print the words Saving Up — that's your program's title. Remember, words need quotes.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Print the words Saving Up — that's your program's title. Remember, words need quotes.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step1" hidden>
-    <div class="daytag">Day 1 &middot; Numbers you can name</div>
+  <div class="card" id="step1" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step1-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">2</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step1-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">A variable is a labeled box that remembers a value. name = value creates the box and fills it — nothing appears on screen, because storing a value and showing one are two different acts.</p>
       <div class="example">
@@ -123,27 +293,45 @@
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">The thing you want costs $220. Store that in a variable called goal.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">The thing you want costs $220. Store that in a variable called goal.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step2" hidden>
-    <div class="daytag">Day 1 &middot; Numbers you can name</div>
+  <div class="card" id="step2" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step2-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">3</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step2-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same move as the line above — a new box, a new value, still nothing printed.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">You have $40 already. Store it in saved.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">You have $40 already. Store it in saved.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step3" hidden>
-    <div class="daytag">Day 1 &middot; Numbers you can name</div>
+  <div class="card" id="step3" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step3-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">4</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step3-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">print() doesn't only show quoted text — put an expression inside instead and Python works it out first, then prints the result. goal - saved becomes a number before it ever reaches the screen.</p>
       <div class="example">
@@ -154,14 +342,23 @@
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Print how much you still need. Subtract saved from goal.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Print how much you still need. Subtract saved from goal.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step4" hidden>
-    <div class="daytag">Day 1 &middot; Numbers you can name</div>
+  <div class="card" id="step4" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step4-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">5</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step4-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">print() can take more than one thing at once — separate them with commas and Python prints each one in order, sliding exactly one space between them for you.</p>
       <div class="example">
@@ -172,20 +369,29 @@
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">A bare number tells nobody anything. Print the words You still need, then goal - saved — the same expression from the line above.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">A bare number tells nobody anything. Print the words You still need, then goal - saved — the same expression from the line above.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step5" hidden>
-    <div class="daytag">Day 1 &middot; Numbers you can name</div>
+  <div class="card" id="step5" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step5-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">6</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step5-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Every one of these looks close to right at a glance. Quotes and capitalisation are exactly the kind of thing Python cares about and a skimming eye does not — reading each option letter by letter is the whole skill this question is testing.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Which line will print the word Hello?</div>
+      <div class="prompt">Which line will print the word Hello?</div>
     <fieldset class="options">
       <legend class="sr-only">Answer options</legend>
       <label class="opt">
@@ -201,11 +407,20 @@
         <span>Print(&quot;Hello&quot;)</span>
       </label>
     </fieldset>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step6" hidden>
-    <div class="daytag">Day 2 &middot; Asking a question</div>
+  <div class="card" id="step6" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step6-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">7</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step6-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">if starts a question. Whatever comes after it works out to True or False, and Python only runs the indented lines underneath when the answer is True. The colon isn't decoration — it's Python's way of saying &quot;the rules for what happens next start here.&quot; &gt;= means &quot;at least as big as&quot;: saved equal to goal counts as true too, not just saved bigger.</p>
       <div class="example">
@@ -218,14 +433,23 @@ if temp &gt;= 90:
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Start a question: is saved at least as big as goal? End the line with a colon.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Start a question: is saved at least as big as goal? End the line with a colon.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step7" hidden>
-    <div class="daytag">Day 2 &middot; Asking a question</div>
+  <div class="card" id="step7" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step7-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">8</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step7-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">The four spaces before print aren't for looks — they're what tells Python this line belongs to the if above it. Every line indented the same amount underneath the colon is &quot;inside&quot; that if; the first line back at the left edge is &quot;outside&quot; it again.</p>
       <div class="example">
@@ -237,14 +461,23 @@ if temp &gt;= 90:
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces and print the words Go buy it — that's what happens when it is true.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces and print the words Go buy it — that's what happens when it is true.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step8" hidden>
-    <div class="daytag">Day 2 &middot; Asking a question</div>
+  <div class="card" id="step8" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step8-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">9</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step8-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">else catches everything the if didn't. It needs no condition of its own — it only runs when the if above it worked out False — which is why it sits back at the left edge, lined up with if rather than indented under it.</p>
       <div class="example">
@@ -259,33 +492,51 @@ else:
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Now the other case. Type else and a colon, back at the left edge.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Now the other case. Type else and a colon, back at the left edge.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step9" hidden>
-    <div class="daytag">Day 2 &middot; Asking a question</div>
+  <div class="card" id="step9" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step9-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">10</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step9-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same indentation rule as the if's body — four spaces, because this line belongs to else the same way that one belonged to if.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces and print the words Not yet — that's what happens when it is false.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces and print the words Not yet — that's what happens when it is false.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step10" hidden>
-    <div class="daytag">Day 2 &middot; Asking a question</div>
+  <div class="card" id="step10" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step10-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">11</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step10-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">One equals sign assigns a value — it changes something. Two together, ==, compare two values and hand back True or False without changing anything. Mixing them up is one of the most common mistakes in Python, and Python will not always catch it for you.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Which line correctly checks whether saved and goal are equal, without changing either one?</div>
+      <div class="prompt">Which line correctly checks whether saved and goal are equal, without changing either one?</div>
     <fieldset class="options">
       <legend class="sr-only">Answer options</legend>
       <label class="opt">
@@ -301,37 +552,64 @@ else:
         <span>saved =! goal</span>
       </label>
     </fieldset>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step11" hidden>
-    <div class="daytag">Day 3 &middot; More than two answers</div>
+  <div class="card" id="step11" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step11-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">12</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step11-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same question as Monday. Python doesn't remember that you already asked it inside a different if block — every if is independent, so you write the condition again from scratch.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Ask the same question again: is saved at least as big as goal? End the line with a colon.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Ask the same question again: is saved at least as big as goal? End the line with a colon.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step12" hidden>
-    <div class="daytag">Day 3 &middot; More than two answers</div>
+  <div class="card" id="step12" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step12-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">13</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step12-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same as Monday too — this line only runs when the if directly above it is True.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces and print the words Go buy it — that's what happens when it is true.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces and print the words Go buy it — that's what happens when it is true.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step13" hidden>
-    <div class="daytag">Day 3 &middot; More than two answers</div>
+  <div class="card" id="step13" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step13-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">14</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step13-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">elif (&quot;else if&quot;) adds another question, but it only gets checked when everything above it worked out False. You can chain as many elif lines as you need between an if and an else — Python checks them top to bottom and stops at the first one that's True. / divides, so goal / 2 is exactly half of goal.</p>
       <div class="example">
@@ -348,79 +626,133 @@ else:
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Add a middle case: type elif, then whether saved is more than half of goal. End with a colon.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Add a middle case: type elif, then whether saved is more than half of goal. End with a colon.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step14" hidden>
-    <div class="daytag">Day 3 &middot; More than two answers</div>
+  <div class="card" id="step14" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step14-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">15</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step14-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same indentation rule again — four spaces because this line belongs to the elif directly above it.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces and print the words Getting there — that's what happens in that middle case.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces and print the words Getting there — that's what happens in that middle case.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step15" hidden>
-    <div class="daytag">Day 3 &middot; More than two answers</div>
+  <div class="card" id="step15" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step15-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">16</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step15-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same else as Day 2. Still no condition of its own — it fires only when every if and elif above it came back False.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Type else and a colon for everything that's left over, back at the left edge.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Type else and a colon for everything that's left over, back at the left edge.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step16" hidden>
-    <div class="daytag">Day 3 &middot; More than two answers</div>
+  <div class="card" id="step16" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step16-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">17</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step16-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">This is the branch that actually runs: saved is 40 and goal / 2 is 110, so saved &gt; goal / 2 is False, the elif is skipped, and this final else is what prints.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces and print the words Not close yet — the last case.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces and print the words Not close yet — the last case.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step17" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+  <div class="card" id="step17" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step17-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">18</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step17-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same pattern as Day 1 — a new box, pay, remembering 15. Nothing new here; the loop below is where it gets used.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">You can save $15 a week. Store that in a variable called pay.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">You can save $15 a week. Store that in a variable called pay.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step18" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+  <div class="card" id="step18" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step18-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">19</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step18-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">weeks starts at 0 on purpose — it's about to count up by one every time the loop below runs. A counter has to start somewhere true, and zero weeks have passed before the loop has even begun.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">You haven't saved any weeks yet. Store 0 in a variable called weeks.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">You haven't saved any weeks yet. Store 0 in a variable called weeks.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step19" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+  <div class="card" id="step19" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step19-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">20</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step19-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">while works like if, but it doesn't check its question just once. After the indented lines under it finish running, Python goes right back up to the while line and checks the condition again — and again — running that block over and over for as long as the answer stays True.</p>
       <div class="example">
@@ -436,14 +768,23 @@ while count &lt; 3:
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Start a loop: keep going as long as saved is less than goal. End the line with a colon.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Start a loop: keep going as long as saved is less than goal. End the line with a colon.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step20" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+  <div class="card" id="step20" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step20-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">21</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step20-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">This is the line that makes the loop actually finish. saved = saved + pay works out the right side first — the old saved plus pay — and then stores that result back into saved, overwriting the old number. Every pass through the loop, saved gets a little bigger, until eventually saved &lt; goal turns False.</p>
       <div class="example">
@@ -456,27 +797,45 @@ print(total)</pre>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces. Add pay to saved and store it back in saved.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces. Add pay to saved and store it back in saved.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step21" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+  <div class="card" id="step21" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step21-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">22</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step21-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same move as the line above, on the counter instead of the balance. weeks = weeks + 1 adds exactly one every pass, which is how weeks ends up counting the number of times the loop ran.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces. Add one to weeks.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces. Add one to weeks.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step22" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+  <div class="card" id="step22" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step22-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">23</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step22-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">This print sits inside the loop, so it runs on every single pass — one line of code, but the loop runs it 12 times before saved finally reaches goal, so 12 lines of output appear, each with that pass's own weeks and saved.</p>
       <div class="example">
@@ -492,34 +851,52 @@ Step 2</div>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces and print, in order: the word Week, then the weeks variable, a dash -, then the saved variable.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces and print, in order: the word Week, then the weeks variable, a dash -, then the saved variable.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step23" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+  <div class="card" id="step23" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step23-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">24</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step23-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Back at the left edge, this line is no longer part of the loop — it runs exactly once, after the loop has completely finished, which only happens once saved is no longer less than goal. weeks still holds whatever it counted up to.</p>
       <p class="watch"><span class="tag">Watch out</span> If this line stayed indented, it would be inside the loop instead of after it, and Python would try to run it every single pass instead of once at the end.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Back at the left edge — the loop is over. Print, in order: the words It took, then the weeks variable, then the word weeks.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Back at the left edge — the loop is over. Print, in order: the words It took, then the weeks variable, then the word weeks.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step24" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+  <div class="card" id="step24" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step24-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">25</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step24-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">A while loop does not count passes by itself — it rechecks its condition every single time, top to bottom, and stops the instant that condition comes back False. If nothing inside the loop changes the value the condition depends on, it never stops on its own. That's what an infinite loop actually is: not a loop that runs forever on purpose, but one where nothing ever made the condition False.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Select every statement that is true about why while saved &lt; goal: eventually stops looping.</div>
+      <div class="prompt">Select every statement that is true about why while saved &lt; goal: eventually stops looping.</div>
     <p class="instruction">Select every one that applies — there may be more than one.</p>
     <fieldset class="options">
       <legend class="sr-only">Answer options</legend>
@@ -540,11 +917,20 @@ Step 2</div>
         <span>weeks = weeks + 1 is what the while line checks to decide whether to stop.</span>
       </label>
     </fieldset>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step25" hidden>
-    <div class="daytag">Day 5 &middot; Going through a list</div>
+  <div class="card" id="step25" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step25-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">26</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step25-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">A list holds more than one value in a single box, in order, separated by commas inside square brackets. spent isn't one number — it's a sequence of three, and the next step walks through them one at a time.</p>
       <div class="example">
@@ -555,14 +941,23 @@ Step 2</div>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">You spent money three different times: $12, $8, and $25. Store them in a list called spent.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">You spent money three different times: $12, $8, and $25. Store them in a list called spent.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step26" hidden>
-    <div class="daytag">Day 5 &middot; Going through a list</div>
+  <div class="card" id="step26" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step26-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">27</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step26-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">A for loop already knows how many times to run — once for every item in the list — so there's no condition to write and no counter to update by hand, unlike while. Each time through, item holds the next value from spent: first 12, then 8, then 25.</p>
       <div class="example">
@@ -576,46 +971,73 @@ green</div>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Start a loop that goes through spent one value at a time — name the loop variable item. End the line with a colon.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Start a loop that goes through spent one value at a time — name the loop variable item. End the line with a colon.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step27" hidden>
-    <div class="daytag">Day 5 &middot; Going through a list</div>
+  <div class="card" id="step27" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step27-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">28</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step27-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same reassignment move from Thursday, running in reverse — saved = saved - item takes item back out of the balance instead of adding to it.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces. Subtract item from saved and store it back in saved.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces. Subtract item from saved and store it back in saved.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step28" hidden>
-    <div class="daytag">Day 5 &middot; Going through a list</div>
+  <div class="card" id="step28" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step28-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">29</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step28-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Same idea as Thursday's loop print — one line of code, three passes through the list, three lines of output, each with that pass's own item and running saved.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Indent four spaces and print, in order: the words After spending, then the item variable, then the words you have, then the saved variable.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <div class="prompt">Indent four spaces and print, in order: the words After spending, then the item variable, then the words you have, then the saved variable.</div>
+      <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+        autocorrect="off" aria-label="Type your answer"></textarea>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
   </div>
-  <div class="step" id="step29" hidden>
-    <div class="daytag">Day 5 &middot; Going through a list</div>
+  <div class="card" id="step29" hidden>
+    <button type="button" class="card-summary" aria-expanded="false" aria-controls="step29-body">
+      <span class="sum-tick" aria-hidden="true"></span>
+      <span class="sum-index">30</span>
+      <span class="sum-line"></span>
+      <span class="sum-output"></span>
+      <span class="sum-chev" aria-hidden="true"></span>
+    </button>
+    <div class="card-body" id="step29-body">
+      <span class="now-badge">Now</span>
     <div class="teach">
       <p class="says">Indentation is not decoration — it's what tells Python which lines belong to the loop and which don't. Every line indented under for item in spent: runs once per item; anything back at the left edge, including the for line itself, runs exactly once no matter how many items are in the list.</p>
     </div>
     <hr class="divider">
     <div class="turn">Your turn</div>
-    <div class="prompt">Select every line below that is indented — the lines that belong to the loop's body and run once per item.</div>
+      <div class="prompt">Select every line below that is indented — the lines that belong to the loop's body and run once per item.</div>
     <p class="instruction">Select every one that applies — there may be more than one.</p>
     <fieldset class="options">
       <legend class="sr-only">Answer options</legend>
@@ -636,8 +1058,11 @@ green</div>
         <span>    print(&quot;After spending&quot;, item, &quot;you have&quot;, saved)</span>
       </label>
     </fieldset>
-    <button type="button">Check</button>
-    <div class="msg" role="status"></div>
+      <button type="button" class="check-btn">Check</button>
+      <div class="msg" role="status"></div>
+    </div>
+  </div>
+    </div>
   </div>
   <div id="done" hidden>
     <h2>That is the whole cycle.</h2>
@@ -1011,14 +1436,118 @@ const rec = JSON.parse(localStorage.getItem(KEY) || "null") || {
 };
 const save = () => localStorage.setItem(KEY, JSON.stringify(rec));
 
-function openStep(i) {
+// True only while the resume-on-load replay below is re-running lock() for
+// every already-completed step. Without this, each replayed lock() call
+// would fire its own openStep(i+1, true) — nine or ten queued reveal
+// animations and as many scrollIntoView calls stacking up in a single
+// synchronous pass, all landing on screen at once the instant the browser
+// gets to paint. The loop already reveals each done card itself (no
+// animation, since it was already done before this load); lock() only needs
+// to drive openStep — reveal-with-animation, then scroll to it — for the
+// ONE card the student is actually resuming onto, which happens once, after
+// the loop, at the bottom of this file.
+let restoring = false;
+
+// openStep reveals the next card. "animate" is false only for the very first
+// paint (the resume-on-load call at the bottom of this file) — a card that is
+// about to be the first thing on screen should not visibly fade in during
+// load; a card that opens because the student just finished the one before it
+// should, per the design brief's "reveal" requirement. The animation itself is
+// pure CSS (the .enter class below), gated by prefers-reduced-motion in the
+// stylesheet rather than here, so this function never has to know whether
+// motion is allowed.
+function openStep(i, animate) {
   const el = document.getElementById("step" + i);
   if (el) {
     el.hidden = false;
+    if (animate) {
+      el.classList.add("enter");
+      // Double rAF: the first frame lets the browser paint the .enter (pre-
+      // transition) state now that [hidden] is gone; only the SECOND frame
+      // removes the class, which is what actually triggers the transition
+      // declared on .card in the stylesheet. Removing it on the first frame
+      // risks the browser coalescing both style changes into one paint and
+      // skipping the animation entirely.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          el.classList.remove("enter");
+        });
+      });
+    }
     el.scrollIntoView({ behavior: "smooth", block: "center" });
   } else {
-    document.getElementById("done").hidden = false;
+    const done = document.getElementById("done");
+    done.hidden = false;
+    if (animate) {
+      done.classList.add("enter");
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          done.classList.remove("enter");
+        });
+      });
+    }
   }
+}
+
+// updateProgress drives BOTH orientation devices the redesign adds in place of
+// day numbers: the "N of TOTAL" count + filling rail in the header, and the
+// vertical thread beside the card stack. Both read the identical --progress
+// custom property, set once here and left to CSS transitions to animate —
+// this function only ever computes a fraction and writes it down, never
+// touches layout directly.
+function updateProgress() {
+  const total = STEPS.length;
+  const done = rec.steps.filter((s) => s.done).length;
+  const frac = total > 0 ? done / total : 0;
+  document.body.style.setProperty("--progress", String(frac));
+  const doneEl = document.getElementById("progress-done");
+  if (doneEl) doneEl.textContent = String(done);
+  const totalEl = document.getElementById("progress-total");
+  if (totalEl) totalEl.textContent = String(total);
+  const wrap = document.getElementById("progress");
+  if (wrap) {
+    wrap.setAttribute("aria-valuenow", String(done));
+    wrap.setAttribute("aria-valuemax", String(total));
+  }
+}
+
+// shortOutput renders a typed step's canned output inside the compact
+// collapsed row. Day 4 and day 5 print a block of output several lines
+// long (the loop runs more than once) — showing all of it in a one-line
+// summary row would defeat the point of collapsing, so only the first line
+// shows, with a count of how many more follow. Nothing here reads student
+// input; output is the author-controlled field from the step's own data.
+// (No backticks in this comment on purpose: this whole block is itself the
+// body of a backtick template literal at the Node level — see the note at
+// the top of RUNTIME — so a literal backtick here would close it early.)
+function shortOutput(output) {
+  if (output === null || output === undefined) return "";
+  const lines = String(output).split("\n");
+  if (lines.length === 1) return lines[0];
+  const more = lines.length - 1;
+  return lines[0] + "  (+" + more + " more line" + (more === 1 ? "" : "s") + ")";
+}
+
+// summaryText reads whatever the DOM already shows for a just-locked step —
+// the textarea's current value for a typed step (the student's own correct
+// text, or the canonical answer if lock() already overwrote it on reveal),
+// or the set of options the lock() logic has already marked checked for a
+// choice/multi step (every correct option, per the reveal rule in RUNTIME's
+// lock()). It is read from the DOM rather than recomputed from step data so
+// there is exactly one source of truth for "what does this step's card
+// currently show" — the same DOM the student is looking at.
+function summaryText(el, step) {
+  if (kindOf(step) === "type") {
+    const ta = el.querySelector("textarea");
+    return ta ? ta.value : "";
+  }
+  const picked = [];
+  el.querySelectorAll(".opt").forEach((label) => {
+    const input = label.querySelector("input");
+    const span = label.querySelector("span");
+    if (input && input.checked && span) picked.push(span.textContent);
+  });
+  return picked.join("; ");
 }
 
 // Everything below is built with createElement/textContent, never innerHTML.
@@ -1067,15 +1596,29 @@ function kindOf(step) {
 
 function lock(i, revealed) {
   const el = document.getElementById("step" + i);
-  el.classList.add("done");
   const step = STEPS[i];
+  // .done — the class that actually triggers the visual collapse — is added
+  // further down, after a short delay, NOT here. See the comment by
+  // collapseAndAdvance() below for why: showOutput/showConfirmation are
+  // about to put something on screen that only exists so the student reads
+  // it (see saving-up.mjs's own header comment on why output has to be
+  // trustworthy the instant it's shown), and collapsing in the same tick
+  // would hide it before the browser ever paints it. (No backticks in this
+  // comment — see the note at the top of RUNTIME on why one would break it.)
+  // showOutput/showConfirmation must append inside .card-body, not the outer
+  // .card — .card-body is the region CSS hides once .done (unless the
+  // student clicks back in to peek). Appending to the outer card directly
+  // would put the output/confirmation box as a SIBLING of .card-body,
+  // outside the thing that collapses, so it would stay visible underneath
+  // every collapsed row forever.
+  const body = el.querySelector(".card-body");
 
   if (kindOf(step) === "type") {
     const ta = el.querySelector("textarea");
     ta.disabled = true;
-    const btn = el.querySelector("button");
+    const btn = el.querySelector(".check-btn");
     if (btn) btn.remove();
-    showOutput(el, step.output);
+    showOutput(body, step.output);
   } else {
     // Every correct option gets checked and marked, whether or not the
     // student picked it — this is the reveal, the same way a typed step's
@@ -1096,20 +1639,49 @@ function lock(i, revealed) {
       }
       inp.disabled = true;
     });
-    const btn = el.querySelector("button");
+    const btn = el.querySelector(".check-btn");
     if (btn) btn.remove();
-    showConfirmation(el, step);
+    showConfirmation(body, step);
   }
+
+  // Populate the compact collapsed row BEFORE toggling rec.steps[i].done —
+  // summaryText reads the DOM state this same function just finished
+  // setting up (the textarea's final value, or which options ended up
+  // checked), so it has to run after the per-kind block above, not before.
+  const sumLine = el.querySelector(".sum-line");
+  if (sumLine) sumLine.textContent = summaryText(el, step);
+  const sumOut = el.querySelector(".sum-output");
+  if (sumOut) sumOut.textContent = shortOutput(step.output);
 
   rec.steps[i].done = true;
   rec.steps[i].revealed = !!revealed;
   save();
-  openStep(i + 1);
+  updateProgress();
+
+  // The actual collapse, plus advancing to the next card, happens after a
+  // short pause rather than instantly — long enough to read a short output
+  // line or the revealed answer, not so long that a student blowing through
+  // easy steps feels throttled. A reveal gets the longer pause: there is
+  // more to read (the hint message AND, for a typed step, the canonical
+  // answer that just overwrote the textarea) and it matters more that it
+  // actually gets read. During the resume-on-load replay (restoring===true)
+  // this is skipped entirely — those steps were already read in a previous
+  // session, and stacking up twenty-odd staggered timeouts just to reach
+  // where the student left off would make every refresh feel slow.
+  const collapseAndAdvance = () => {
+    el.classList.add("done");
+    if (!restoring) openStep(i + 1, true);
+  };
+  if (restoring) {
+    collapseAndAdvance();
+  } else {
+    setTimeout(collapseAndAdvance, revealed ? 1500 : 900);
+  }
 }
 
 STEPS.forEach((step, i) => {
   const el = document.getElementById("step" + i);
-  const btn = el.querySelector("button");
+  const btn = el.querySelector(".check-btn");
   const msg = el.querySelector(".msg");
   const kind = kindOf(step);
 
@@ -1169,10 +1741,22 @@ STEPS.forEach((step, i) => {
       }
     });
   }
+
+  // The collapsed summary row is a real <button> (see the design rule: real
+  // controls, not clickable divs) so it is free — no extra keydown handling
+  // needed for Enter/Space. It only ever does anything once the card is
+  // .done (CSS hides it entirely until then), so no guard is needed here
+  // either: a hidden, undisplayed button cannot receive focus or a click.
+  const summary = el.querySelector(".card-summary");
+  summary.addEventListener("click", () => {
+    const open = el.classList.toggle("peek");
+    summary.setAttribute("aria-expanded", open ? "true" : "false");
+  });
 });
 
 // Restore progress. Replays every already-completed step so a refresh costs the
 // student nothing — the alternative is a gate that punishes closing the tab.
+restoring = true;
 let resume = 0;
 for (let i = 0; i < STEPS.length; i++) {
   if (!rec.steps[i].done) break;
@@ -1184,7 +1768,8 @@ for (let i = 0; i < STEPS.length; i++) {
   lock(i, rec.steps[i].revealed);
   resume = i + 1;
 }
-openStep(resume);
+restoring = false;
+openStep(resume, false);
 
 document.getElementById("dl").addEventListener("click", () => {
   // btoa(unescape(encodeURIComponent(...))) is the standard UTF-8-safe base64
