@@ -14,12 +14,39 @@
   }
   * { box-sizing:border-box }
   html { background:var(--bg) }
+  /* A dark scrollbar on the same palette as everything else — the default
+     silver-on-white system scrollbar is the single largest "this is still
+     just a document" tell on an otherwise fully-designed dark page.
+     Firefox honours scrollbar-color directly; Chromium (what a Chromebook
+     runs) has supported it since 121, so this isn't a Firefox-only nicety
+     here the way it sometimes is. No @supports needed — an unsupporting
+     browser just keeps its native scrollbar, which is a normal, working
+     scrollbar, not a broken or hidden one. */
+  html { scrollbar-color: var(--crimson) var(--panel-2); scrollbar-width: thin; }
   body { margin:0; padding:0 0 5rem; color:var(--text);
          font:16px/1.6 Carlito,Calibri,Arial,sans-serif;
+         /* A mesh-lit backdrop, not a flat fill: four soft radial glows at
+            different sizes and strengths (three colour, one a pure-dark
+            vignette pulling the far corners down) layered under a very
+            faint procedural grain (GRAIN_DATA_URI, above) that exists only
+            to keep the near-black areas between the glows from banding —
+            at 5% baked-in alpha it reads as texture, not pattern. Every
+            layer stays within navy/crimson/neutral, per the brand
+            constraint; nothing here is decorative colour that isn't ALA's
+            own. */
          background:
+           url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'180'%20height%3D'180'%3E%3Cfilter%20id%3D'grain'%3E%3CfeTurbulence%20type%3D'fractalNoise'%20baseFrequency%3D'0.85'%20numOctaves%3D'3'%20stitchTiles%3D'stitch'%2F%3E%3CfeColorMatrix%20type%3D'matrix'%20values%3D'0%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200.05%200'%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D'100%25'%20height%3D'100%25'%20filter%3D'url(%23grain)'%2F%3E%3C%2Fsvg%3E"),
            radial-gradient(1100px 460px at 10% -12%, rgba(0,45,98,.55), transparent 60%),
            radial-gradient(900px 420px at 105% 0%, rgba(174,39,52,.16), transparent 55%),
+           radial-gradient(700px 500px at 82% 78%, rgba(0,45,98,.22), transparent 62%),
+           radial-gradient(1400px 700px at 50% 115%, rgba(0,0,0,.55), transparent 60%),
            var(--bg);
+         /* Deliberately left at the default scroll attachment, not fixed —
+            a fixed multi-layer gradient this size repaints on every scroll
+            frame on some lower-end panels, and the grain tile looks
+            identical either way since it's a small repeating pattern. Not
+            worth the performance question mark on the exact hardware this
+            has to run on. */
          /* --progress (0..1) is set once, in one place, by RUNTIME's updateProgress()
             — every visual that reflects "how far through the notebook" (the header
             rail and the connecting thread beside the cards) reads this same value
@@ -39,7 +66,8 @@
   .projweek { display:inline-block; margin-top:.75rem; font-size:12px; letter-spacing:.14em;
               text-transform:uppercase; font-weight:700; color:#fff; padding:.32rem .75rem;
               border:1px solid var(--crimson); border-radius:999px; background:rgba(174,39,52,.16) }
-  header.hero h1 { margin:.85rem 0 0; font-size:2rem; font-family:Cinzel,Georgia,serif; color:#fff }
+  header.hero h1 { margin:.85rem 0 0; font-size:2rem; font-family:Cinzel,Georgia,serif; color:#fff;
+                   text-wrap:balance }
   header.hero .blurb { margin:.55rem 0 0; color:var(--muted); font-size:1.02rem; max-width:38rem }
 
   /* Orientation without a finish line: a count and a filling rail, never a "you are
@@ -54,18 +82,132 @@
                     border-radius:999px; transition:width .5s ease }
   .progress-count { margin-top:.55rem; font-size:12px; letter-spacing:.06em;
                      text-transform:uppercase; color:var(--muted) }
-  .progress-count b { color:#fff }
+  .progress-count b { color:#fff; display:inline-block }
+  .stickybar-count b { display:inline-block }
+  /* The restrained "that counted" pulse — see updateProgress()'s bump()
+     helper. A brief scale-and-colour flash on the number only, nothing
+     more; no confetti, per the design brief. */
+  @keyframes bump { 0% { transform:scale(1); color:#fff } 45% { transform:scale(1.32); color:var(--crimson) }
+                     100% { transform:scale(1); color:#fff } }
+  .progress-count b.bump, .stickybar-count b.bump { animation:bump .4s ease }
+  @media (prefers-reduced-motion:reduce) {
+    .progress-count b.bump, .stickybar-count b.bump { animation:none }
+  }
+
+  /* Start Over — shared base for both placements (see resetControlHTML).
+     The header instance is deliberately understated: a small text-only
+     link, not a button that competes with the progress rail for attention —
+     see the design rule, "must be out of the way." It only appears once
+     there's a step done (RUNTIME's updateProgress toggles [hidden]), so a
+     brand-new page shows nothing here at all. */
+  .reset-header { position:absolute; top:1.5rem; right:1.25rem; text-align:right }
+  .reset-header .reset-trigger { background:none; border:0; padding:0; margin:0; cursor:pointer;
+    font:600 12px Carlito,Calibri,Arial,sans-serif; letter-spacing:.03em; color:var(--muted);
+    text-decoration:underline; text-underline-offset:3px }
+  .reset-header .reset-trigger:hover { color:#fff }
+  .reset-header .reset-confirm { margin-top:.5rem; max-width:15rem; text-align:left;
+    background:var(--panel-2); border:1px solid var(--panel-border); border-radius:8px;
+    padding:.7rem .8rem; box-shadow:0 18px 34px -18px rgba(0,0,0,.85) }
+  .reset-header .reset-warn { margin:0 0 .55rem; font-size:.8rem; color:var(--text) }
+
+  /* The sticky slim header — orientation that never leaves the screen once
+     a student has scrolled past the full hero. position:sticky alone is
+     what makes this work at all (it pins to the viewport top the instant
+     its own normal-flow position would scroll past it, no JS needed to
+     decide WHEN to stick); the baseline below it is a solid, always-legible
+     bar regardless of what a browser does or doesn't support beyond that.
+     aria-hidden (see the markup) keeps a screen reader from hearing
+     progress announced twice. */
+  .stickybar { position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:.9rem;
+               padding:.6rem 1.25rem; background:rgba(7,9,14,.94);
+               border-bottom:1px solid var(--panel-border-soft) }
+  .stickybar-title { font:700 13px/1.3 Cinzel,Georgia,serif; color:#fff; white-space:nowrap;
+                      overflow:hidden; text-overflow:ellipsis; flex:0 1 auto }
+  .stickybar-rail { flex:1 1 auto; max-width:14rem; height:5px; border-radius:999px;
+                     background:rgba(255,255,255,.1); overflow:hidden }
+  .stickybar-fill { height:100%; width:calc(var(--progress) * 100%);
+                     background:linear-gradient(90deg, var(--navy), var(--crimson)); border-radius:999px;
+                     transition:width .5s ease }
+  .stickybar-count { flex:0 0 auto; font:600 12px var(--mono); color:var(--muted) }
+  .stickybar-count b { color:#fff }
+
+  /* Progressive enhancement only: a browser without support for
+     scroll-driven animations keeps the solid baseline above, always
+     legible, never transparent — see the design brief's own warning that a
+     mishandled fallback here can hide content rather than just look
+     plainer. Inside @supports, the bar instead STARTS transparent (blended
+     into the hero behind it) and solidifies as the student scrolls the
+     first ~200px, driven entirely by scroll position via
+     animation-timeline: scroll(root) — no scroll event listener, no JS
+     at all. animation-fill-mode "both" (the "both" in the shorthand below)
+     is what makes it hold the FROM state before scrolling starts, rather
+     than flashing to solid on load and back. */
+  @supports (animation-timeline: scroll()) {
+    /* The CONTENTS fade too, not only the background. Solidifying the bar
+       alone left the title and the count fully legible at scroll 0, sitting
+       directly beneath the hero that already shows both — which reads as a
+       duplicated header rather than as orientation. There is nothing to
+       orient a student who can still see the real thing. Fading the whole
+       bar means it simply does not exist until the hero has gone. */
+    @keyframes stickybar-solidify {
+      from { background-color:rgba(7,9,14,0); border-bottom-color:transparent; box-shadow:none;
+             opacity:0; visibility:hidden }
+      to   { background-color:rgba(7,9,14,.94); border-bottom-color:var(--panel-border-soft);
+             box-shadow:0 14px 30px -20px rgba(0,0,0,.8); opacity:1; visibility:visible }
+    }
+    @media (prefers-reduced-motion:no-preference) {
+      .stickybar { animation:stickybar-solidify linear both; animation-timeline:scroll(root);
+                   animation-range:0 200px }
+    }
+  }
+  /* backdrop-filter, permitted ONLY here per the design brief — on at most
+     one element, since it is genuinely expensive to composite on a
+     low-end Chromebook GPU. A sticky bar that's on screen for the entire
+     rest of the scroll is the one place that expense buys something (text
+     over whatever card is currently scrolled underneath it stays legible);
+     thirty cards each paying that cost would not be. @supports-gated so a
+     browser without it just keeps the plain background above — still
+     opaque, still legible, nothing missing. */
+  @supports (backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px)) {
+    .stickybar { backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%) }
+  }
 
   main.board { max-width:48rem; margin:0 auto; padding:2.25rem 1.25rem 0 }
 
+  /* opacity/transform stay at their fully-visible baseline unconditionally
+     — the @supports block below only ever ADDS an entrance animation on
+     top of this, never removes the guarantee that .howto renders visible
+     with zero CSS support at all. This is the one property in this whole
+     stylesheet that has to be gotten right: see the design brief's warning
+     that a mishandled scroll-driven fallback can hide real content, not
+     just look plainer. */
   .howto { border:1px solid var(--panel-border); border-radius:14px; padding:1.3rem 1.4rem 1.4rem;
            margin:0 0 2.25rem; background:linear-gradient(180deg, var(--panel), var(--panel-2));
-           box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 22px 40px -28px rgba(0,0,0,.75) }
-  .howto h2 { margin:0 0 .7rem; font-family:Cinzel,Georgia,serif; font-size:1.05rem; color:#fff }
+           box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 22px 40px -28px rgba(0,0,0,.75);
+           opacity:1; transform:none }
+  .howto h2 { margin:0 0 .7rem; font-family:Cinzel,Georgia,serif; font-size:1.05rem; color:#fff;
+              text-wrap:balance }
   .howto ul { margin:0; padding-left:1.2rem }
   .howto li { margin:0 0 .55rem; font-size:.95rem }
   .howto li:last-child { margin-bottom:0 }
   .howto strong { color:#fff }
+  /* Scroll-driven, not JS-driven: as the page's own scroll position carries
+     .howto through the top of the viewport, animation-timeline: view() ties
+     its opacity/position DIRECTLY to that scroll progress — no
+     IntersectionObserver, no scroll listener. It is chosen for a static,
+     always-in-the-DOM element (never toggled by RUNTIME) specifically so
+     there is no interaction with the [hidden]/@starting-style reveal the
+     cards use below; the two mechanisms never touch the same element. Gated
+     on BOTH feature support and motion preference, and the animation only
+     ever runs on top of the unconditional opacity:1 baseline above — an
+     unsupporting browser, or a reduced-motion one, shows this section at
+     full opacity from the first paint, not blank. */
+  @supports (animation-timeline: view()) {
+    @keyframes howto-reveal { from { opacity:0; transform:translateY(22px) } to { opacity:1; transform:none } }
+    @media (prefers-reduced-motion: no-preference) {
+      .howto { animation:howto-reveal linear both; animation-timeline:view(); animation-range:entry 0% entry 60% }
+    }
+  }
 
   /* The connecting thread. A plain vertical line, not one woven through each
      card's actual on-screen position — see the design brief's own "do not
@@ -95,22 +237,52 @@
 
   .card { position:relative; border-radius:14px; border:1px solid var(--panel-border);
           background:linear-gradient(165deg, var(--panel), var(--panel-2));
-          box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 26px 46px -30px rgba(0,0,0,.8);
-          padding:1.25rem 1.35rem 1.35rem; transition:opacity .35s ease, transform .35s ease }
+          box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 26px 46px -30px rgba(0,0,0,.8);
+          padding:1.25rem 1.35rem 1.35rem; opacity:1; transform:translateY(0);
+          transition:opacity .35s ease, transform .35s ease, border-color .25s ease, box-shadow .25s ease }
   .card[hidden] { display:none }
-  /* The reveal: openStep() adds .enter (transition:none, so the pre-transition
-     opacity/transform apply instantly with no animation) right as [hidden] comes
-     off, then removes it one frame later so the card's own transition — declared
-     above, unconditionally — is what the browser actually animates. */
-  .card.enter, #done.enter { opacity:0; transform:translateY(14px); transition:none }
+  #done { opacity:1; transform:translateY(0) }
+  /* The reveal, entirely in CSS. @starting-style defines the "before" frame
+     for a card the instant its computed display goes from none to
+     something rendered (exactly what happens when RUNTIME clears the
+     [hidden] attribute) — the browser plays that as the START of the
+     transition already declared on .card above, with no JS class-toggling,
+     no double-rAF force-reflow trick, nothing. A browser that doesn't
+     support @starting-style simply has no starting frame to animate from,
+     so the card just appears at its normal (fully visible) style instantly
+     — a pop instead of a fade-in, never a card stuck invisible, because the
+     BASE .card rule above is opacity:1 unconditionally. */
+  @starting-style {
+    .card { opacity:0; transform:translateY(14px) }
+    #done { opacity:0; transform:translateY(14px) }
+  }
   @media (prefers-reduced-motion:reduce) {
     .card, #done { transition:none !important }
   }
-  /* The current card — open, not yet done — gets the prominent treatment; a
-     collapsed, completed card gets none of this. */
+  /* The current card — open, not yet done — gets the prominent treatment: a
+     crimson border plus a slow, subtle rotating conic-gradient accent ring
+     via ::after (registered as an animatable <angle> with @property, below)
+     — a collapsed, completed card gets none of this. The ring is a
+     supplementary layer, not a replacement for the plain border-color
+     above: if @property isn't supported, --step-angle is just an ordinary,
+     non-interpolating custom property, the gradient renders at its static
+     initial angle, and the card still reads as "the current one" from the
+     border-color and box-shadow alone. */
   .card:not(.done):not([hidden]) { border-color:var(--crimson);
     box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 0 0 1px rgba(174,39,52,.4),
                0 30px 55px -30px rgba(0,0,0,.85) }
+  @property --step-angle { syntax:'<angle>'; inherits:false; initial-value:0deg }
+  .card:not(.done):not([hidden])::after {
+    content:""; position:absolute; inset:-1px; border-radius:inherit; padding:1px;
+    background:conic-gradient(from var(--step-angle), transparent 0 62%, var(--crimson) 78%, transparent 92%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    opacity:.55; pointer-events:none; animation:step-angle-spin 7s linear infinite;
+  }
+  @keyframes step-angle-spin { to { --step-angle:360deg } }
+  @media (prefers-reduced-motion:reduce) {
+    .card:not(.done):not([hidden])::after { animation:none }
+  }
   .now-badge { display:none; position:absolute; top:-11px; right:18px; font-size:10px;
                letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:#fff;
                background:var(--crimson); border-radius:999px; padding:.25rem .6rem }
@@ -129,11 +301,17 @@
      the design brief. A real <button> (keyboard-operable, focusable) rather than
      a clickable div; CSS alone decides whether it or .card-body is what's on
      screen, based purely on .done/.peek, so RUNTIME never has to toggle a
-     display style directly. */
+     display style directly. A collapsed card also recedes visually: tighter
+     padding (it's a list row now, not a lesson) and a flatter, slightly
+     darker fill than the active card's — the two states should not read as
+     the same weight of object. */
+  .card.done { padding-top:.85rem; padding-bottom:.85rem;
+               background:linear-gradient(165deg, var(--panel-2), #0a1220) }
   .card-summary { display:none; width:100%; align-items:center; gap:.65rem; background:transparent;
                   border:0; margin:0; padding:0; color:var(--text); font:inherit; text-align:left;
-                  cursor:pointer }
+                  cursor:pointer; border-radius:8px; transition:background-color .15s ease }
   .card.done .card-summary { display:flex }
+  .card.done .card-summary:hover { background:rgba(255,255,255,.035) }
   .card.done .card-body { display:none }
   .card.done.peek .card-body { display:block; margin-top:1rem; padding-top:1rem;
                                 border-top:1px dashed var(--panel-border) }
@@ -206,16 +384,67 @@
   .turn { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
           font-weight:700; margin:0 0 .6rem }
 
-  #done { border:1px solid var(--crimson); border-radius:14px; padding:1.5rem 1.4rem 1.6rem; margin:2rem 0 0;
-          background:linear-gradient(165deg, var(--panel), var(--panel-2));
+  /* The capstone — the one moment on this page the design brief asked to
+     feel like "an ending worth reaching," not just the last card in the
+     list. A red/white/blue top edge (the brand's own three colours, in
+     that order, never introduced anywhere else on the page) marks it as
+     categorically different from a card; a richer mesh of radial glows
+     than the plain two-tone panel gradient every other box on this page
+     uses gives it more visual weight than anything before it. */
+  #done { position:relative; overflow:hidden; border:1px solid var(--crimson); border-radius:14px;
+          padding:2rem 1.5rem 1.7rem; margin:2rem 0 0; text-align:center;
+          background:
+            radial-gradient(600px 260px at 50% -10%, rgba(0,45,98,.5), transparent 60%),
+            radial-gradient(500px 240px at 100% 110%, rgba(174,39,52,.22), transparent 60%),
+            linear-gradient(165deg, var(--panel), var(--panel-2));
           box-shadow:0 1px 0 rgba(255,255,255,.06) inset, 0 30px 60px -30px rgba(0,0,0,.85);
           transition:opacity .35s ease, transform .35s ease }
+  #done::before { content:""; position:absolute; top:0; left:0; right:0; height:4px;
+                   background:linear-gradient(90deg, var(--navy) 0 33%, #fff 33% 67%, var(--crimson) 67%) }
   #done[hidden] { display:none }
-  #done h2 { margin:0 0 .5rem; font-family:Cinzel,Georgia,serif; font-size:1.3rem; color:#fff }
+  .done-badge { width:3rem; height:3rem; margin:0 auto 1rem; border-radius:50%;
+                background:rgba(174,39,52,.16); border:2px solid var(--crimson); position:relative }
+  .done-badge::after { content:""; position:absolute; left:50%; top:47%; width:.85rem; height:.5rem;
+                        border-left:3px solid #fff; border-bottom:3px solid #fff;
+                        transform:translate(-50%,-50%) rotate(-45deg) }
+  #done h2 { margin:0 0 .5rem; font-family:Cinzel,Georgia,serif; font-size:1.4rem; color:#fff;
+             text-wrap:balance }
   #done p { color:var(--text); margin:0 0 1rem }
+  #done-stats { font-size:.95rem; color:var(--muted) }
+  .done-actions { justify-content:center }
+  .reset-hint { text-align:center }
   #dl { font:600 14px Carlito,Calibri,Arial,sans-serif; background:var(--navy); color:#fff; border:0;
         border-radius:8px; padding:.75rem 1.4rem; cursor:pointer; box-shadow:0 10px 24px -12px rgba(0,45,98,.7) }
   #dl:hover { background:#012a5c }
+
+  /* Start Over, primary placement — see the design rule: #done is where a
+     student actually decides they want a better run, so this is a real
+     secondary action next to Download, not a tucked-away link like the
+     header's copy of the same control. */
+  .done-actions { display:flex; flex-wrap:wrap; align-items:flex-start; gap:.9rem }
+  .reset-done .reset-trigger { font:600 14px Carlito,Calibri,Arial,sans-serif; background:transparent;
+    color:var(--text); border:1px solid var(--panel-border); border-radius:8px; padding:.7rem 1.2rem;
+    cursor:pointer }
+  .reset-done .reset-trigger:hover { border-color:var(--muted) }
+  .reset-done .reset-confirm { max-width:26rem; background:#0b1220; border:1px solid var(--crimson);
+    border-radius:10px; padding:.9rem 1rem; margin-top:0; text-align:left }
+  .reset-done .reset-warn { margin:0 0 .7rem; font-size:.92rem; color:var(--text) }
+  .reset-hint { margin:1.1rem 0 0 !important; font-size:.85rem; color:var(--muted) }
+
+  /* The Yes/Cancel pair, shared by both placements. "Yes, clear my work" is
+     the one destructive action in this whole page, so it gets the crimson
+     treatment normally reserved for Check — everything else on this page
+     that isn't destructive stays neutral. */
+  .reset-confirm[hidden] { display:none }
+  .reset-actions { display:flex; gap:.6rem; flex-wrap:wrap }
+  .reset-yes { font:600 13px Carlito,Calibri,Arial,sans-serif; background:var(--crimson); color:#fff;
+    border:0; border-radius:6px; padding:.55rem 1rem; cursor:pointer }
+  .reset-yes:hover { background:#c22e3d }
+  .reset-cancel { font:600 13px Carlito,Calibri,Arial,sans-serif; background:transparent; color:var(--text);
+    border:1px solid var(--panel-border); border-radius:6px; padding:.55rem 1rem; cursor:pointer }
+  .reset-cancel:hover { border-color:var(--muted) }
+  .reset-trigger:focus-visible, .reset-yes:focus-visible, .reset-cancel:focus-visible {
+    outline:2px solid #fff; outline-offset:2px }
 </style></head><body>
 <header class="hero">
   <div class="kicker">AMERICAN LEADERSHIP ACADEMY — VISTANCIA</div>
@@ -227,7 +456,26 @@
     <div class="progress-rail"><div class="progress-fill"></div></div>
     <div class="progress-count"><b id="progress-done">0</b> of <b id="progress-total">30</b></div>
   </div>
+  <div class="reset reset-header" id="reset-header" hidden>
+    <button type="button" class="reset-trigger">Start over</button>
+    <div class="reset-confirm" hidden>
+      <p class="reset-warn"></p>
+      <div class="reset-actions">
+        <button type="button" class="reset-yes">Yes, clear my work</button>
+        <button type="button" class="reset-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
 </header>
+<div class="stickybar" id="stickybar" aria-hidden="true">
+  <!-- A visual echo of the header's own progressbar (role="progressbar" lives
+       there, above), not a second one — a screen reader hearing "steps
+       completed" announced twice, once per scroll position, would be worse
+       than not having this at all. -->
+  <span class="stickybar-title">Saving Up</span>
+  <div class="stickybar-rail"><div class="stickybar-fill"></div></div>
+  <span class="stickybar-count"><b id="progress-done-mini">0</b>/<span id="progress-total-mini">30</span></span>
+</div>
 <main class="board">
   <section class="howto">
     <h2>How this works</h2>
@@ -1065,9 +1313,24 @@ green</div>
     </div>
   </div>
   <div id="done" hidden>
+    <div class="done-badge" aria-hidden="true"></div>
     <h2>That is the whole cycle.</h2>
+    <p id="done-stats"></p>
     <p>Download your work, then upload the file to the assignment on Canvas.</p>
-    <button type="button" id="dl">Download my work</button>
+    <div class="done-actions">
+      <button type="button" id="dl">Download my work</button>
+  <div class="reset reset-done" id="reset-done">
+    <button type="button" class="reset-trigger">Start over</button>
+    <div class="reset-confirm" hidden>
+      <p class="reset-warn"></p>
+      <div class="reset-actions">
+        <button type="button" class="reset-yes">Yes, clear my work</button>
+        <button type="button" class="reset-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+    </div>
+    <p class="reset-hint">Not happy with this run? Starting over keeps a record of this attempt so your improvement still shows.</p>
   </div>
 </main>
 <script>
@@ -1378,6 +1641,70 @@ const buildReportHTML = function buildReportHTML(record, meta, b64, colors) {
   const completed = steps.filter((s) => s.done).length;
   const revealed = steps.filter((s) => s.revealed).length;
 
+  // `runs` is the archive Start Over leaves behind (see archiveRun, above) —
+  // absent entirely on a record from before this feature existed, which is
+  // "zero previous attempts," not an error. This is the whole point of
+  // collecting the history at all: "18/30 with 9 revealed, then 26/30 with 3
+  // revealed" makes a student who went back and did it properly legible to
+  // Colton at a glance, without opening a single attempt's raw data.
+  const runs = Array.isArray(record.runs) ? record.runs : [];
+  const attemptNumber = runs.length + 1;
+
+  // Minutes, not raw milliseconds — nobody reading a grading report benefits
+  // from "1284231ms," and this report is read by a human first (see the
+  // function's own doc comment below: "one file, two audiences"). Dependency
+  // -free on purpose: this function has to run identically whether it's
+  // called here at build time in Node or inlined into a student's browser
+  // (see the HARD CONSTRAINT note atop this file), so it can't reach for
+  // Intl.RelativeTimeFormat or anything else that could disagree between the
+  // two runtimes.
+  const fmtDuration = (ms) => {
+    if (!ms || ms < 0) return "under a minute";
+    const mins = Math.round(ms / 60000);
+    if (mins < 1) return "under a minute";
+    if (mins === 1) return "1 minute";
+    if (mins < 60) return mins + " minutes";
+    const hrs = Math.floor(mins / 60);
+    const rem = mins % 60;
+    return hrs + "h" + (rem ? " " + rem + "m" : "");
+  };
+
+  // Whatever the browser's own locale renders a Date as. This runs on
+  // Colton's machine when he opens the file, not the student's — a plain
+  // human-legible timestamp is what he needs here, not a portable format.
+  const fmtWhen = (iso) => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? "" : d.toLocaleString();
+  };
+
+  // The at-a-glance line, built only when there IS a history to show — a
+  // first-ever attempt (runs.length === 0) gets no "Attempt 1" noise, per
+  // the design rule that this report should read exactly like a normal
+  // submission until a student has actually gone back and tried again.
+  const historyLine =
+    runs.length === 0
+      ? ""
+      : "Attempt " + attemptNumber + " &middot; previous " +
+        (runs.length === 1 ? "attempt" : "attempts") + ": " +
+        runs.map((r) => r.done + "/" + r.total + " with " + r.revealed + " revealed").join(", then ") + ".";
+
+  const historyRows = runs
+    .map((r, i) =>
+      "<tr><td>" + (i + 1) + "</td>" +
+      "<td>" + r.done + " / " + r.total + "</td>" +
+      "<td>" + r.revealed + "</td>" +
+      "<td>" + esc(fmtDuration(r.durationMs)) + "</td>" +
+      "<td>" + esc(fmtWhen(r.endedAt)) + "</td></tr>"
+    )
+    .join("");
+
+  const historyTable =
+    runs.length === 0
+      ? ""
+      : "<h2>Previous attempts</h2><table><tr><th>Attempt</th><th>Completed</th><th>Revealed</th>" +
+        "<th>Time on task</th><th>When</th></tr>" + historyRows + "</table>";
+
   const rows = steps
     .map((s, i) => {
       const attempts = s.attempts || [];
@@ -1416,12 +1743,38 @@ const buildReportHTML = function buildReportHTML(record, meta, b64, colors) {
   td { border:1px solid #${colors.silver}; padding:6px 9px; vertical-align:top; font-size:13.5px }
   code { font:13px/1.5 ui-monospace, SFMono-Regular, Consolas, "DejaVu Sans Mono", Menlo, monospace;
        white-space:pre-wrap; word-break:break-word }
+  .history { margin:0 0 .6rem; font-size:.95rem; color:#444 }
+  h2 { font-family:Cinzel,Georgia,serif; color:#${colors.navy}; font-size:1rem; margin:1.6rem 0 .5rem }
 </style></head><body>
 <h1>${esc(meta.title)}</h1>
+${historyLine ? `<p class="history">${historyLine}</p>` : ""}
 <p class="summary"><b>${completed} of ${steps.length}</b> steps completed &middot; <b>${revealed}</b> answer(s) revealed</p>
+${historyTable}
+<h2>This attempt</h2>
 <table><tr><th>Step</th><th>Attempts</th><th>Revealed</th><th>Final answer</th></tr>${rows}</table>
 <script type="application/json" id="record">${b64}<\/script>
 </body></html>`;
+};
+const archiveRun = function archiveRun(record, freshSteps, endedAt) {
+  const steps = Array.isArray(record.steps) ? record.steps : [];
+  const done = steps.filter((s) => s && s.done).length;
+  const revealed = steps.filter((s) => s && s.revealed).length;
+  const startedAt = record.started;
+  const startMs = Date.parse(startedAt);
+  const endMs = Date.parse(endedAt);
+  const durationMs = isNaN(startMs) || isNaN(endMs) ? 0 : endMs - startMs;
+
+  const runs = (Array.isArray(record.runs) ? record.runs : []).slice();
+  runs.push({
+    total: steps.length,
+    done: done,
+    revealed: revealed,
+    startedAt: startedAt,
+    endedAt: endedAt,
+    durationMs: durationMs,
+  });
+
+  return Object.assign({}, record, { runs: runs, steps: freshSteps, started: endedAt });
 };
 const STEPS = [{"prompt":"Print the words Saving Up — that's your program's title. Remember, words need quotes.","answer":"print(\"Saving Up\")","output":"Saving Up","teach":{"says":"print() puts words on the screen. Whatever you put inside the quotes is what appears.","example":"print(\"Good morning\")","shows":"Good morning","watch":"The quotes are part of the code. Without them Python goes looking for something called Good, does not find it, and stops."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"The thing you want costs $220. Store that in a variable called goal.","answer":"goal = 220","output":null,"teach":{"says":"A variable is a labeled box that remembers a value. name = value creates the box and fills it — nothing appears on screen, because storing a value and showing one are two different acts.","example":"price = 5","shows":null,"watch":"Numbers don't get quotes. price = \"5\" stores text that only looks like a number — Python won't let you do math with it the way it will with 5. One more style note: Python code puts a space on each side of an operator like = too — goal = 220, not goal=220 — because it's easier to read. Every operator in this notebook, from = and - to comparisons like >= and \u003C, follows that same spacing."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"You have $40 already. Store it in saved.","answer":"saved = 40","output":null,"teach":{"says":"Same move as the line above — a new box, a new value, still nothing printed."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"Print how much you still need. Subtract saved from goal.","answer":"print(goal - saved)","output":"180","teach":{"says":"print() doesn't only show quoted text — put an expression inside instead and Python works it out first, then prints the result. goal - saved becomes a number before it ever reaches the screen.","example":"print(10 - 3)","shows":"7","watch":"No quotes around the math. print(\"goal - saved\") would print those five words literally — quotes turn code into text, and text just sits there instead of being calculated. Same spacing habit as before, too — goal - saved, not goal-saved."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"A bare number tells nobody anything. Print the words You still need, then goal - saved — the same expression from the line above.","answer":"print(\"You still need\", goal - saved)","output":"You still need 180","teach":{"says":"print() can take more than one thing at once — separate them with commas and Python prints each one in order, sliding exactly one space between them for you.","example":"print(\"Total:\", 10 - 3)","shows":"Total: 7","watch":"That one space is automatic. Type \"You still need \" with a trailing space of your own and the output ends up with two spaces instead of one."},"day":1,"dayTitle":"Numbers you can name"},{"kind":"choice","prompt":"Which line will print the word Hello?","options":[{"text":"print(Hello)","why":"No quotes, so Python looks for a variable called Hello and does not find one."},{"text":"print(\"Hello\")","correct":true},{"text":"Print(\"Hello\")","why":"Capital P. Python is case-sensitive and only knows print."}],"teach":{"says":"Every one of these looks close to right at a glance. Quotes and capitalisation are exactly the kind of thing Python cares about and a skimming eye does not — reading each option letter by letter is the whole skill this question is testing."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"Start a question: is saved at least as big as goal? End the line with a colon.","answer":"if saved >= goal:","output":null,"teach":{"says":"if starts a question. Whatever comes after it works out to True or False, and Python only runs the indented lines underneath when the answer is True. The colon isn't decoration — it's Python's way of saying \"the rules for what happens next start here.\" >= means \"at least as big as\": saved equal to goal counts as true too, not just saved bigger.","example":"temp = 100\nif temp >= 90:\n    print(\"Hot\")","shows":"Hot","watch":"A single = stores a value — that's assignment, from Day 1. Two together, ==, ask \"are these equal?\" Write if saved = goal: by mistake and Python stops you immediately: that spot only accepts a question, not an instruction to store something. Same spacing habit as Day 1's operators, too — saved >= goal, not saved>=goal."},"day":2,"dayTitle":"Asking a question"},{"prompt":"Indent four spaces and print the words Go buy it — that's what happens when it is true.","answer":"    print(\"Go buy it\")","output":null,"teach":{"says":"The four spaces before print aren't for looks — they're what tells Python this line belongs to the if above it. Every line indented the same amount underneath the colon is \"inside\" that if; the first line back at the left edge is \"outside\" it again.","example":"if 5 > 2:\n    print(\"Yes\")","shows":"Yes","watch":"Every line in the same block has to be indented by the exact same amount. Python doesn't care whether you use two spaces or four — it cares that every line inside one block matches. Mix them and Python refuses to run at all."},"day":2,"dayTitle":"Asking a question"},{"prompt":"Now the other case. Type else and a colon, back at the left edge.","answer":"else:","output":null,"teach":{"says":"else catches everything the if didn't. It needs no condition of its own — it only runs when the if above it worked out False — which is why it sits back at the left edge, lined up with if rather than indented under it.","example":"temp = 60\nif temp >= 90:\n    print(\"Hot\")\nelse:\n    print(\"Not hot\")","shows":"Not hot","watch":"else never gets its own condition — you can't write else saved \u003C goal:. Need another condition in between? That's elif, and Day 3 is where it shows up."},"day":2,"dayTitle":"Asking a question"},{"prompt":"Indent four spaces and print the words Not yet — that's what happens when it is false.","answer":"    print(\"Not yet\")","output":"Not yet","teach":{"says":"Same indentation rule as the if's body — four spaces, because this line belongs to else the same way that one belonged to if."},"day":2,"dayTitle":"Asking a question"},{"kind":"choice","prompt":"Which line correctly checks whether saved and goal are equal, without changing either one?","options":[{"text":"saved = goal","why":"A single = stores a value — this line would overwrite saved with whatever goal holds. Python does not even accept this as a condition after if."},{"text":"saved == goal","correct":true},{"text":"saved =! goal","why":"This is not a real Python comparison — = and ! next to each other like this is just a syntax error, not a working condition."}],"teach":{"says":"One equals sign assigns a value — it changes something. Two together, ==, compare two values and hand back True or False without changing anything. Mixing them up is one of the most common mistakes in Python, and Python will not always catch it for you."},"day":2,"dayTitle":"Asking a question"},{"prompt":"Ask the same question again: is saved at least as big as goal? End the line with a colon.","answer":"if saved >= goal:","output":null,"teach":{"says":"Same question as Monday. Python doesn't remember that you already asked it inside a different if block — every if is independent, so you write the condition again from scratch."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print the words Go buy it — that's what happens when it is true.","answer":"    print(\"Go buy it\")","output":null,"teach":{"says":"Same as Monday too — this line only runs when the if directly above it is True."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Add a middle case: type elif, then whether saved is more than half of goal. End with a colon.","answer":"elif saved > goal / 2:","output":null,"teach":{"says":"elif (\"else if\") adds another question, but it only gets checked when everything above it worked out False. You can chain as many elif lines as you need between an if and an else — Python checks them top to bottom and stops at the first one that's True. / divides, so goal / 2 is exactly half of goal.","example":"score = 75\nif score >= 90:\n    print(\"A\")\nelif score >= 70:\n    print(\"B\")\nelse:\n    print(\"C\")","shows":"B","watch":"Order matters. Python stops at the first True line it finds and skips the rest — put a wide condition too early and it can catch cases a later, more specific line was supposed to handle. Same spacing habit applies to > and / as well — saved > goal / 2, not saved>goal/2."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print the words Getting there — that's what happens in that middle case.","answer":"    print(\"Getting there\")","output":null,"teach":{"says":"Same indentation rule again — four spaces because this line belongs to the elif directly above it."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Type else and a colon for everything that's left over, back at the left edge.","answer":"else:","output":null,"teach":{"says":"Same else as Day 2. Still no condition of its own — it fires only when every if and elif above it came back False."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print the words Not close yet — the last case.","answer":"    print(\"Not close yet\")","output":"Not close yet","teach":{"says":"This is the branch that actually runs: saved is 40 and goal / 2 is 110, so saved > goal / 2 is False, the elif is skipped, and this final else is what prints."},"day":3,"dayTitle":"More than two answers"},{"prompt":"You can save $15 a week. Store that in a variable called pay.","answer":"pay = 15","output":null,"teach":{"says":"Same pattern as Day 1 — a new box, pay, remembering 15. Nothing new here; the loop below is where it gets used."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"You haven't saved any weeks yet. Store 0 in a variable called weeks.","answer":"weeks = 0","output":null,"teach":{"says":"weeks starts at 0 on purpose — it's about to count up by one every time the loop below runs. A counter has to start somewhere true, and zero weeks have passed before the loop has even begun."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Start a loop: keep going as long as saved is less than goal. End the line with a colon.","answer":"while saved \u003C goal:","output":null,"teach":{"says":"while works like if, but it doesn't check its question just once. After the indented lines under it finish running, Python goes right back up to the while line and checks the condition again — and again — running that block over and over for as long as the answer stays True.","example":"count = 0\nwhile count \u003C 3:\n    print(count)\n    count = count + 1","shows":"0\n1\n2","watch":"saved \u003C goal has to become False eventually, or this runs forever. That only happens if something inside the loop changes saved — which is exactly what the next line does. Skip that line and you've built an infinite loop that never lets the page respond again. Same spacing habit as always — saved \u003C goal, not saved\u003Cgoal."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces. Add pay to saved and store it back in saved.","answer":"    saved = saved + pay","output":null,"accept":["    saved = pay + saved"],"teach":{"says":"This is the line that makes the loop actually finish. saved = saved + pay works out the right side first — the old saved plus pay — and then stores that result back into saved, overwriting the old number. Every pass through the loop, saved gets a little bigger, until eventually saved \u003C goal turns False.","example":"total = 5\ntotal = total + 2\nprint(total)","shows":"7","watch":"= here isn't math-class \"equals.\" saved = saved + pay would be nonsense as an equation — nothing equals itself plus 15 — but it's a completely ordinary instruction to a computer: compute the right side, then store it on the left. Same spacing habit again — saved + pay, not saved+pay."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces. Add one to weeks.","answer":"    weeks = weeks + 1","output":null,"accept":["    weeks = 1 + weeks"],"teach":{"says":"Same move as the line above, on the counter instead of the balance. weeks = weeks + 1 adds exactly one every pass, which is how weeks ends up counting the number of times the loop ran."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces and print, in order: the word Week, then the weeks variable, a dash -, then the saved variable.","answer":"    print(\"Week\", weeks, \"-\", saved)","output":"Week 1 - 55\nWeek 2 - 70\nWeek 3 - 85\nWeek 4 - 100\nWeek 5 - 115\nWeek 6 - 130\nWeek 7 - 145\nWeek 8 - 160\nWeek 9 - 175\nWeek 10 - 190\nWeek 11 - 205\nWeek 12 - 220","teach":{"says":"This print sits inside the loop, so it runs on every single pass — one line of code, but the loop runs it 12 times before saved finally reaches goal, so 12 lines of output appear, each with that pass's own weeks and saved.","example":"n = 0\nwhile n \u003C 3:\n    print(\"Step\", n)\n    n = n + 1","shows":"Step 0\nStep 1\nStep 2","watch":"The \"-\" here is just a piece of text, same as any other comma-separated piece — Python doesn't treat it specially. It's only there so the line reads Week 1 - 55 instead of Week 1 55."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Back at the left edge — the loop is over. Print, in order: the words It took, then the weeks variable, then the word weeks.","answer":"print(\"It took\", weeks, \"weeks\")","output":"It took 12 weeks","teach":{"says":"Back at the left edge, this line is no longer part of the loop — it runs exactly once, after the loop has completely finished, which only happens once saved is no longer less than goal. weeks still holds whatever it counted up to.","watch":"If this line stayed indented, it would be inside the loop instead of after it, and Python would try to run it every single pass instead of once at the end."},"day":4,"dayTitle":"Doing it again until it is done"},{"kind":"multi","prompt":"Select every statement that is true about why while saved \u003C goal: eventually stops looping.","options":[{"text":"saved = saved + pay makes saved bigger every pass, moving it toward goal.","correct":true},{"text":"The loop is hard-coded to stop after 12 passes.","why":"Python does not count passes for a while loop — it has no idea it's been 12 times. It only ever rechecks the condition. It happened to take 12 passes here because of these specific numbers, not because 12 is special."},{"text":"Eventually saved \u003C goal becomes False, and that is the only thing that stops a while loop.","correct":true},{"text":"weeks = weeks + 1 is what the while line checks to decide whether to stop.","why":"weeks only counts how many passes have happened — the while line never looks at it. Deleting that line wouldn't stop the loop from ending; deleting saved = saved + pay would stop it from EVER ending."}],"teach":{"says":"A while loop does not count passes by itself — it rechecks its condition every single time, top to bottom, and stops the instant that condition comes back False. If nothing inside the loop changes the value the condition depends on, it never stops on its own. That's what an infinite loop actually is: not a loop that runs forever on purpose, but one where nothing ever made the condition False."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"You spent money three different times: $12, $8, and $25. Store them in a list called spent.","answer":"spent = [12, 8, 25]","output":null,"teach":{"says":"A list holds more than one value in a single box, in order, separated by commas inside square brackets. spent isn't one number — it's a sequence of three, and the next step walks through them one at a time.","example":"print([3, 6, 9])","shows":"[3, 6, 9]","watch":"Square brackets, not parentheses. spent = (12, 8, 25) builds a different kind of value entirely — brackets are what make it a list."},"day":5,"dayTitle":"Going through a list"},{"prompt":"Start a loop that goes through spent one value at a time — name the loop variable item. End the line with a colon.","answer":"for item in spent:","output":null,"teach":{"says":"A for loop already knows how many times to run — once for every item in the list — so there's no condition to write and no counter to update by hand, unlike while. Each time through, item holds the next value from spent: first 12, then 8, then 25.","example":"colors = [\"red\", \"green\"]\nfor c in colors:\n    print(c)","shows":"red\ngreen","watch":"item is a name Python lets you choose, not a fixed keyword — in your own programs it could be called anything. Here it has to be exactly item, both because that's what this step is asking for and because whatever you call it has to match exactly what you type inside the loop body on the next two lines, or Python won't know what you mean."},"day":5,"dayTitle":"Going through a list"},{"prompt":"Indent four spaces. Subtract item from saved and store it back in saved.","answer":"    saved = saved - item","output":null,"teach":{"says":"Same reassignment move from Thursday, running in reverse — saved = saved - item takes item back out of the balance instead of adding to it."},"day":5,"dayTitle":"Going through a list"},{"prompt":"Indent four spaces and print, in order: the words After spending, then the item variable, then the words you have, then the saved variable.","answer":"    print(\"After spending\", item, \"you have\", saved)","output":"After spending 12 you have 208\nAfter spending 8 you have 200\nAfter spending 25 you have 175","teach":{"says":"Same idea as Thursday's loop print — one line of code, three passes through the list, three lines of output, each with that pass's own item and running saved."},"day":5,"dayTitle":"Going through a list"},{"kind":"multi","prompt":"Select every line below that is indented — the lines that belong to the loop's body and run once per item.","options":[{"text":"spent = [12, 8, 25]","why":"No leading spaces — this line sits at the left edge, outside the loop, so it only ever runs once, before the loop even starts."},{"text":"for item in spent:","why":"The for line itself starts at the left edge too. Indentation is what marks the lines UNDER it as the loop's body — this line is what creates that body, but it isn't part of it."},{"text":"    saved = saved - item","correct":true},{"text":"    print(\"After spending\", item, \"you have\", saved)","correct":true}],"teach":{"says":"Indentation is not decoration — it's what tells Python which lines belong to the loop and which don't. Every line indented under for item in spent: runs once per item; anything back at the left edge, including the for line itself, runs exactly once no matter how many items are in the list."},"day":5,"dayTitle":"Going through a list"}];
 const CYCLE = {"id":"saving-up","title":"Saving Up"};
@@ -1438,56 +1791,39 @@ const save = () => localStorage.setItem(KEY, JSON.stringify(rec));
 
 // True only while the resume-on-load replay below is re-running lock() for
 // every already-completed step. Without this, each replayed lock() call
-// would fire its own openStep(i+1, true) — nine or ten queued reveal
-// animations and as many scrollIntoView calls stacking up in a single
-// synchronous pass, all landing on screen at once the instant the browser
-// gets to paint. The loop already reveals each done card itself (no
-// animation, since it was already done before this load); lock() only needs
-// to drive openStep — reveal-with-animation, then scroll to it — for the
-// ONE card the student is actually resuming onto, which happens once, after
-// the loop, at the bottom of this file.
+// would fire its own openStep(i+1) — nine or ten queued scrollIntoView
+// calls stacking up in a single synchronous pass, all landing on screen at
+// once the instant the browser gets to paint. The loop already reveals each
+// done card itself directly; lock() only needs to drive openStep — reveal,
+// then scroll to it — for the ONE card the student is actually resuming
+// onto, which happens once, after the loop, at the bottom of this file.
 let restoring = false;
 
-// openStep reveals the next card. "animate" is false only for the very first
-// paint (the resume-on-load call at the bottom of this file) — a card that is
-// about to be the first thing on screen should not visibly fade in during
-// load; a card that opens because the student just finished the one before it
-// should, per the design brief's "reveal" requirement. The animation itself is
-// pure CSS (the .enter class below), gated by prefers-reduced-motion in the
-// stylesheet rather than here, so this function never has to know whether
-// motion is allowed.
-function openStep(i, animate) {
+// openStep reveals the next card. The fade-and-rise reveal itself is pure
+// CSS now — @starting-style on .card (see the stylesheet) supplies the
+// "before" frame the instant [hidden] comes off, so clearing that attribute
+// is the whole animation trigger. That also means this same call, used both
+// for "the student just finished the step before this one" and for "resume
+// this card on page load," produces the identical visual in both cases —
+// there is no longer a separate no-animation path to keep in sync with it,
+// and prefers-reduced-motion is handled entirely in the stylesheet, not here.
+function openStep(i) {
   const el = document.getElementById("step" + i);
   if (el) {
     el.hidden = false;
-    if (animate) {
-      el.classList.add("enter");
-      // Double rAF: the first frame lets the browser paint the .enter (pre-
-      // transition) state now that [hidden] is gone; only the SECOND frame
-      // removes the class, which is what actually triggers the transition
-      // declared on .card in the stylesheet. Removing it on the first frame
-      // risks the browser coalescing both style changes into one paint and
-      // skipping the animation entirely.
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          el.classList.remove("enter");
-        });
-      });
-    }
     el.scrollIntoView({ behavior: "smooth", block: "center" });
   } else {
-    const done = document.getElementById("done");
-    done.hidden = false;
-    if (animate) {
-      done.classList.add("enter");
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          done.classList.remove("enter");
-        });
-      });
-    }
+    updateDoneStats();
+    document.getElementById("done").hidden = false;
   }
 }
+
+// True only once updateProgress has run at least once with a KNOWN done
+// count that differs from the current one — see the guard below. Without
+// it, the very first call (page load, before the student has done
+// anything) would "bump" the count from nothing to 0, a pulse with nothing
+// to celebrate.
+let lastKnownDone = -1;
 
 // updateProgress drives BOTH orientation devices the redesign adds in place of
 // day numbers: the "N of TOTAL" count + filling rail in the header, and the
@@ -1500,15 +1836,136 @@ function updateProgress() {
   const done = rec.steps.filter((s) => s.done).length;
   const frac = total > 0 ? done / total : 0;
   document.body.style.setProperty("--progress", String(frac));
+
+  // A restrained "that counted" moment — see the design brief: a satisfying
+  // but not celebratory pulse on the number itself, ONLY the instant it
+  // actually changes. Pure CSS (the .bump keyframe in the stylesheet),
+  // retriggered by removing and re-adding the class across a forced reflow
+  // (reading offsetWidth) so it replays every time rather than only the
+  // first. Reduced motion turns the animation off in CSS; this still safely
+  // adds/removes a class that does nothing in that case.
+  //
+  // Skipped entirely while restoring is true (the resume-on-load replay,
+  // below) — no backticks in this comment on purpose, see the note at the
+  // top of RUNTIME on why one would break it. That loop calls lock() — and
+  // therefore this function — once per
+  // already-completed step in a tight synchronous pass, and forcing a
+  // layout reflow (reading offsetWidth) that many times in a row on page
+  // load is a real, measurable cost on the exact low-end hardware this has
+  // to run on, for an animation nobody is there to see mid-loop anyway.
+  const changed = !restoring && done !== lastKnownDone;
+  const bump = (el) => {
+    if (!el || !changed) return;
+    el.classList.remove("bump");
+    void el.offsetWidth;
+    el.classList.add("bump");
+  };
+  lastKnownDone = done;
+
   const doneEl = document.getElementById("progress-done");
   if (doneEl) doneEl.textContent = String(done);
+  bump(doneEl);
   const totalEl = document.getElementById("progress-total");
   if (totalEl) totalEl.textContent = String(total);
+  // The sticky bar's own copy of the same two numbers (see .stickybar in
+  // the stylesheet) — a separate pair of elements, not a duplicate
+  // aria-live region, since the sticky bar is aria-hidden and exists to be
+  // SEEN while scrolled, not announced.
+  const doneMini = document.getElementById("progress-done-mini");
+  if (doneMini) doneMini.textContent = String(done);
+  bump(doneMini);
+  const totalMini = document.getElementById("progress-total-mini");
+  if (totalMini) totalMini.textContent = String(total);
   const wrap = document.getElementById("progress");
   if (wrap) {
     wrap.setAttribute("aria-valuenow", String(done));
     wrap.setAttribute("aria-valuemax", String(total));
   }
+  // The header's reset control is the SECONDARY one (see the design rule:
+  // primary lives in #done, secondary in the header, and the secondary one
+  // "must be out of the way"). Staying hidden until there's at least one
+  // done step is what makes it out of the way on a fresh page — there is
+  // nothing to protect a student from clearing before they've typed
+  // anything, so showing it from step one would just be clutter.
+  const resetHeader = document.getElementById("reset-header");
+  if (resetHeader) resetHeader.hidden = done === 0;
+}
+
+// updateDoneStats fills in the one line of #done that turns "you finished"
+// into something a student chasing a better grade can actually read at a
+// glance: which attempt this is, and — once there IS a previous attempt —
+// exactly how this one compares. This is the live-page half of the same
+// promise the downloaded report keeps (see buildReportHTML's historyLine);
+// the two are deliberately worded the same way so neither reads like a
+// different feature. Runs only when #done is about to become visible (see
+// openStep, below), because rec.steps is only fully "done" at that point.
+function updateDoneStats() {
+  const el = document.getElementById("done-stats");
+  if (!el) return;
+  const total = STEPS.length;
+  const done = rec.steps.filter((s) => s.done).length;
+  const revealed = rec.steps.filter((s) => s.revealed).length;
+  const runs = Array.isArray(rec.runs) ? rec.runs : [];
+  const attemptNumber = runs.length + 1;
+  let text = "Attempt " + attemptNumber + " — " + done + " of " + total + " steps, " + revealed + " revealed.";
+  if (runs.length > 0) {
+    const last = runs[runs.length - 1];
+    text += " Last time: " + last.done + "/" + last.total + " with " + last.revealed + " revealed.";
+  }
+  el.textContent = text;
+}
+
+// wireReset attaches the two-click confirm flow to ONE reset control —
+// called once per instance (header and #done both get their own). A
+// browser confirm() dialog was explicitly ruled out (looks broken, too easy
+// to dismiss blindly for something this destructive); this is the inline
+// equivalent: click "Start over" once and it's replaced by an explicit
+// warning plus a "Yes, clear my work" / "Cancel" pair, so clearing 25 steps
+// of work by accident takes two deliberate clicks, not one.
+function wireReset(root) {
+  if (!root) return;
+  const trigger = root.querySelector(".reset-trigger");
+  const confirmBox = root.querySelector(".reset-confirm");
+  const warn = root.querySelector(".reset-warn");
+  const yesBtn = root.querySelector(".reset-yes");
+  const cancelBtn = root.querySelector(".reset-cancel");
+
+  trigger.addEventListener("click", () => {
+    const done = rec.steps.filter((s) => s.done).length;
+    warn.textContent = done === 0
+      ? "Start over? There is no work to lose yet, but this also resets the clock."
+      : "This clears your work on " + done + " of " + STEPS.length + " steps. There is no undo — " +
+        "but a summary of this attempt is kept, so your improvement still shows.";
+    trigger.hidden = true;
+    confirmBox.hidden = false;
+    yesBtn.focus();
+  });
+  cancelBtn.addEventListener("click", () => {
+    confirmBox.hidden = true;
+    trigger.hidden = false;
+    trigger.focus();
+  });
+  yesBtn.addEventListener("click", resetAssignment);
+}
+
+// resetAssignment is the actual "try again" — archiveRun (shared with the
+// build-time gate and unit-tested on its own, see render.mjs) folds this run
+// into rec.runs, then a fresh, empty steps array takes its place. Reloading
+// the page afterward, rather than hand-unwinding every DOM mutation lock()
+// may have made across up to 30 cards (disabled inputs, removed buttons,
+// appended output blocks, checked radios, collapsed rows...), is deliberate:
+// the exact same startup code that already handles "a student closes the tab
+// and comes back" is what puts the fresh page in front of them, so a reset
+// page is provably identical to any other fresh load rather than a second,
+// hand-maintained code path that could drift from it.
+function resetAssignment() {
+  const fresh = STEPS.map(() => ({ attempts: [], revealed: false, done: false }));
+  const archived = archiveRun(rec, fresh, new Date().toISOString());
+  rec.runs = archived.runs;
+  rec.steps = archived.steps;
+  rec.started = archived.started;
+  save();
+  location.reload();
 }
 
 // shortOutput renders a typed step's canned output inside the compact
@@ -1541,13 +1998,18 @@ function summaryText(el, step) {
     const ta = el.querySelector("textarea");
     return ta ? ta.value : "";
   }
-  const picked = [];
-  el.querySelectorAll(".opt").forEach((label) => {
-    const input = label.querySelector("input");
-    const span = label.querySelector("span");
-    if (input && input.checked && span) picked.push(span.textContent);
-  });
-  return picked.join("; ");
+  // A choice step's collapsed row shows the QUESTION, not the joined option
+  // text. Concatenating several selected options produced strings like
+  // 'saved = saved - item; print("After spending", item, "you hav...' — three
+  // answers welded together and then truncated mid-word, which reads as
+  // corruption rather than as a record. The prompt is what identifies the step
+  // to a student scrolling back, and the exact selection is still in the
+  // record and still one click away by expanding the row.
+  const picked = el.querySelectorAll(".opt input:checked").length;
+  const total = el.querySelectorAll(".opt").length;
+  const q = String(step.prompt || "").replace(/\s+/g, " ").trim();
+  const tail = kindOf(step) === "multi" ? "  (" + picked + " of " + total + " selected)" : "";
+  return q + tail;
 }
 
 // Everything below is built with createElement/textContent, never innerHTML.
@@ -1670,7 +2132,7 @@ function lock(i, revealed) {
   // where the student left off would make every refresh feel slow.
   const collapseAndAdvance = () => {
     el.classList.add("done");
-    if (!restoring) openStep(i + 1, true);
+    if (!restoring) openStep(i + 1);
   };
   if (restoring) {
     collapseAndAdvance();
@@ -1754,6 +2216,15 @@ STEPS.forEach((step, i) => {
   });
 });
 
+wireReset(document.getElementById("reset-header"));
+wireReset(document.getElementById("reset-done"));
+// Runs once up front so the header's reset control (hidden by default in
+// the markup) is in the right state from the very first paint even for a
+// brand-new student whose resume loop below never executes lock() at all —
+// every later change to rec.steps re-derives this same state through the
+// lock() calls that already call updateProgress() on their own.
+updateProgress();
+
 // Restore progress. Replays every already-completed step so a refresh costs the
 // student nothing — the alternative is a gate that punishes closing the tab.
 restoring = true;
@@ -1769,7 +2240,19 @@ for (let i = 0; i < STEPS.length; i++) {
   resume = i + 1;
 }
 restoring = false;
-openStep(resume, false);
+// A genuinely brand-new session (resume === 0: nothing completed, nothing
+// to resume onto) shows the page exactly where the browser already put
+// it — the top, hero header and "how this works" first. openStep's
+// scrollIntoView is for RETURNING to the middle of the page, either
+// because the student just finished a step or because they're resuming
+// past several already-done ones; centring step one in the viewport on a
+// student's very first paint would shove the orientation content they
+// haven't read yet off the top of the screen for no reason.
+if (resume > 0) {
+  openStep(resume);
+} else {
+  document.getElementById("step0").hidden = false;
+}
 
 document.getElementById("dl").addEventListener("click", () => {
   // btoa(unescape(encodeURIComponent(...))) is the standard UTF-8-safe base64
