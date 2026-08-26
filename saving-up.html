@@ -21,6 +21,20 @@
   textarea { width:100%; font:15px/1.5 Consolas,ui-monospace,monospace; padding:.65rem .7rem;
              border:1px solid var(--silver); border-radius:5px; resize:vertical; min-height:3rem }
   textarea:disabled { background:#f6f7f9; color:#333 }
+  .instruction { margin:0 0 .6rem; font-size:.9rem; color:#5a6472; font-style:italic }
+  .options { border:0; margin:0 0 .3rem; padding:0; display:flex; flex-direction:column; gap:.5rem }
+  .opt { display:flex; align-items:flex-start; gap:.6rem; padding:.6rem .75rem; border:1px solid var(--silver);
+         border-radius:6px; cursor:pointer; font:15px/1.45 Consolas,ui-monospace,monospace }
+  .opt:hover { border-color:var(--navy) }
+  .opt input { flex:0 0 auto; width:1.05rem; height:1.05rem; margin-top:.15rem; cursor:pointer }
+  .opt input:disabled { cursor:default }
+  .opt span { flex:1 1 auto; white-space:pre-wrap; word-break:break-word }
+  .opt.correct { border-color:#1b5e20; background:#f4faf5 }
+  .opt.wrong { border-color:var(--crimson); background:#fdf2f2; text-decoration:line-through; opacity:.8 }
+  .confirm { margin-top:.75rem; background:#12161d; color:#e8ecf3; padding:.75rem .85rem;
+             border-radius:5px; font:15px/1.5 Carlito,Calibri,Arial,sans-serif }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+             clip:rect(0,0,0,0); white-space:nowrap; border:0 }
   button { font:600 14px Carlito,Calibri,Arial,sans-serif; background:var(--navy); color:#fff;
            border:0; border-radius:5px; padding:.6rem 1.2rem; cursor:pointer; margin-top:.65rem }
   button:hover { opacity:.9 }
@@ -34,6 +48,24 @@
   .out .lbl { display:block; color:#8fa0bb; font-size:11px; letter-spacing:.12em;
               text-transform:uppercase; margin-bottom:.3rem }
   .none { color:#5a6472; font-style:italic; font-size:.92rem; margin-top:.75rem }
+  .teach { margin:0 0 1rem }
+  .teach .says { margin:.2rem 0 .7rem; font-size:.97rem }
+  .teach .example { margin:0 0 .5rem }
+  .teach .code { margin:0; background:#f3f5f9; color:var(--navy); padding:.6rem .75rem;
+                 border-radius:5px 5px 0 0; font:14px/1.5 Consolas,ui-monospace,monospace;
+                 white-space:pre-wrap; word-break:break-word }
+  .teach .example .out, .teach .example .none { margin-top:0; border-radius:0 0 5px 5px }
+  .teach .watch { margin:.7rem 0 0; font-size:.88rem; color:var(--crimson) }
+  .teach .watch .tag { font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:.78rem }
+  .divider { border:0; border-top:1px dashed var(--silver); margin:1rem 0 .8rem }
+  .turn { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--navy);
+          font-weight:700; margin:0 0 .55rem }
+  .howto { border:1px solid var(--navy); border-radius:8px; padding:1.1rem 1.2rem 1.2rem;
+           margin:0 0 1.5rem; background:#f5f7fb }
+  .howto h2 { margin:0 0 .6rem; font-family:Cinzel,Georgia,serif; font-size:1.05rem; color:var(--navy) }
+  .howto ul { margin:0; padding-left:1.2rem }
+  .howto li { margin:0 0 .5rem; font-size:.95rem }
+  .howto li:last-child { margin-bottom:0 }
   #done { border:2px solid #1b5e20; border-radius:8px; padding:1.3rem 1.2rem; margin-top:1.6rem;
           background:#f4faf5 }
   #done h2 { margin:0 0 .4rem; font-family:Cinzel,Georgia,serif; font-size:1.2rem }
@@ -45,8 +77,27 @@
   <p>Pick something you want. Work out how long it takes to afford it.</p>
 </header><div class="rule"></div>
 <main>
+  <section class="howto">
+    <h2>How this works</h2>
+    <ul>
+      <li>Most steps ask you to type Python one line at a time. Some ask you to pick the right answer instead. Either way, you have to get it <strong>exactly</strong> right before the next one opens — capitals, quotes and brackets all count, because they count in Python.</li>
+      <li>Get it wrong and you get a hint. Wrong again, a better one. <strong>Third time, it shows you the answer</strong> and moves you on — you can never get stuck.</li>
+      <li>Your work saves as you go. Close the tab and come back — you'll be right where you left off.</li>
+      <li>When you finish, click <strong>Download my work</strong> and upload that file to Canvas.</li>
+    </ul>
+  </section>
   <div class="step" id="step0">
     <div class="daytag">Day 1 &middot; Numbers you can name</div>
+    <div class="teach">
+      <p class="says">print() puts words on the screen. Whatever you put inside the quotes is what appears.</p>
+      <div class="example">
+        <pre class="code">print(&quot;Good morning&quot;)</pre>
+        <div class="out"><span class="lbl">Output</span>Good morning</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> The quotes are part of the code. Without them Python goes looking for something called Good, does not find it, and stops.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
     <div class="prompt">Give your program a title.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
@@ -55,6 +106,16 @@
   </div>
   <div class="step" id="step1" hidden>
     <div class="daytag">Day 1 &middot; Numbers you can name</div>
+    <div class="teach">
+      <p class="says">A variable is a labeled box that remembers a value. name = value creates the box and fills it — nothing appears on screen, because storing a value and showing one are two different acts.</p>
+      <div class="example">
+        <pre class="code">price = 5</pre>
+        <div class="none">Nothing prints. That line only stores or sets something up.</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> Numbers don't get quotes. price = &quot;5&quot; stores text that only looks like a number — Python won't let you do math with it the way it will with 5.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
     <div class="prompt">The thing you want costs $220. Store that in a variable called goal.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
@@ -63,6 +124,11 @@
   </div>
   <div class="step" id="step2" hidden>
     <div class="daytag">Day 1 &middot; Numbers you can name</div>
+    <div class="teach">
+      <p class="says">Same move as the line above — a new box, a new value, still nothing printed.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
     <div class="prompt">You have $40 already. Store it in saved.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
@@ -71,6 +137,16 @@
   </div>
   <div class="step" id="step3" hidden>
     <div class="daytag">Day 1 &middot; Numbers you can name</div>
+    <div class="teach">
+      <p class="says">print() doesn't only show quoted text — put an expression inside instead and Python works it out first, then prints the result. goal - saved becomes a number before it ever reaches the screen.</p>
+      <div class="example">
+        <pre class="code">print(10 - 3)</pre>
+        <div class="out"><span class="lbl">Output</span>7</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> No quotes around the math. print(&quot;goal - saved&quot;) would print those five words literally — quotes turn code into text, and text just sits there instead of being calculated.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
     <div class="prompt">Print how much you still need. Subtract saved from goal.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
@@ -79,6 +155,16 @@
   </div>
   <div class="step" id="step4" hidden>
     <div class="daytag">Day 1 &middot; Numbers you can name</div>
+    <div class="teach">
+      <p class="says">print() can take more than one thing at once — separate them with commas and Python prints each one in order, sliding exactly one space between them for you.</p>
+      <div class="example">
+        <pre class="code">print(&quot;Total:&quot;, 10 - 3)</pre>
+        <div class="out"><span class="lbl">Output</span>Total: 7</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> That one space is automatic. Type &quot;You still need &quot; with a trailing space of your own and the output ends up with two spaces instead of one.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
     <div class="prompt">A bare number tells nobody anything. Print it with words in front.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
@@ -86,16 +172,46 @@
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step5" hidden>
-    <div class="daytag">Day 2 &middot; Asking a question</div>
-    <div class="prompt">Start a question: is saved at least as big as goal? End the line with a colon.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
+    <div class="daytag">Day 1 &middot; Numbers you can name</div>
+    <div class="teach">
+      <p class="says">Every one of these looks close to right at a glance. Quotes and capitalisation are exactly the kind of thing Python cares about and a skimming eye does not — reading each option letter by letter is the whole skill this question is testing.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Which line will print the word Hello?</div>
+    <fieldset class="options">
+      <legend class="sr-only">Answer options</legend>
+      <label class="opt">
+        <input type="radio" name="opt5" value="0">
+        <span>print(Hello)</span>
+      </label>
+      <label class="opt">
+        <input type="radio" name="opt5" value="1">
+        <span>print(&quot;Hello&quot;)</span>
+      </label>
+      <label class="opt">
+        <input type="radio" name="opt5" value="2">
+        <span>Print(&quot;Hello&quot;)</span>
+      </label>
+    </fieldset>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step6" hidden>
     <div class="daytag">Day 2 &middot; Asking a question</div>
-    <div class="prompt">Indent four spaces and print what happens when it is true.</div>
+    <div class="teach">
+      <p class="says">if starts a question. Whatever comes after it works out to True or False, and Python only runs the indented lines underneath when the answer is True. The colon isn't decoration — it's Python's way of saying &quot;the rules for what happens next start here.&quot; &gt;= means &quot;at least as big as&quot;: saved equal to goal counts as true too, not just saved bigger.</p>
+      <div class="example">
+        <pre class="code">temp = 100
+if temp &gt;= 90:
+    print(&quot;Hot&quot;)</pre>
+        <div class="out"><span class="lbl">Output</span>Hot</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> A single = stores a value — that's assignment, from Day 1. Two together, ==, ask &quot;are these equal?&quot; Write if saved = goal: by mistake and Python stops you immediately: that spot only accepts a question, not an instruction to store something.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Start a question: is saved at least as big as goal? End the line with a colon.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -103,7 +219,18 @@
   </div>
   <div class="step" id="step7" hidden>
     <div class="daytag">Day 2 &middot; Asking a question</div>
-    <div class="prompt">Now the other case. Type else and a colon, back at the left edge.</div>
+    <div class="teach">
+      <p class="says">The four spaces before print aren't for looks — they're what tells Python this line belongs to the if above it. Every line indented the same amount underneath the colon is &quot;inside&quot; that if; the first line back at the left edge is &quot;outside&quot; it again.</p>
+      <div class="example">
+        <pre class="code">if 5 &gt; 2:
+    print(&quot;Yes&quot;)</pre>
+        <div class="out"><span class="lbl">Output</span>Yes</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> Every line in the same block has to be indented by the exact same amount. Python doesn't care whether you use two spaces or four — it cares that every line inside one block matches. Mix them and Python refuses to run at all.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Indent four spaces and print what happens when it is true.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -111,31 +238,73 @@
   </div>
   <div class="step" id="step8" hidden>
     <div class="daytag">Day 2 &middot; Asking a question</div>
-    <div class="prompt">Indent four spaces and print what happens when it is false.</div>
+    <div class="teach">
+      <p class="says">else catches everything the if didn't. It needs no condition of its own — it only runs when the if above it worked out False — which is why it sits back at the left edge, lined up with if rather than indented under it.</p>
+      <div class="example">
+        <pre class="code">temp = 60
+if temp &gt;= 90:
+    print(&quot;Hot&quot;)
+else:
+    print(&quot;Not hot&quot;)</pre>
+        <div class="out"><span class="lbl">Output</span>Not hot</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> else never gets its own condition — you can't write else saved &lt; goal:. Need another condition in between? That's elif, and Day 3 is where it shows up.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Now the other case. Type else and a colon, back at the left edge.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step9" hidden>
-    <div class="daytag">Day 3 &middot; More than two answers</div>
-    <div class="prompt">Ask the same question again: is saved at least as big as goal? End the line with a colon.</div>
+    <div class="daytag">Day 2 &middot; Asking a question</div>
+    <div class="teach">
+      <p class="says">Same indentation rule as the if's body — four spaces, because this line belongs to else the same way that one belonged to if.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Indent four spaces and print what happens when it is false.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step10" hidden>
-    <div class="daytag">Day 3 &middot; More than two answers</div>
-    <div class="prompt">Indent four spaces and print what happens when it is true.</div>
-    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
-      autocorrect="off" aria-label="Type your answer"></textarea>
+    <div class="daytag">Day 2 &middot; Asking a question</div>
+    <div class="teach">
+      <p class="says">One equals sign assigns a value — it changes something. Two together, ==, compare two values and hand back True or False without changing anything. Mixing them up is one of the most common mistakes in Python, and Python will not always catch it for you.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Which line correctly checks whether saved and goal are equal, without changing either one?</div>
+    <fieldset class="options">
+      <legend class="sr-only">Answer options</legend>
+      <label class="opt">
+        <input type="radio" name="opt10" value="0">
+        <span>saved = goal</span>
+      </label>
+      <label class="opt">
+        <input type="radio" name="opt10" value="1">
+        <span>saved == goal</span>
+      </label>
+      <label class="opt">
+        <input type="radio" name="opt10" value="2">
+        <span>saved =! goal</span>
+      </label>
+    </fieldset>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step11" hidden>
     <div class="daytag">Day 3 &middot; More than two answers</div>
-    <div class="prompt">Add a middle case: type elif, then whether saved is more than half of goal. End with a colon.</div>
+    <div class="teach">
+      <p class="says">Same question as Monday. Python doesn't remember that you already asked it inside a different if block — every if is independent, so you write the condition again from scratch.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Ask the same question again: is saved at least as big as goal? End the line with a colon.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -143,7 +312,12 @@
   </div>
   <div class="step" id="step12" hidden>
     <div class="daytag">Day 3 &middot; More than two answers</div>
-    <div class="prompt">Indent four spaces and print what happens in that middle case.</div>
+    <div class="teach">
+      <p class="says">Same as Monday too — this line only runs when the if directly above it is True.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Indent four spaces and print what happens when it is true.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -151,7 +325,23 @@
   </div>
   <div class="step" id="step13" hidden>
     <div class="daytag">Day 3 &middot; More than two answers</div>
-    <div class="prompt">Type else and a colon for everything that's left over, back at the left edge.</div>
+    <div class="teach">
+      <p class="says">elif (&quot;else if&quot;) adds another question, but it only gets checked when everything above it worked out False. You can chain as many elif lines as you need between an if and an else — Python checks them top to bottom and stops at the first one that's True. / divides, so goal / 2 is exactly half of goal.</p>
+      <div class="example">
+        <pre class="code">score = 75
+if score &gt;= 90:
+    print(&quot;A&quot;)
+elif score &gt;= 70:
+    print(&quot;B&quot;)
+else:
+    print(&quot;C&quot;)</pre>
+        <div class="out"><span class="lbl">Output</span>B</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> Order matters. Python stops at the first True line it finds and skips the rest — put a wide condition too early and it can catch cases a later, more specific line was supposed to handle.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Add a middle case: type elif, then whether saved is more than half of goal. End with a colon.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -159,23 +349,38 @@
   </div>
   <div class="step" id="step14" hidden>
     <div class="daytag">Day 3 &middot; More than two answers</div>
-    <div class="prompt">Indent four spaces and print the last case.</div>
+    <div class="teach">
+      <p class="says">Same indentation rule again — four spaces because this line belongs to the elif directly above it.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Indent four spaces and print what happens in that middle case.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step15" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
-    <div class="prompt">You can save $15 a week. Store that in a variable called pay.</div>
+    <div class="daytag">Day 3 &middot; More than two answers</div>
+    <div class="teach">
+      <p class="says">Same else as Day 2. Still no condition of its own — it fires only when every if and elif above it came back False.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Type else and a colon for everything that's left over, back at the left edge.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step16" hidden>
-    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
-    <div class="prompt">You haven't saved any weeks yet. Store 0 in a variable called weeks.</div>
+    <div class="daytag">Day 3 &middot; More than two answers</div>
+    <div class="teach">
+      <p class="says">This is the branch that actually runs: saved is 40 and goal / 2 is 110, so saved &gt; goal / 2 is False, the elif is skipped, and this final else is what prints.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Indent four spaces and print the last case.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -183,7 +388,12 @@
   </div>
   <div class="step" id="step17" hidden>
     <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
-    <div class="prompt">Start a loop: keep going as long as saved is less than goal. End the line with a colon.</div>
+    <div class="teach">
+      <p class="says">Same pattern as Day 1 — a new box, pay, remembering 15. Nothing new here; the loop below is where it gets used.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">You can save $15 a week. Store that in a variable called pay.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -191,7 +401,12 @@
   </div>
   <div class="step" id="step18" hidden>
     <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
-    <div class="prompt">Indent four spaces. Add pay to saved and store it back in saved.</div>
+    <div class="teach">
+      <p class="says">weeks starts at 0 on purpose — it's about to count up by one every time the loop below runs. A counter has to start somewhere true, and zero weeks have passed before the loop has even begun.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">You haven't saved any weeks yet. Store 0 in a variable called weeks.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -199,7 +414,22 @@
   </div>
   <div class="step" id="step19" hidden>
     <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
-    <div class="prompt">Indent four spaces. Add one to weeks.</div>
+    <div class="teach">
+      <p class="says">while works like if, but it doesn't check its question just once. After the indented lines under it finish running, Python goes right back up to the while line and checks the condition again — and again — running that block over and over for as long as the answer stays True.</p>
+      <div class="example">
+        <pre class="code">count = 0
+while count &lt; 3:
+    print(count)
+    count = count + 1</pre>
+        <div class="out"><span class="lbl">Output</span>0
+1
+2</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> saved &lt; goal has to become False eventually, or this runs forever. That only happens if something inside the loop changes saved — which is exactly what the next line does. Skip that line and you've built an infinite loop that never lets the page respond again.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Start a loop: keep going as long as saved is less than goal. End the line with a colon.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -207,7 +437,19 @@
   </div>
   <div class="step" id="step20" hidden>
     <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
-    <div class="prompt">Indent four spaces and print the week number and the new total.</div>
+    <div class="teach">
+      <p class="says">This is the line that makes the loop actually finish. saved = saved + pay works out the right side first — the old saved plus pay — and then stores that result back into saved, overwriting the old number. Every pass through the loop, saved gets a little bigger, until eventually saved &lt; goal turns False.</p>
+      <div class="example">
+        <pre class="code">total = 5
+total = total + 2
+print(total)</pre>
+        <div class="out"><span class="lbl">Output</span>7</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> = here isn't math-class &quot;equals.&quot; saved = saved + pay would be nonsense as an equation — nothing equals itself plus 15 — but it's a completely ordinary instruction to a computer: compute the right side, then store it on the left.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Indent four spaces. Add pay to saved and store it back in saved.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
@@ -215,41 +457,178 @@
   </div>
   <div class="step" id="step21" hidden>
     <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
-    <div class="prompt">Back at the left edge — the loop is over. Print how many weeks it took.</div>
+    <div class="teach">
+      <p class="says">Same move as the line above, on the counter instead of the balance. weeks = weeks + 1 adds exactly one every pass, which is how weeks ends up counting the number of times the loop ran.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Indent four spaces. Add one to weeks.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step22" hidden>
-    <div class="daytag">Day 5 &middot; Going through a list</div>
-    <div class="prompt">You spent money three different times: $12, $8, and $25. Store them in a list called spent.</div>
+    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+    <div class="teach">
+      <p class="says">This print sits inside the loop, so it runs on every single pass — one line of code, but the loop runs it 12 times before saved finally reaches goal, so 12 lines of output appear, each with that pass's own weeks and saved.</p>
+      <div class="example">
+        <pre class="code">n = 0
+while n &lt; 3:
+    print(&quot;Step&quot;, n)
+    n = n + 1</pre>
+        <div class="out"><span class="lbl">Output</span>Step 0
+Step 1
+Step 2</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> The &quot;-&quot; here is just a piece of text, same as any other comma-separated piece — Python doesn't treat it specially. It's only there so the line reads Week 1 - 55 instead of Week 1 55.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Indent four spaces and print the week number and the new total.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step23" hidden>
-    <div class="daytag">Day 5 &middot; Going through a list</div>
-    <div class="prompt">Start a loop that goes through spent one item at a time. End the line with a colon.</div>
+    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+    <div class="teach">
+      <p class="says">Back at the left edge, this line is no longer part of the loop — it runs exactly once, after the loop has completely finished, which only happens once saved is no longer less than goal. weeks still holds whatever it counted up to.</p>
+      <p class="watch"><span class="tag">Watch out</span> If this line stayed indented, it would be inside the loop instead of after it, and Python would try to run it every single pass instead of once at the end.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Back at the left edge — the loop is over. Print how many weeks it took.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
   <div class="step" id="step24" hidden>
+    <div class="daytag">Day 4 &middot; Doing it again until it is done</div>
+    <div class="teach">
+      <p class="says">A while loop does not count passes by itself — it rechecks its condition every single time, top to bottom, and stops the instant that condition comes back False. If nothing inside the loop changes the value the condition depends on, it never stops on its own. That's what an infinite loop actually is: not a loop that runs forever on purpose, but one where nothing ever made the condition False.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Select every statement that is true about why while saved &lt; goal: eventually stops looping.</div>
+    <p class="instruction">Select every one that applies — there may be more than one.</p>
+    <fieldset class="options">
+      <legend class="sr-only">Answer options</legend>
+      <label class="opt">
+        <input type="checkbox" value="0">
+        <span>saved = saved + pay makes saved bigger every pass, moving it toward goal.</span>
+      </label>
+      <label class="opt">
+        <input type="checkbox" value="1">
+        <span>The loop is hard-coded to stop after 12 passes.</span>
+      </label>
+      <label class="opt">
+        <input type="checkbox" value="2">
+        <span>Eventually saved &lt; goal becomes False, and that is the only thing that stops a while loop.</span>
+      </label>
+      <label class="opt">
+        <input type="checkbox" value="3">
+        <span>weeks = weeks + 1 is what the while line checks to decide whether to stop.</span>
+      </label>
+    </fieldset>
+    <button type="button">Check</button>
+    <div class="msg" role="status"></div>
+  </div>
+  <div class="step" id="step25" hidden>
     <div class="daytag">Day 5 &middot; Going through a list</div>
+    <div class="teach">
+      <p class="says">A list holds more than one value in a single box, in order, separated by commas inside square brackets. spent isn't one number — it's a sequence of three, and the next step walks through them one at a time.</p>
+      <div class="example">
+        <pre class="code">print([3, 6, 9])</pre>
+        <div class="out"><span class="lbl">Output</span>[3, 6, 9]</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> Square brackets, not parentheses. spent = (12, 8, 25) builds a different kind of value entirely — brackets are what make it a list.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">You spent money three different times: $12, $8, and $25. Store them in a list called spent.</div>
+    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+      autocorrect="off" aria-label="Type your answer"></textarea>
+    <button type="button">Check</button>
+    <div class="msg" role="status"></div>
+  </div>
+  <div class="step" id="step26" hidden>
+    <div class="daytag">Day 5 &middot; Going through a list</div>
+    <div class="teach">
+      <p class="says">A for loop already knows how many times to run — once for every item in the list — so there's no condition to write and no counter to update by hand, unlike while. Each time through, item holds the next value from spent: first 12, then 8, then 25.</p>
+      <div class="example">
+        <pre class="code">colors = [&quot;red&quot;, &quot;green&quot;]
+for c in colors:
+    print(c)</pre>
+        <div class="out"><span class="lbl">Output</span>red
+green</div>
+      </div>
+      <p class="watch"><span class="tag">Watch out</span> item is a name you're choosing, not a fixed keyword — it could be called anything. Whatever you call it here has to match exactly what you type inside the loop body on the next two lines, or Python won't know what you mean.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Start a loop that goes through spent one item at a time. End the line with a colon.</div>
+    <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
+      autocorrect="off" aria-label="Type your answer"></textarea>
+    <button type="button">Check</button>
+    <div class="msg" role="status"></div>
+  </div>
+  <div class="step" id="step27" hidden>
+    <div class="daytag">Day 5 &middot; Going through a list</div>
+    <div class="teach">
+      <p class="says">Same reassignment move from Thursday, running in reverse — saved = saved - item takes item back out of the balance instead of adding to it.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
     <div class="prompt">Indent four spaces. Subtract item from saved and store it back in saved.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
-  <div class="step" id="step25" hidden>
+  <div class="step" id="step28" hidden>
     <div class="daytag">Day 5 &middot; Going through a list</div>
+    <div class="teach">
+      <p class="says">Same idea as Thursday's loop print — one line of code, three passes through the list, three lines of output, each with that pass's own item and running saved.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
     <div class="prompt">Indent four spaces and print what you spent and what's left.</div>
     <textarea rows="2" spellcheck="false" autocapitalize="off" autocomplete="off"
       autocorrect="off" aria-label="Type your answer"></textarea>
+    <button type="button">Check</button>
+    <div class="msg" role="status"></div>
+  </div>
+  <div class="step" id="step29" hidden>
+    <div class="daytag">Day 5 &middot; Going through a list</div>
+    <div class="teach">
+      <p class="says">Indentation is not decoration — it's what tells Python which lines belong to the loop and which don't. Every line indented under for item in spent: runs once per item; anything back at the left edge, including the for line itself, runs exactly once no matter how many items are in the list.</p>
+    </div>
+    <hr class="divider">
+    <div class="turn">Your turn</div>
+    <div class="prompt">Select every line below that is indented — the lines that belong to the loop's body and run once per item.</div>
+    <p class="instruction">Select every one that applies — there may be more than one.</p>
+    <fieldset class="options">
+      <legend class="sr-only">Answer options</legend>
+      <label class="opt">
+        <input type="checkbox" value="0">
+        <span>spent = [12, 8, 25]</span>
+      </label>
+      <label class="opt">
+        <input type="checkbox" value="1">
+        <span>for item in spent:</span>
+      </label>
+      <label class="opt">
+        <input type="checkbox" value="2">
+        <span>    saved = saved - item</span>
+      </label>
+      <label class="opt">
+        <input type="checkbox" value="3">
+        <span>    print(&quot;After spending&quot;, item, &quot;you have&quot;, saved)</span>
+      </label>
+    </fieldset>
     <button type="button">Check</button>
     <div class="msg" role="status"></div>
   </div>
@@ -421,6 +800,102 @@ const hintFor   = function hintFor(attempt, target, attemptNumber, normalize) {
     message: `Character ${pos} isn't right. You typed ${shown} there.`,
   };
 };
+const choiceHintFor = function choiceHintFor(selected, options, attemptNumber) {
+  const sel = Array.from(new Set(Array.isArray(selected) ? selected : [])).sort((a, b) => a - b);
+  const correctIdx = options
+    .map((o, i) => (o && o.correct ? i : -1))
+    .filter((i) => i > -1)
+    .sort((a, b) => a - b);
+  const isMulti = correctIdx.length > 1;
+  const sameSet = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+
+  // --- "choice": exactly one correct option, exact index match -----------
+  if (!isMulti) {
+    const correctOne = correctIdx[0];
+    if (sel.length === 1 && sel[0] === correctOne) {
+      return { correct: true, reveal: false, message: "Correct." };
+    }
+    // Third-try reveal is the same safety requirement as hintFor's: no
+    // student is ever permanently stuck on a question they cannot pass.
+    // reveal stays true for every attempt after the third too, same as
+    // hintFor — a stuck student does not get re-trapped on attempt 4 or 9.
+    if (attemptNumber >= 3) {
+      return { correct: false, reveal: true, message: "Here it is:\n" + options[correctOne].text };
+    }
+    if (attemptNumber <= 1) {
+      return { correct: false, reveal: false, message: "Not that one. Read them again." };
+    }
+    // Second wrong attempt: the option they actually picked gets to teach,
+    // via its authored `why` — that's the whole reason every wrong option
+    // in a choice/multi step is required to carry one. If they clicked
+    // Check with nothing selected, or the picked option has no `why`
+    // authored, fall back to a generic nudge rather than showing nothing.
+    const chosen = sel.length === 1 ? options[sel[0]] : null;
+    return {
+      correct: false,
+      reveal: false,
+      message: chosen && chosen.why ? chosen.why : "Look at each option again — one of them is exactly right.",
+    };
+  }
+
+  // --- "multi": more than one correct option, exact SET match ------------
+  if (sameSet(sel, correctIdx)) {
+    return { correct: true, reveal: false, message: "Correct." };
+  }
+  if (attemptNumber >= 3) {
+    const list = correctIdx.map((i) => options[i].text).join("\n");
+    return { correct: false, reveal: true, message: "Here they are:\n" + list };
+  }
+
+  const correctSet = new Set(correctIdx);
+  const rightPicked = sel.filter((i) => correctSet.has(i)).length;
+  const wrongPicked = sel.filter((i) => !correctSet.has(i));
+  const totalCorrect = correctIdx.length;
+  const missing = totalCorrect - rightPicked;
+
+  // The try-1 message has to be accurate for every combination a student
+  // can produce: too few (some correct ones missing, nothing extra), too
+  // many (every correct one picked, plus extras that don't belong), and
+  // right-count-but-wrong-members (some missing AND some extra at once —
+  // e.g. "2 of 3 right, and one you picked does not belong"). It says how
+  // many they have right and which DIRECTION they're off (over vs under)
+  // without ever naming which specific option is wrong — that's what
+  // attempt 2 is for.
+  let summary;
+  if (wrongPicked.length === 0) {
+    // Pure under-selection: everything picked so far is right, but not
+    // everything right has been picked yet.
+    summary = `You have ${rightPicked} of the ${totalCorrect} right, and you have not selected everything that belongs yet.`;
+  } else if (missing === 0) {
+    // Pure over-selection: every correct option is picked, plus extras
+    // that shouldn't be there.
+    summary = `You have all ${totalCorrect} right ones, but you also picked ${
+      wrongPicked.length === 1 ? "one that does" : wrongPicked.length + " that do"
+    } not belong.`;
+  } else {
+    // Mixed: some right, some missing, and some wrong picked at the same
+    // time — this covers "right count, wrong members" as well as "picked
+    // too many and still missing some."
+    summary = `You have ${rightPicked} of the ${totalCorrect} right, and ${
+      wrongPicked.length === 1 ? "one" : wrongPicked.length
+    } you picked ${wrongPicked.length === 1 ? "does" : "do"} not belong.`;
+  }
+
+  if (attemptNumber <= 1) {
+    return { correct: false, reveal: false, message: summary };
+  }
+
+  // Second wrong attempt: add the `why` of one wrongly-selected option, if
+  // any of them has one. If everything they picked was actually correct
+  // (they're only under-selecting, nothing to blame) there is no wrong
+  // option to explain, so the summary alone is what they get again.
+  const withWhy = wrongPicked.map((i) => options[i]).find((o) => o && o.why);
+  return {
+    correct: false,
+    reveal: false,
+    message: withWhy ? summary + " " + withWhy.why : summary,
+  };
+};
 const buildReportHTML = function buildReportHTML(record, meta, b64, colors) {
   const esc = (s) =>
     String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -473,7 +948,7 @@ const buildReportHTML = function buildReportHTML(record, meta, b64, colors) {
 <script type="application/json" id="record">${b64}<\/script>
 </body></html>`;
 };
-const STEPS = [{"prompt":"Give your program a title.","answer":"print(\"Saving Up\")","output":"Saving Up","day":1,"dayTitle":"Numbers you can name"},{"prompt":"The thing you want costs $220. Store that in a variable called goal.","answer":"goal = 220","output":null,"day":1,"dayTitle":"Numbers you can name"},{"prompt":"You have $40 already. Store it in saved.","answer":"saved = 40","output":null,"day":1,"dayTitle":"Numbers you can name"},{"prompt":"Print how much you still need. Subtract saved from goal.","answer":"print(goal - saved)","output":"180","day":1,"dayTitle":"Numbers you can name"},{"prompt":"A bare number tells nobody anything. Print it with words in front.","answer":"print(\"You still need\", goal - saved)","output":"You still need 180","day":1,"dayTitle":"Numbers you can name"},{"prompt":"Start a question: is saved at least as big as goal? End the line with a colon.","answer":"if saved >= goal:","output":null,"day":2,"dayTitle":"Asking a question"},{"prompt":"Indent four spaces and print what happens when it is true.","answer":"    print(\"Go buy it\")","output":null,"day":2,"dayTitle":"Asking a question"},{"prompt":"Now the other case. Type else and a colon, back at the left edge.","answer":"else:","output":null,"day":2,"dayTitle":"Asking a question"},{"prompt":"Indent four spaces and print what happens when it is false.","answer":"    print(\"Not yet\")","output":"Not yet","day":2,"dayTitle":"Asking a question"},{"prompt":"Ask the same question again: is saved at least as big as goal? End the line with a colon.","answer":"if saved >= goal:","output":null,"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print what happens when it is true.","answer":"    print(\"Go buy it\")","output":null,"day":3,"dayTitle":"More than two answers"},{"prompt":"Add a middle case: type elif, then whether saved is more than half of goal. End with a colon.","answer":"elif saved > goal / 2:","output":null,"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print what happens in that middle case.","answer":"    print(\"Getting there\")","output":null,"day":3,"dayTitle":"More than two answers"},{"prompt":"Type else and a colon for everything that's left over, back at the left edge.","answer":"else:","output":null,"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print the last case.","answer":"    print(\"Not close yet\")","output":"Not close yet","day":3,"dayTitle":"More than two answers"},{"prompt":"You can save $15 a week. Store that in a variable called pay.","answer":"pay = 15","output":null,"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"You haven't saved any weeks yet. Store 0 in a variable called weeks.","answer":"weeks = 0","output":null,"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Start a loop: keep going as long as saved is less than goal. End the line with a colon.","answer":"while saved \u003C goal:","output":null,"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces. Add pay to saved and store it back in saved.","answer":"    saved = saved + pay","output":null,"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces. Add one to weeks.","answer":"    weeks = weeks + 1","output":null,"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces and print the week number and the new total.","answer":"    print(\"Week\", weeks, \"-\", saved)","output":"Week 1 - 55\nWeek 2 - 70\nWeek 3 - 85\nWeek 4 - 100\nWeek 5 - 115\nWeek 6 - 130\nWeek 7 - 145\nWeek 8 - 160\nWeek 9 - 175\nWeek 10 - 190\nWeek 11 - 205\nWeek 12 - 220","day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Back at the left edge — the loop is over. Print how many weeks it took.","answer":"print(\"It took\", weeks, \"weeks\")","output":"It took 12 weeks","day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"You spent money three different times: $12, $8, and $25. Store them in a list called spent.","answer":"spent = [12, 8, 25]","output":null,"day":5,"dayTitle":"Going through a list"},{"prompt":"Start a loop that goes through spent one item at a time. End the line with a colon.","answer":"for item in spent:","output":null,"day":5,"dayTitle":"Going through a list"},{"prompt":"Indent four spaces. Subtract item from saved and store it back in saved.","answer":"    saved = saved - item","output":null,"day":5,"dayTitle":"Going through a list"},{"prompt":"Indent four spaces and print what you spent and what's left.","answer":"    print(\"After spending\", item, \"you have\", saved)","output":"After spending 12 you have 208\nAfter spending 8 you have 200\nAfter spending 25 you have 175","day":5,"dayTitle":"Going through a list"}];
+const STEPS = [{"prompt":"Give your program a title.","answer":"print(\"Saving Up\")","output":"Saving Up","teach":{"says":"print() puts words on the screen. Whatever you put inside the quotes is what appears.","example":"print(\"Good morning\")","shows":"Good morning","watch":"The quotes are part of the code. Without them Python goes looking for something called Good, does not find it, and stops."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"The thing you want costs $220. Store that in a variable called goal.","answer":"goal = 220","output":null,"teach":{"says":"A variable is a labeled box that remembers a value. name = value creates the box and fills it — nothing appears on screen, because storing a value and showing one are two different acts.","example":"price = 5","shows":null,"watch":"Numbers don't get quotes. price = \"5\" stores text that only looks like a number — Python won't let you do math with it the way it will with 5."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"You have $40 already. Store it in saved.","answer":"saved = 40","output":null,"teach":{"says":"Same move as the line above — a new box, a new value, still nothing printed."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"Print how much you still need. Subtract saved from goal.","answer":"print(goal - saved)","output":"180","teach":{"says":"print() doesn't only show quoted text — put an expression inside instead and Python works it out first, then prints the result. goal - saved becomes a number before it ever reaches the screen.","example":"print(10 - 3)","shows":"7","watch":"No quotes around the math. print(\"goal - saved\") would print those five words literally — quotes turn code into text, and text just sits there instead of being calculated."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"A bare number tells nobody anything. Print it with words in front.","answer":"print(\"You still need\", goal - saved)","output":"You still need 180","teach":{"says":"print() can take more than one thing at once — separate them with commas and Python prints each one in order, sliding exactly one space between them for you.","example":"print(\"Total:\", 10 - 3)","shows":"Total: 7","watch":"That one space is automatic. Type \"You still need \" with a trailing space of your own and the output ends up with two spaces instead of one."},"day":1,"dayTitle":"Numbers you can name"},{"kind":"choice","prompt":"Which line will print the word Hello?","options":[{"text":"print(Hello)","why":"No quotes, so Python looks for a variable called Hello and does not find one."},{"text":"print(\"Hello\")","correct":true},{"text":"Print(\"Hello\")","why":"Capital P. Python is case-sensitive and only knows print."}],"teach":{"says":"Every one of these looks close to right at a glance. Quotes and capitalisation are exactly the kind of thing Python cares about and a skimming eye does not — reading each option letter by letter is the whole skill this question is testing."},"day":1,"dayTitle":"Numbers you can name"},{"prompt":"Start a question: is saved at least as big as goal? End the line with a colon.","answer":"if saved >= goal:","output":null,"teach":{"says":"if starts a question. Whatever comes after it works out to True or False, and Python only runs the indented lines underneath when the answer is True. The colon isn't decoration — it's Python's way of saying \"the rules for what happens next start here.\" >= means \"at least as big as\": saved equal to goal counts as true too, not just saved bigger.","example":"temp = 100\nif temp >= 90:\n    print(\"Hot\")","shows":"Hot","watch":"A single = stores a value — that's assignment, from Day 1. Two together, ==, ask \"are these equal?\" Write if saved = goal: by mistake and Python stops you immediately: that spot only accepts a question, not an instruction to store something."},"day":2,"dayTitle":"Asking a question"},{"prompt":"Indent four spaces and print what happens when it is true.","answer":"    print(\"Go buy it\")","output":null,"teach":{"says":"The four spaces before print aren't for looks — they're what tells Python this line belongs to the if above it. Every line indented the same amount underneath the colon is \"inside\" that if; the first line back at the left edge is \"outside\" it again.","example":"if 5 > 2:\n    print(\"Yes\")","shows":"Yes","watch":"Every line in the same block has to be indented by the exact same amount. Python doesn't care whether you use two spaces or four — it cares that every line inside one block matches. Mix them and Python refuses to run at all."},"day":2,"dayTitle":"Asking a question"},{"prompt":"Now the other case. Type else and a colon, back at the left edge.","answer":"else:","output":null,"teach":{"says":"else catches everything the if didn't. It needs no condition of its own — it only runs when the if above it worked out False — which is why it sits back at the left edge, lined up with if rather than indented under it.","example":"temp = 60\nif temp >= 90:\n    print(\"Hot\")\nelse:\n    print(\"Not hot\")","shows":"Not hot","watch":"else never gets its own condition — you can't write else saved \u003C goal:. Need another condition in between? That's elif, and Day 3 is where it shows up."},"day":2,"dayTitle":"Asking a question"},{"prompt":"Indent four spaces and print what happens when it is false.","answer":"    print(\"Not yet\")","output":"Not yet","teach":{"says":"Same indentation rule as the if's body — four spaces, because this line belongs to else the same way that one belonged to if."},"day":2,"dayTitle":"Asking a question"},{"kind":"choice","prompt":"Which line correctly checks whether saved and goal are equal, without changing either one?","options":[{"text":"saved = goal","why":"A single = stores a value — this line would overwrite saved with whatever goal holds. Python does not even accept this as a condition after if."},{"text":"saved == goal","correct":true},{"text":"saved =! goal","why":"This is not a real Python comparison — = and ! next to each other like this is just a syntax error, not a working condition."}],"teach":{"says":"One equals sign assigns a value — it changes something. Two together, ==, compare two values and hand back True or False without changing anything. Mixing them up is one of the most common mistakes in Python, and Python will not always catch it for you."},"day":2,"dayTitle":"Asking a question"},{"prompt":"Ask the same question again: is saved at least as big as goal? End the line with a colon.","answer":"if saved >= goal:","output":null,"teach":{"says":"Same question as Monday. Python doesn't remember that you already asked it inside a different if block — every if is independent, so you write the condition again from scratch."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print what happens when it is true.","answer":"    print(\"Go buy it\")","output":null,"teach":{"says":"Same as Monday too — this line only runs when the if directly above it is True."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Add a middle case: type elif, then whether saved is more than half of goal. End with a colon.","answer":"elif saved > goal / 2:","output":null,"teach":{"says":"elif (\"else if\") adds another question, but it only gets checked when everything above it worked out False. You can chain as many elif lines as you need between an if and an else — Python checks them top to bottom and stops at the first one that's True. / divides, so goal / 2 is exactly half of goal.","example":"score = 75\nif score >= 90:\n    print(\"A\")\nelif score >= 70:\n    print(\"B\")\nelse:\n    print(\"C\")","shows":"B","watch":"Order matters. Python stops at the first True line it finds and skips the rest — put a wide condition too early and it can catch cases a later, more specific line was supposed to handle."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print what happens in that middle case.","answer":"    print(\"Getting there\")","output":null,"teach":{"says":"Same indentation rule again — four spaces because this line belongs to the elif directly above it."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Type else and a colon for everything that's left over, back at the left edge.","answer":"else:","output":null,"teach":{"says":"Same else as Day 2. Still no condition of its own — it fires only when every if and elif above it came back False."},"day":3,"dayTitle":"More than two answers"},{"prompt":"Indent four spaces and print the last case.","answer":"    print(\"Not close yet\")","output":"Not close yet","teach":{"says":"This is the branch that actually runs: saved is 40 and goal / 2 is 110, so saved > goal / 2 is False, the elif is skipped, and this final else is what prints."},"day":3,"dayTitle":"More than two answers"},{"prompt":"You can save $15 a week. Store that in a variable called pay.","answer":"pay = 15","output":null,"teach":{"says":"Same pattern as Day 1 — a new box, pay, remembering 15. Nothing new here; the loop below is where it gets used."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"You haven't saved any weeks yet. Store 0 in a variable called weeks.","answer":"weeks = 0","output":null,"teach":{"says":"weeks starts at 0 on purpose — it's about to count up by one every time the loop below runs. A counter has to start somewhere true, and zero weeks have passed before the loop has even begun."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Start a loop: keep going as long as saved is less than goal. End the line with a colon.","answer":"while saved \u003C goal:","output":null,"teach":{"says":"while works like if, but it doesn't check its question just once. After the indented lines under it finish running, Python goes right back up to the while line and checks the condition again — and again — running that block over and over for as long as the answer stays True.","example":"count = 0\nwhile count \u003C 3:\n    print(count)\n    count = count + 1","shows":"0\n1\n2","watch":"saved \u003C goal has to become False eventually, or this runs forever. That only happens if something inside the loop changes saved — which is exactly what the next line does. Skip that line and you've built an infinite loop that never lets the page respond again."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces. Add pay to saved and store it back in saved.","answer":"    saved = saved + pay","output":null,"teach":{"says":"This is the line that makes the loop actually finish. saved = saved + pay works out the right side first — the old saved plus pay — and then stores that result back into saved, overwriting the old number. Every pass through the loop, saved gets a little bigger, until eventually saved \u003C goal turns False.","example":"total = 5\ntotal = total + 2\nprint(total)","shows":"7","watch":"= here isn't math-class \"equals.\" saved = saved + pay would be nonsense as an equation — nothing equals itself plus 15 — but it's a completely ordinary instruction to a computer: compute the right side, then store it on the left."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces. Add one to weeks.","answer":"    weeks = weeks + 1","output":null,"teach":{"says":"Same move as the line above, on the counter instead of the balance. weeks = weeks + 1 adds exactly one every pass, which is how weeks ends up counting the number of times the loop ran."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Indent four spaces and print the week number and the new total.","answer":"    print(\"Week\", weeks, \"-\", saved)","output":"Week 1 - 55\nWeek 2 - 70\nWeek 3 - 85\nWeek 4 - 100\nWeek 5 - 115\nWeek 6 - 130\nWeek 7 - 145\nWeek 8 - 160\nWeek 9 - 175\nWeek 10 - 190\nWeek 11 - 205\nWeek 12 - 220","teach":{"says":"This print sits inside the loop, so it runs on every single pass — one line of code, but the loop runs it 12 times before saved finally reaches goal, so 12 lines of output appear, each with that pass's own weeks and saved.","example":"n = 0\nwhile n \u003C 3:\n    print(\"Step\", n)\n    n = n + 1","shows":"Step 0\nStep 1\nStep 2","watch":"The \"-\" here is just a piece of text, same as any other comma-separated piece — Python doesn't treat it specially. It's only there so the line reads Week 1 - 55 instead of Week 1 55."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"Back at the left edge — the loop is over. Print how many weeks it took.","answer":"print(\"It took\", weeks, \"weeks\")","output":"It took 12 weeks","teach":{"says":"Back at the left edge, this line is no longer part of the loop — it runs exactly once, after the loop has completely finished, which only happens once saved is no longer less than goal. weeks still holds whatever it counted up to.","watch":"If this line stayed indented, it would be inside the loop instead of after it, and Python would try to run it every single pass instead of once at the end."},"day":4,"dayTitle":"Doing it again until it is done"},{"kind":"multi","prompt":"Select every statement that is true about why while saved \u003C goal: eventually stops looping.","options":[{"text":"saved = saved + pay makes saved bigger every pass, moving it toward goal.","correct":true},{"text":"The loop is hard-coded to stop after 12 passes.","why":"Python does not count passes for a while loop — it has no idea it's been 12 times. It only ever rechecks the condition. It happened to take 12 passes here because of these specific numbers, not because 12 is special."},{"text":"Eventually saved \u003C goal becomes False, and that is the only thing that stops a while loop.","correct":true},{"text":"weeks = weeks + 1 is what the while line checks to decide whether to stop.","why":"weeks only counts how many passes have happened — the while line never looks at it. Deleting that line wouldn't stop the loop from ending; deleting saved = saved + pay would stop it from EVER ending."}],"teach":{"says":"A while loop does not count passes by itself — it rechecks its condition every single time, top to bottom, and stops the instant that condition comes back False. If nothing inside the loop changes the value the condition depends on, it never stops on its own. That's what an infinite loop actually is: not a loop that runs forever on purpose, but one where nothing ever made the condition False."},"day":4,"dayTitle":"Doing it again until it is done"},{"prompt":"You spent money three different times: $12, $8, and $25. Store them in a list called spent.","answer":"spent = [12, 8, 25]","output":null,"teach":{"says":"A list holds more than one value in a single box, in order, separated by commas inside square brackets. spent isn't one number — it's a sequence of three, and the next step walks through them one at a time.","example":"print([3, 6, 9])","shows":"[3, 6, 9]","watch":"Square brackets, not parentheses. spent = (12, 8, 25) builds a different kind of value entirely — brackets are what make it a list."},"day":5,"dayTitle":"Going through a list"},{"prompt":"Start a loop that goes through spent one item at a time. End the line with a colon.","answer":"for item in spent:","output":null,"teach":{"says":"A for loop already knows how many times to run — once for every item in the list — so there's no condition to write and no counter to update by hand, unlike while. Each time through, item holds the next value from spent: first 12, then 8, then 25.","example":"colors = [\"red\", \"green\"]\nfor c in colors:\n    print(c)","shows":"red\ngreen","watch":"item is a name you're choosing, not a fixed keyword — it could be called anything. Whatever you call it here has to match exactly what you type inside the loop body on the next two lines, or Python won't know what you mean."},"day":5,"dayTitle":"Going through a list"},{"prompt":"Indent four spaces. Subtract item from saved and store it back in saved.","answer":"    saved = saved - item","output":null,"teach":{"says":"Same reassignment move from Thursday, running in reverse — saved = saved - item takes item back out of the balance instead of adding to it."},"day":5,"dayTitle":"Going through a list"},{"prompt":"Indent four spaces and print what you spent and what's left.","answer":"    print(\"After spending\", item, \"you have\", saved)","output":"After spending 12 you have 208\nAfter spending 8 you have 200\nAfter spending 25 you have 175","teach":{"says":"Same idea as Thursday's loop print — one line of code, three passes through the list, three lines of output, each with that pass's own item and running saved."},"day":5,"dayTitle":"Going through a list"},{"kind":"multi","prompt":"Select every line below that is indented — the lines that belong to the loop's body and run once per item.","options":[{"text":"spent = [12, 8, 25]","why":"No leading spaces — this line sits at the left edge, outside the loop, so it only ever runs once, before the loop even starts."},{"text":"for item in spent:","why":"The for line itself starts at the left edge too. Indentation is what marks the lines UNDER it as the loop's body — this line is what creates that body, but it isn't part of it."},{"text":"    saved = saved - item","correct":true},{"text":"    print(\"After spending\", item, \"you have\", saved)","correct":true}],"teach":{"says":"Indentation is not decoration — it's what tells Python which lines belong to the loop and which don't. Every line indented under for item in spent: runs once per item; anything back at the left edge, including the for line itself, runs exactly once no matter how many items are in the list."},"day":5,"dayTitle":"Going through a list"}];
 const CYCLE = {"id":"saving-up","title":"Saving Up"};
 const REPORT_COLORS = {"navy":"002D62","silver":"D0D2D3"};
 </script>
@@ -518,14 +993,64 @@ function showOutput(container, output) {
   container.appendChild(out);
 }
 
+// choice/multi steps have no code, so no output to show on unlock (see the
+// design rule: "No output on choice/multi steps"). A short confirmation
+// takes its place instead — the step's own revealText if the author wrote
+// one, otherwise a generic line. Built with createElement/textContent, same
+// as showOutput above, even though this text is author-controlled: one
+// construction style throughout means nobody has to reason about which path
+// is safe to relax.
+function showConfirmation(container, step) {
+  const box = document.createElement("div");
+  box.className = "confirm";
+  box.textContent = step.revealText != null ? step.revealText : "Locked in.";
+  container.appendChild(box);
+}
+
+// A step is "type" (typed code, the original behaviour) unless it explicitly
+// says otherwise. Absent kind or kind:"type" are the same thing — this one
+// helper is the single place that distinction is made, so the check/lock/
+// resume logic below never has to repeat the || itself.
+function kindOf(step) {
+  return step.kind === "choice" || step.kind === "multi" ? step.kind : "type";
+}
+
 function lock(i, revealed) {
   const el = document.getElementById("step" + i);
   el.classList.add("done");
-  const ta = el.querySelector("textarea");
-  ta.disabled = true;
-  const btn = el.querySelector("button");
-  if (btn) btn.remove();
-  showOutput(el, STEPS[i].output);
+  const step = STEPS[i];
+
+  if (kindOf(step) === "type") {
+    const ta = el.querySelector("textarea");
+    ta.disabled = true;
+    const btn = el.querySelector("button");
+    if (btn) btn.remove();
+    showOutput(el, step.output);
+  } else {
+    // Every correct option gets checked and marked, whether or not the
+    // student picked it — this is the reveal, the same way a typed step's
+    // textarea gets overwritten with the canonical answer on a 3rd-try
+    // reveal. Anything the student had checked that ISN'T correct keeps its
+    // checked state and gets marked "wrong" instead of being silently
+    // unchecked, so a revealed step still shows exactly what they picked
+    // alongside what was actually right.
+    const correctIdxs = new Set(step.options.map((o, oi) => (o.correct ? oi : -1)).filter((oi) => oi > -1));
+    const inputs = Array.from(el.querySelectorAll("input"));
+    inputs.forEach((inp, oi) => {
+      const label = inp.closest("label");
+      if (correctIdxs.has(oi)) {
+        inp.checked = true;
+        if (label) label.classList.add("correct");
+      } else if (inp.checked && label) {
+        label.classList.add("wrong");
+      }
+      inp.disabled = true;
+    });
+    const btn = el.querySelector("button");
+    if (btn) btn.remove();
+    showConfirmation(el, step);
+  }
+
   rec.steps[i].done = true;
   rec.steps[i].revealed = !!revealed;
   save();
@@ -534,21 +1059,40 @@ function lock(i, revealed) {
 
 STEPS.forEach((step, i) => {
   const el = document.getElementById("step" + i);
-  const ta = el.querySelector("textarea");
   const btn = el.querySelector("button");
   const msg = el.querySelector(".msg");
+  const kind = kindOf(step);
 
   const check = () => {
-    const typed = ta.value;
     // Attempt number is whatever this step's attempt log already holds plus one —
     // it survives a refresh because rec.steps[i].attempts does, so the escalation
     // (position, then category, then reveal) never resets just because the tab did.
     const attemptNumber = rec.steps[i].attempts.length + 1;
-    const r = hintFor(typed, step.answer, attemptNumber, normalize);
-    // Push EVERY attempt, correct or not, before doing anything else with the
-    // result — the point of this record is the path the student took, not just
-    // whether they eventually got there.
-    rec.steps[i].attempts.push({ text: typed, at: new Date().toISOString(), correct: r.correct });
+    let r;
+
+    if (kind === "type") {
+      const ta = el.querySelector("textarea");
+      const typed = ta.value;
+      r = hintFor(typed, step.answer, attemptNumber, normalize);
+      // Push EVERY attempt, correct or not, before doing anything else with
+      // the result — the point of this record is the path the student
+      // took, not just whether they eventually got there.
+      rec.steps[i].attempts.push({ text: typed, at: new Date().toISOString(), correct: r.correct });
+    } else {
+      // Read whatever is checked right now, in DOM order — that order
+      // always matches step.options because options are never shuffled
+      // (see the design rule: authored order is the shown order).
+      const selected = Array.from(el.querySelectorAll("input"))
+        .map((inp, oi) => (inp.checked ? oi : -1))
+        .filter((oi) => oi > -1);
+      r = choiceHintFor(selected, step.options, attemptNumber);
+      // Store the indices (the precise, machine-checkable record of what
+      // was picked) AND a human-readable text rendering of the same
+      // selection, so the downloaded report's "final answer" column stays
+      // readable without the report needing the original options list.
+      const text = selected.map((oi) => step.options[oi].text).join("; ");
+      rec.steps[i].attempts.push({ text, selected, at: new Date().toISOString(), correct: r.correct });
+    }
     save();
 
     if (r.correct) {
@@ -561,18 +1105,20 @@ STEPS.forEach((step, i) => {
     msg.textContent = r.message;
     msg.className = r.reveal ? "msg reveal" : "msg bad";
     if (r.reveal) {
-      ta.value = step.answer;
+      if (kind === "type") el.querySelector("textarea").value = step.answer;
       lock(i, true);
     }
   };
 
   btn.addEventListener("click", check);
-  ta.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      check();
-    }
-  });
+  if (kind === "type") {
+    el.querySelector("textarea").addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        check();
+      }
+    });
+  }
 });
 
 // Restore progress. Replays every already-completed step so a refresh costs the
@@ -582,7 +1128,9 @@ for (let i = 0; i < STEPS.length; i++) {
   if (!rec.steps[i].done) break;
   const el = document.getElementById("step" + i);
   el.hidden = false;
-  el.querySelector("textarea").value = STEPS[i].answer;
+  if (kindOf(STEPS[i]) === "type") {
+    el.querySelector("textarea").value = STEPS[i].answer;
+  }
   lock(i, rec.steps[i].revealed);
   resume = i + 1;
 }
