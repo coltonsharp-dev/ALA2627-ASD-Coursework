@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lay out your page with flexbox — App Design 1</title>
+<meta name="color-scheme" content="light dark">
+<style>
+:root{--ink:#111827;--soft:#4b5563;--faint:#6b7280;--line:#e5e7eb;--card:#fff;--bg:#f9fafb;--accent:#4338ca;--warn:#b45309;--warnbg:#fffbeb}
+@media(prefers-color-scheme:dark){:root{--ink:#e5e7eb;--soft:#c7cbd4;--faint:#9096a3;--line:#2a2f3a;--card:#171b24;--bg:#0f1218;--accent:#a5b4fc;--warn:#fbbf24;--warnbg:rgba(251,191,36,.1)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);padding:2rem 1rem 5rem;font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.wrap{max-width:46rem;margin:0 auto}
+a.back{display:inline-block;color:var(--accent);text-decoration:none;font-weight:600;font-size:.9rem;margin:0 0 1rem}
+.eyebrow{font:600 .72rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:clamp(1.7rem,5.5vw,2.4rem);line-height:1.13;letter-spacing:-.02em;margin:.4rem 0 .3rem}
+.when{color:var(--soft);margin:0 0 2rem}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.35rem;margin:0 0 1.1rem}
+.box.accent{border-left:4px solid var(--accent)}
+h2{font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 .7rem}
+h3{font-size:1.05rem;margin:1.4rem 0 .5rem}
+p{margin:0 0 .8rem}p:last-child{margin:0}
+.slo{font-size:1.2rem;font-weight:600;line-height:1.4;margin:0}
+ul.sc{list-style:none;margin:0;padding:0}
+ul.sc li{position:relative;padding:.45rem 0 .45rem 2rem;border-bottom:1px solid var(--line)}
+ul.sc li:last-child{border-bottom:0}
+ul.sc li::before{content:"";position:absolute;left:0;top:.72rem;width:1.05rem;height:1.05rem;border:2px solid var(--line);border-radius:4px}
+table.plan{border-collapse:collapse;width:100%}
+table.plan td{padding:.6rem .5rem;border-bottom:1px solid var(--line);vertical-align:top}
+table.plan tr:last-child td{border-bottom:0}
+table.plan td.m{width:3.6rem;font:700 .85rem/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);white-space:nowrap}
+table.plan td.ph{width:5.5rem;font:600 .8rem/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.dl{display:inline-block;background:var(--accent);color:var(--bg);text-decoration:none;font-weight:700;padding:.8rem 1.4rem;border-radius:10px;margin:.2rem 0 .9rem}
+.files{list-style:none;margin:.4rem 0 0;padding:0}
+.files li{padding:.5rem 0;border-top:1px solid var(--line)}
+.files a{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92rem;font-weight:600;text-decoration:none}
+.files span{display:block;color:var(--faint);font-size:.86rem;margin-top:.15rem}
+pre{background:#0f1218;color:#e5e7eb;border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font:.86rem/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;margin:.5rem 0}
+pre b{color:#a5b4fc;font-weight:400}
+.code{position:relative;margin:.5rem 0}
+.code pre{margin:0;padding-right:5.5rem}
+.code .copy{position:absolute;top:.6rem;right:.6rem;cursor:pointer;border:1px solid #3b4252;
+ background:#1c2230;color:#a5b4fc;font:600 .74rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+ letter-spacing:.06em;text-transform:uppercase;padding:.45rem .7rem;border-radius:6px}
+.code .copy:hover{border-color:#a5b4fc}
+.code .copy.ok{background:#064e3b;border-color:#10b981;color:#6ee7b7}
+.note{background:var(--warnbg);border:1px solid var(--warn);border-radius:10px;padding:.85rem 1rem;color:var(--warn);font-size:.93rem;margin:.8rem 0 0}
+.qa{border-top:1px solid var(--line);padding:.65rem 0}
+.qa b{display:block;font-weight:600}.qa span{color:var(--accent);font-size:.94rem}
+footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--faint);font-size:.85rem}
+</style>
+</head>
+<body><div class="wrap">
+    <a class="back" href="../../">&larr; All coursework</a>
+    <div class="eyebrow">App Design 1 &middot; Week 7 &middot; Unit 02 — Make it look good</div>
+    <h1>Lay out your page with flexbox</h1>
+    <p class="when">Tuesday, 8 September 2026</p>
+
+    <div class="box accent">
+      <h2>Today's objective</h2>
+      <p class="slo">Use flexbox to put the parts of my page where I want them, on purpose.</p>
+    </div>
+
+    <div class="box">
+      <h2>Course learning outcome</h2>
+      <p>I can turn a plain HTML page into something that looks designed — colour, type, spacing and layout.</p>
+    </div>
+
+    <div class="box">
+      <h2>You have met today's objective when</h2>
+      <ul class="sc"><li>I can turn any container into a flex container</li><li>I can say which way the main axis runs, and change it</li><li>I can use justify-content to space items along the main axis</li><li>I can use align-items to place items across the other axis</li><li>I can change flex-direction and predict what happens to both properties</li></ul>
+    </div>
+
+    <div class="box">
+      <h2>Read this first</h2>
+      <p>Last week you got flexbox working on a practice box. Today it goes on your own page, and you make it do what you actually want instead of what it happens to do.</p>
+      <p>One warning before you start. Almost everyone learns justify-content and align-items as 'across' and 'down' and it works fine — right up until flex-direction changes to column, and then both of them do the opposite of what you remember. They are not across and down. They are along the main axis and across it, and flex-direction decides which is which. If you learn it that way today you never have to unlearn it.</p>
+    </div>
+
+    <div class="box">
+      <h2>Today's plan</h2>
+      <table class="plan"><tr><td class="m">5 min</td><td>Bell work. One question on the board — answer it in your notes before anything else.</td></tr>
+        <tr><td class="m">10 min</td><td>Watch: one container, three boxes. We change one property at a time and you say out loud what moved.</td></tr>
+        <tr><td class="m">10 min</td><td>Together: we trace which property moved which box, and why the answer changes when the direction flips.</td></tr>
+        <tr><td class="m">18 min</td><td>You: open the starter files and lay out your own header and card row. Get it to match the target picture.</td></tr>
+        <tr><td class="m">5 min</td><td>Exit: run the drill. It takes about four minutes and it tells you straight away if the axis idea landed.</td></tr></table>
+    </div>
+
+    <div class="box">
+      <h2>What you need</h2>
+      <a class="dl" href="assets.zip" download>Download everything (.zip)</a>
+      <ul class="files">
+        <li><a href="starter.html" download>starter.html</a><span>The page you are laying out. Do not change the HTML unless you are asked to.</span></li>
+        <li><a href="styles.css" download>styles.css</a><span>Where all your work goes. The comments tell you where each part belongs.</span></li>
+        <li><a href="target.png" download>target.png</a><span>What it should look like when you are done.</span></li>
+      </ul>
+      <h3>Or pull them with git</h3>
+      <p>If you are working in a Codespace or anywhere with a terminal, this gets you the same files and keeps working all term.</p>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><b># first time only</b>
+git clone --depth 1 https://github.com/coltonsharp-dev/ALA2627-ASD-Coursework.git coursework
+cd coursework/week-07/day-24
+ls</pre>
+      </div>
+      <p>After that first clone, any new day is two lines:</p>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><b># every day after</b>
+cd ~/coursework &amp;&amp; git pull
+cd week-07/day-24</pre>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Turning it in</h2>
+      <p>Nothing to hand in today — this one gets checked at your machine while you work. Keep your styles.css, you are building on it for the rest of the week.</p>
+    </div>
+
+    <footer>Your work stays on your machine. Nothing on this page sends anything anywhere.</footer>
+</div>
+<script>
+document.querySelectorAll(".code .copy").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent="Copied"; b.classList.add("ok");
+      setTimeout(function(){ b.textContent="Copy"; b.classList.remove("ok"); },1600); }
+    if(navigator.clipboard){ navigator.clipboard.writeText(t).then(done, fallback); } else { fallback(); }
+    function fallback(){
+      var r=document.createRange(); r.selectNodeContents(b.parentElement.querySelector("pre"));
+      var s=getSelection(); s.removeAllRanges(); s.addRange(r);
+      b.textContent="Press Ctrl+C";
+      setTimeout(function(){ b.textContent="Copy"; },2200);
+    }
+  });
+});
+</script>
+</body>
+</html>
