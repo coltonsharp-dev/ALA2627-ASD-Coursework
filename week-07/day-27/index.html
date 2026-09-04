@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Refactor your CSS into sections — App Design 1</title>
+<meta name="color-scheme" content="light dark">
+<style>
+:root{--ink:#111827;--soft:#4b5563;--faint:#6b7280;--line:#e5e7eb;--card:#fff;--bg:#f9fafb;--accent:#4338ca;--warn:#b45309;--warnbg:#fffbeb}
+@media(prefers-color-scheme:dark){:root{--ink:#e5e7eb;--soft:#c7cbd4;--faint:#9096a3;--line:#2a2f3a;--card:#171b24;--bg:#0f1218;--accent:#a5b4fc;--warn:#fbbf24;--warnbg:rgba(251,191,36,.1)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);padding:2rem 1rem 5rem;font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.wrap{max-width:46rem;margin:0 auto}
+a.back{display:inline-block;color:var(--accent);text-decoration:none;font-weight:600;font-size:.9rem;margin:0 0 1rem}
+.eyebrow{font:600 .72rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:clamp(1.7rem,5.5vw,2.4rem);line-height:1.13;letter-spacing:-.02em;margin:.4rem 0 .3rem}
+.when{color:var(--soft);margin:0 0 2rem}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.35rem;margin:0 0 1.1rem}
+.box.accent{border-left:4px solid var(--accent)}
+h2{font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 .7rem}
+h3{font-size:1.05rem;margin:1.4rem 0 .5rem}
+p{margin:0 0 .8rem}p:last-child{margin:0}
+.slo{font-size:1.2rem;font-weight:600;line-height:1.4;margin:0}
+ul.sc{list-style:none;margin:0;padding:0}
+ul.sc li{position:relative;padding:.45rem 0 .45rem 2rem;border-bottom:1px solid var(--line)}
+ul.sc li:last-child{border-bottom:0}
+ul.sc li::before{content:"";position:absolute;left:0;top:.72rem;width:1.05rem;height:1.05rem;border:2px solid var(--line);border-radius:4px}
+table.plan{border-collapse:collapse;width:100%}
+table.plan td{padding:.6rem .5rem;border-bottom:1px solid var(--line);vertical-align:top}
+table.plan tr:last-child td{border-bottom:0}
+table.plan td.m{width:3.6rem;font:700 .85rem/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);white-space:nowrap}
+table.plan td.ph{width:5.5rem;font:600 .8rem/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.dl{display:inline-block;background:var(--accent);color:var(--bg);text-decoration:none;font-weight:700;padding:.8rem 1.4rem;border-radius:10px;margin:.2rem 0 .9rem}
+.files{list-style:none;margin:.4rem 0 0;padding:0}
+.files li{padding:.5rem 0;border-top:1px solid var(--line)}
+.files a{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92rem;font-weight:600;text-decoration:none}
+.files span{display:block;color:var(--faint);font-size:.86rem;margin-top:.15rem}
+pre{background:#0f1218;color:#e5e7eb;border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font:.86rem/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;margin:.5rem 0}
+pre b{color:#a5b4fc;font-weight:400}
+.code{position:relative;margin:.5rem 0}
+.code pre{margin:0;padding-right:5.5rem}
+.code .copy{position:absolute;top:.6rem;right:.6rem;cursor:pointer;border:1px solid #3b4252;
+ background:#1c2230;color:#a5b4fc;font:600 .74rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+ letter-spacing:.06em;text-transform:uppercase;padding:.45rem .7rem;border-radius:6px}
+.code .copy:hover{border-color:#a5b4fc}
+.code .copy.ok{background:#064e3b;border-color:#10b981;color:#6ee7b7}
+.who{display:flex;gap:1rem;flex-wrap:wrap;margin:0 0 1rem}
+.who label{flex:1 1 12rem;font-size:.85rem;color:var(--faint);font-weight:600}
+.who input{display:block;width:100%;margin-top:.3rem;padding:.6rem .7rem;font:inherit;color:var(--ink);
+ background:var(--bg);border:2px solid var(--line);border-radius:8px}
+.who input:focus{outline:none;border-color:var(--accent)}
+ul.check{list-style:none;margin:0 0 1rem;padding:0}
+ul.check li{border-bottom:1px solid var(--line)}
+ul.check li:last-child{border-bottom:0}
+ul.check label{display:flex;gap:.75rem;align-items:flex-start;padding:.7rem 0;cursor:pointer}
+ul.check input{margin-top:.35rem;width:1.1rem;height:1.1rem;accent-color:var(--accent);flex:none}
+button.dl{border:none;font:inherit;cursor:pointer}
+.note{background:var(--warnbg);border:1px solid var(--warn);border-radius:10px;padding:.85rem 1rem;color:var(--warn);font-size:.93rem;margin:.8rem 0 0}
+.qa{border-top:1px solid var(--line);padding:.65rem 0}
+.qa b{display:block;font-weight:600}.qa span{color:var(--accent);font-size:.94rem}
+footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--faint);font-size:.85rem}
+</style>
+</head>
+<body><div class="wrap">
+    <a class="back" href="../../">&larr; All coursework</a>
+    <div class="eyebrow">App Design 1 &middot; Week 7 &middot; Unit 02 — Make it look good</div>
+    <h1>Refactor your CSS into sections</h1>
+    <p class="when">Friday, 11 September 2026</p>
+
+    <div class="box accent">
+      <h2>Today's objective</h2>
+      <p class="slo">Reorganise my own stylesheet so someone else could find things in it.</p>
+    </div>
+
+    <div class="box">
+      <h2>Course learning outcome</h2>
+      <p>I can turn a plain HTML page into something that looks designed — colour, type, spacing and layout.</p>
+    </div>
+
+    <div class="box">
+      <h2>You have met today's objective when</h2>
+      <ul class="sc"><li>I can group my rules by the part of the page they style</li><li>I can write a comment header that says what a group is for</li><li>I can find a colour I used more than once and give it a name</li><li>I can spot two rules doing the same job and delete one</li><li>I can open my file a week later and still know where things are</li></ul>
+    </div>
+
+    <div class="box">
+      <h2>Read this first</h2>
+      <p>You have written a week of CSS. It works. It is also, if you are honest, in the order you happened to think of things.</p>
+      <p>Today you do not add anything. You reorganise what is already there, which is a real job with a real name — refactoring. The code does exactly the same thing when you are done. The difference is that you can find things in it.</p>
+      <p>Three operations, in this order, and the order matters: group and label first, because you cannot see duplicates until related rules are next to each other. Then pull the repeated colours out. Then delete what is now obviously repeated.</p>
+      <p>This is a short period and you are not expected to finish. Monday's first block is for finishing. Do the operations properly rather than rushing all three.</p>
+    </div>
+
+    <div class="box">
+      <h2>Today's plan</h2>
+      <table class="plan"><tr><td class="m">3 min</td><td>Bell work. One question, in your notes.</td></tr>
+        <tr><td class="m">6 min</td><td>Watch: the same three operations done on example-before.css, so you can see what 'grouped' actually looks like.</td></tr>
+        <tr><td class="m">13 min</td><td>You: work down your own styles.css. Group and comment first. Get through as much as you get through.</td></tr>
+        <tr><td class="m">3 min</td><td>Tick what you finished on the checklist below and download your receipt before you leave.</td></tr></table>
+    </div>
+
+    <div class="box">
+      <h2>What you need</h2>
+      <a class="dl" href="assets.zip" download>Download everything (.zip)</a>
+      <ul class="files">
+        <li><a href="example-before.css" download>example-before.css</a><span>A small stylesheet in the state yours is probably in.</span></li>
+        <li><a href="example-after.css" download>example-after.css</a><span>The same file after the three operations. Same page, same result.</span></li>
+      </ul>
+      <h3>Or pull them with git</h3>
+      <p>If you are working in a Codespace or anywhere with a terminal, this gets you the same files and keeps working all term.</p>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><b># first time only</b>
+git clone --depth 1 https://github.com/coltonsharp-dev/ALA2627-ASD-Coursework.git coursework
+cd coursework/week-07/day-27
+ls</pre>
+      </div>
+      <p>After that first clone, any new day is two lines:</p>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><b># every day after</b>
+cd ~/coursework &amp;&amp; git pull
+cd week-07/day-27</pre>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>What I got through</h2>
+      <p>Tick only what you actually finished. Unfinished is fine — Monday's first block is for that. An honest receipt is worth more than a full one.</p>
+      <div class="who">
+        <label>Your name <input id="rc-name" type="text" autocomplete="name" placeholder="First and last"></label>
+        <label>Period <input id="rc-period" type="text" inputmode="numeric" placeholder="6 or 7"></label>
+      </div>
+      <ul class="check">
+        <li><label><input type="checkbox" data-i="0"> <span>I grouped my rules by the part of the page they style</span></label></li>
+        <li><label><input type="checkbox" data-i="1"> <span>I put a comment header above each group saying what it is for</span></label></li>
+        <li><label><input type="checkbox" data-i="2"> <span>I found the colours I used more than once and gave them names at the top</span></label></li>
+        <li><label><input type="checkbox" data-i="3"> <span>I deleted at least one rule that was doing a job another rule already did</span></label></li>
+        <li><label><input type="checkbox" data-i="4"> <span>My file does exactly what it did before I started</span></label></li>
+      </ul>
+      <button class="dl" id="rc-go" type="button">Download my receipt</button>
+      <p class="hint" id="rc-msg">Tick what you actually finished. Downloading does not mark anything &mdash; it just records what you did.</p>
+    </div>
+    <div class="box">
+      <h2>Turning it in</h2>
+      <p>Download your receipt at the end of the period and upload it to the assignment. If you did not finish, download it anyway with what you did tick — you will download a second one on Monday when you are done.</p>
+    </div>
+
+    <footer>Your work stays on your machine. Nothing on this page sends anything anywhere.</footer>
+</div>
+<script>
+var RC = {"course":"App Design 1","title":"Refactor your CSS into sections","week":7,"day":27,"date":"2026-09-11","file":"w07-d27-refactor"};
+var rcGo = document.getElementById("rc-go");
+if (rcGo) rcGo.addEventListener("click", function(){
+  var name = (document.getElementById("rc-name").value || "").trim();
+  var period = (document.getElementById("rc-period").value || "").trim();
+  var msg = document.getElementById("rc-msg");
+  if (!name) { msg.textContent = "Put your name in first — the receipt is no use without it."; return; }
+  var boxes = [].slice.call(document.querySelectorAll("ul.check input[type=checkbox]"));
+  var items = boxes.map(function(b){
+    return { done: b.checked, text: b.parentElement.querySelector("span").textContent.trim() };
+  });
+  var doneN = items.filter(function(i){ return i.done; }).length;
+  var stamp = new Date();
+  var L = [];
+  L.push("RECEIPT — " + RC.course);
+  L.push(RC.title);
+  L.push("Week " + RC.week + " · Day " + RC.day + " · " + RC.date);
+  L.push("");
+  L.push("Name:      " + name);
+  L.push("Period:    " + (period || "not given"));
+  L.push("Finished:  " + stamp.toLocaleString());
+  L.push("Completed: " + doneN + " of " + items.length);
+  L.push("");
+  L.push("WHAT I DID");
+  items.forEach(function(i, n){ L.push("  [" + (i.done ? "x" : " ") + "] " + (n+1) + ". " + i.text); });
+  L.push("");
+  var basis = name + "|" + period + "|" + RC.day + "|" + items.map(function(i){return i.done?1:0;}).join("");
+  var h = 0; for (var k = 0; k < basis.length; k++) { h = ((h << 5) - h + basis.charCodeAt(k)) | 0; }
+  L.push("check: " + (h >>> 0).toString(36).toUpperCase());
+  L.push("(If this line is edited it will not match the answers above.)");
+  var blob = new Blob([L.join("\n")], { type: "text/plain" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = RC.file + "-" + name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".txt";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  msg.textContent = "Downloaded. Upload that file to the assignment.";
+});
+
+document.querySelectorAll(".code .copy").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent="Copied"; b.classList.add("ok");
+      setTimeout(function(){ b.textContent="Copy"; b.classList.remove("ok"); },1600); }
+    if(navigator.clipboard){ navigator.clipboard.writeText(t).then(done, fallback); } else { fallback(); }
+    function fallback(){
+      var r=document.createRange(); r.selectNodeContents(b.parentElement.querySelector("pre"));
+      var s=getSelection(); s.removeAllRanges(); s.addRange(r);
+      b.textContent="Press Ctrl+C";
+      setTimeout(function(){ b.textContent="Copy"; },2200);
+    }
+  });
+});
+</script>
+</body>
+</html>
