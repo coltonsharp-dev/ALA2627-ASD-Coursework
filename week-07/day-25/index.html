@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spacing and visual rhythm — App Design 1</title>
+<meta name="color-scheme" content="light dark">
+<style>
+:root{--ink:#111827;--soft:#4b5563;--faint:#6b7280;--line:#e5e7eb;--card:#fff;--bg:#f9fafb;--accent:#4338ca;--warn:#b45309;--warnbg:#fffbeb}
+@media(prefers-color-scheme:dark){:root{--ink:#e5e7eb;--soft:#c7cbd4;--faint:#9096a3;--line:#2a2f3a;--card:#171b24;--bg:#0f1218;--accent:#a5b4fc;--warn:#fbbf24;--warnbg:rgba(251,191,36,.1)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);padding:2rem 1rem 5rem;font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.wrap{max-width:46rem;margin:0 auto}
+a.back{display:inline-block;color:var(--accent);text-decoration:none;font-weight:600;font-size:.9rem;margin:0 0 1rem}
+.eyebrow{font:600 .72rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+h1{font-size:clamp(1.7rem,5.5vw,2.4rem);line-height:1.13;letter-spacing:-.02em;margin:.4rem 0 .3rem}
+.when{color:var(--soft);margin:0 0 2rem}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.35rem;margin:0 0 1.1rem}
+.box.accent{border-left:4px solid var(--accent)}
+h2{font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin:0 0 .7rem}
+h3{font-size:1.05rem;margin:1.4rem 0 .5rem}
+p{margin:0 0 .8rem}p:last-child{margin:0}
+.slo{font-size:1.2rem;font-weight:600;line-height:1.4;margin:0}
+ul.sc{list-style:none;margin:0;padding:0}
+ul.sc li{position:relative;padding:.45rem 0 .45rem 2rem;border-bottom:1px solid var(--line)}
+ul.sc li:last-child{border-bottom:0}
+ul.sc li::before{content:"";position:absolute;left:0;top:.72rem;width:1.05rem;height:1.05rem;border:2px solid var(--line);border-radius:4px}
+table.plan{border-collapse:collapse;width:100%}
+table.plan td{padding:.6rem .5rem;border-bottom:1px solid var(--line);vertical-align:top}
+table.plan tr:last-child td{border-bottom:0}
+table.plan td.m{width:3.6rem;font:700 .85rem/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--accent);white-space:nowrap}
+table.plan td.ph{width:5.5rem;font:600 .8rem/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
+.dl{display:inline-block;background:var(--accent);color:var(--bg);text-decoration:none;font-weight:700;padding:.8rem 1.4rem;border-radius:10px;margin:.2rem 0 .9rem}
+.files{list-style:none;margin:.4rem 0 0;padding:0}
+.files li{padding:.5rem 0;border-top:1px solid var(--line)}
+.files a{color:var(--accent);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92rem;font-weight:600;text-decoration:none}
+.files span{display:block;color:var(--faint);font-size:.86rem;margin-top:.15rem}
+pre{background:#0f1218;color:#e5e7eb;border-radius:10px;padding:1rem 1.1rem;overflow-x:auto;font:.86rem/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;margin:.5rem 0}
+pre b{color:#a5b4fc;font-weight:400}
+.code{position:relative;margin:.5rem 0}
+.code pre{margin:0;padding-right:5.5rem}
+.code .copy{position:absolute;top:.6rem;right:.6rem;cursor:pointer;border:1px solid #3b4252;
+ background:#1c2230;color:#a5b4fc;font:600 .74rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+ letter-spacing:.06em;text-transform:uppercase;padding:.45rem .7rem;border-radius:6px}
+.code .copy:hover{border-color:#a5b4fc}
+.code .copy.ok{background:#064e3b;border-color:#10b981;color:#6ee7b7}
+.note{background:var(--warnbg);border:1px solid var(--warn);border-radius:10px;padding:.85rem 1rem;color:var(--warn);font-size:.93rem;margin:.8rem 0 0}
+.qa{border-top:1px solid var(--line);padding:.65rem 0}
+.qa b{display:block;font-weight:600}.qa span{color:var(--accent);font-size:.94rem}
+footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--faint);font-size:.85rem}
+</style>
+</head>
+<body><div class="wrap">
+    <a class="back" href="../../">&larr; All coursework</a>
+    <div class="eyebrow">App Design 1 &middot; Week 7 &middot; Unit 02 — Make it look good</div>
+    <h1>Spacing and visual rhythm</h1>
+    <p class="when">Wednesday, 9 September 2026</p>
+
+    <div class="box accent">
+      <h2>Today's objective</h2>
+      <p class="slo">Space the parts of my page on a scale, so the spacing looks decided instead of accidental.</p>
+    </div>
+
+    <div class="box">
+      <h2>Course learning outcome</h2>
+      <p>I can turn a plain HTML page into something that looks designed — colour, type, spacing and layout.</p>
+    </div>
+
+    <div class="box">
+      <h2>You have met today's objective when</h2>
+      <ul class="sc"><li>I can name the spacing scale I am using and stay on it</li><li>I can choose between padding, margin and gap and say why</li><li>I can look at a page and point at the spacing that breaks the scale</li><li>I can space a group so things that belong together sit closer</li><li>I can explain why consistent spacing is what makes a page look designed</li></ul>
+    </div>
+
+    <div class="box">
+      <h2>Read this first</h2>
+      <p>Yesterday you decided where things go. Today you decide how much room is between them, which is the part most people never think about and the part that does most of the work.</p>
+      <p>Two ideas and that is the whole lesson. First, pick a scale and stay on it — 4, 8, 16, 24, 32. Not 7, not 13, not 22. A page where every gap comes off one scale looks deliberate even when you cannot say why. Second, spacing carries meaning: things closer together read as belonging together. If your heading is the same distance from its own paragraph as it is from the next section, you have told the reader they are unrelated.</p>
+      <p>The three tools are not interchangeable. Padding is inside a box. Margin is outside it. Gap is between children of a flex container — and gap is almost always the right answer for the space between cards, because margin on the last card leaves a gap you have to go back and delete.</p>
+    </div>
+
+    <div class="box">
+      <h2>Today's plan</h2>
+      <table class="plan"><tr><td class="m">5 min</td><td>Bell work. One question on the board — answer in your notes first.</td></tr>
+        <tr><td class="m">12 min</td><td>Watch: the scale, then padding vs margin vs gap on the same three boxes so you can see which one moves what.</td></tr>
+        <tr><td class="m">10 min</td><td>Together: open audit.html. It has six spacing mistakes in it. Find them before we fix any.</td></tr>
+        <tr><td class="m">16 min</td><td>You: put your own page on the scale. Every number in your styles.css should come off it.</td></tr>
+        <tr><td class="m">5 min</td><td>Exit: hand your screen to the person next to you and have them find one gap that is off the scale.</td></tr></table>
+    </div>
+
+    <div class="box">
+      <h2>What you need</h2>
+      <a class="dl" href="assets.zip" download>Download everything (.zip)</a>
+      <ul class="files">
+        <li><a href="spacing-scale.png" download>spacing-scale.png</a><span>The scale. Put it somewhere you can see it while you work.</span></li>
+        <li><a href="audit.html" download>audit.html</a><span>A page with six spacing mistakes. Do not fix them until we have found them.</span></li>
+        <li><a href="audit.css" download>audit.css</a><span>Where the six mistakes actually live. Comments mark the areas, not the answers.</span></li>
+      </ul>
+      <h3>Or pull them with git</h3>
+      <p>If you are working in a Codespace or anywhere with a terminal, this gets you the same files and keeps working all term.</p>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><b># first time only</b>
+git clone --depth 1 https://github.com/coltonsharp-dev/ALA2627-ASD-Coursework.git coursework
+cd coursework/week-07/day-25
+ls</pre>
+      </div>
+      <p>After that first clone, any new day is two lines:</p>
+      <div class="code">
+        <button class="copy" type="button">Copy</button>
+        <pre><b># every day after</b>
+cd ~/coursework &amp;&amp; git pull
+cd week-07/day-25</pre>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Turning it in</h2>
+      <p>Nothing to upload. Keep working in the same styles.css — Friday you are going to reorganise it, and it is a lot easier if today's numbers already come off one scale.</p>
+    </div>
+
+    <footer>Your work stays on your machine. Nothing on this page sends anything anywhere.</footer>
+</div>
+<script>
+document.querySelectorAll(".code .copy").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent="Copied"; b.classList.add("ok");
+      setTimeout(function(){ b.textContent="Copy"; b.classList.remove("ok"); },1600); }
+    if(navigator.clipboard){ navigator.clipboard.writeText(t).then(done, fallback); } else { fallback(); }
+    function fallback(){
+      var r=document.createRange(); r.selectNodeContents(b.parentElement.querySelector("pre"));
+      var s=getSelection(); s.removeAllRanges(); s.addRange(r);
+      b.textContent="Press Ctrl+C";
+      setTimeout(function(){ b.textContent="Copy"; },2200);
+    }
+  });
+});
+</script>
+</body>
+</html>
