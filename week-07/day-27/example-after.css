@@ -1,0 +1,43 @@
+/* Same rules. Same page. You can now find things.
+   Operation 1: grouped by part of the page, each group labelled.
+   Operation 2: repeated colours named once, at the top.
+   Operation 3: the two split .card and .site-header rules merged. */
+
+/* ---- COLOURS ------------------------------------------------ */
+:root{
+  --brand:      #4338ca;
+  --brand-dark: #3730a3;
+  --ink:        #1f2937;
+  --ink-soft:   #4b5563;
+  --ink-faint:  #6b7280;
+  --line:       #e5e7eb;
+  --surface:    #fff;
+}
+
+/* ---- BASE --------------------------------------------------- */
+body{ margin:0; font-family: system-ui, sans-serif; color: var(--ink); }
+a{ color: var(--brand); }
+
+/* ---- HEADER ------------------------------------------------- */
+.site-header{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px; background: var(--surface);
+}
+.nav a{ color: var(--brand); margin-left:16px; }
+
+/* ---- CARDS -------------------------------------------------- */
+.cards{ display:flex; gap:16px; }
+.card{
+  background: var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:16px;
+}
+.card h3{ margin:0 0 8px; }
+.card p{ margin:0; color: var(--ink-soft); }
+
+/* ---- BUTTONS ------------------------------------------------ */
+.btn{ background: var(--brand); color:#fff; border:none; padding:8px 16px; border-radius:8px; }
+.btn:hover{ background: var(--brand-dark); }
+
+/* ---- FOOTER ------------------------------------------------- */
+.foot{ border-top:1px solid var(--line); padding:24px 0; }
+.foot p{ color: var(--ink-faint); margin:0; }
