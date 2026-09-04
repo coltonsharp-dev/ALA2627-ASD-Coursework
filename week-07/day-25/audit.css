@@ -1,0 +1,67 @@
+/* ============================================================
+   audit.css — six spacing mistakes are in this file.
+   The comments tell you WHERE to look. They do not tell you what
+   is wrong. Find all six before you change anything.
+
+   The scale for this page:  4 · 8 · 16 · 24 · 32
+   ============================================================ */
+
+body{
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1f2937;
+  background: #f9fafb;
+  line-height: 1.6;
+}
+
+main{ max-width: 52rem; margin: 0 auto; padding: 32px 16px; }
+
+
+/* ---- LOOK HERE (1) --------------------------------------- */
+.intro{ margin-bottom: 13px; }
+
+.intro h1{ margin: 0 0 16px; font-size: 2rem; }
+.intro p{ margin: 0; color: #4b5563; }
+
+
+/* ---- LOOK HERE (2) --------------------------------------- */
+.entries{ margin-bottom: 32px; }
+.entries h2{ margin: 0 0 24px; font-size: 1.3rem; }
+.entries p{ margin: 0; color: #4b5563; }
+
+
+/* ---- LOOK HERE (3) --------------------------------------- */
+.cards{
+  display: flex;
+  margin-bottom: 32px;
+}
+
+.card{
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  flex: 1;
+  margin-right: 16px;
+  padding: 16px;
+}
+
+/* ---- LOOK HERE (4) --------------------------------------- */
+.card.wide{ padding: 24px; }
+
+.card h3{ margin: 0 0 8px; font-size: 1.05rem; }
+.card p{ margin: 0; color: #4b5563; }
+
+
+/* ---- LOOK HERE (5) --------------------------------------- */
+.foot{
+  border-top: 1px solid #e5e7eb;
+  padding: 24px 0 8px 0;
+}
+.foot p{ margin: 0; color: #6b7280; font-size: .9rem; }
+
+
+/* ---- LOOK HERE (6) ---------------------------------------
+   One of the sections above sits the same distance from its own
+   paragraph as it does from the next section. Which one, and why
+   does that make the page harder to read?
+   ---------------------------------------------------------- */
