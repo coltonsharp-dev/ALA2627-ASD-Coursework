@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>App &amp; Software Design — Coursework</title>
+<meta name="description" content="Work through it in the browser, then download your work and turn it in.">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{--ink:#111827;--soft:#4b5563;--faint:#6b7280;--line:#e5e7eb;--card:#fff;--bg:#f9fafb;--accent:#4338ca}
+@media(prefers-color-scheme:dark){:root{--ink:#e5e7eb;--soft:#c7cbd4;--faint:#9096a3;--line:#2a2f3a;--card:#171b24;--bg:#0f1218;--accent:#a5b4fc}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);padding:2rem 1rem 5rem;
+ font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
+.wrap{max-width:44rem;margin:0 auto}
+h1{font-size:clamp(1.8rem,6vw,2.6rem);line-height:1.1;letter-spacing:-.02em;margin:0 0 .4rem}
+.sub{color:var(--soft);font-size:1.05rem;margin:0 0 2rem}
+.how{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.35rem;margin:0 0 2rem}
+.how h2{font-size:1rem;margin:0 0 .7rem;color:var(--accent);letter-spacing:.02em}
+.how ol{margin:0;padding-left:1.3rem}.how li{margin:0 0 .45rem}.how li:last-child{margin:0}
+h2.sec{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 .8rem}
+.work{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;
+ padding:1.2rem 1.35rem;margin:0 0 .9rem;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.work:hover{border-color:var(--accent);transform:translateY(-1px)}
+.work .tag{display:inline-block;font:600 .72rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
+ letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
+.work h2{font-size:1.25rem;margin:0 0 .35rem;letter-spacing:-.01em}
+.work .blurb{color:var(--soft);margin:0 0 .6rem;font-size:.97rem}
+.work .meta{font:600 .78rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint)}
+.none{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:1.4rem;color:var(--faint);text-align:center}
+footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--faint);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>App &amp; Software Design</h1>
+  <p class="sub">Everything you need is on this page. Open a piece of work, do it in the browser, then download it and turn it in.</p>
+
+  <div class="how">
+    <h2>How this works</h2>
+    <ol>
+      <li>Click the work you have been assigned.</li>
+      <li>Do one step at a time. Each step opens the next when you get it right.</li>
+      <li>Wrong answers are fine and cost you nothing — you get a hint and try again.</li>
+      <li>When you reach the end, press <strong>Download my work</strong>.</li>
+      <li>Upload that downloaded file to the assignment. That file is your grade.</li>
+    </ol>
+  </div>
+
+  <h2 class="sec">Available now</h2>
+
+    <a class="work" href="saving-up.html">
+      <span class="tag">Project 1 &middot; Week 5</span>
+      <h2>Saving Up</h2>
+      <p class="blurb">Pick something you want. Work out how long it takes to afford it.</p>
+      <span class="meta">5 parts &middot; 30 steps</span>
+    </a>
+
+  <footer>
+    Your progress is saved in this browser only. If you switch computers you start over, so finish a piece of work in one sitting where you can.<br>
+    Nothing you type here is sent anywhere — the file you download is the only copy.
+  </footer>
+</div>
+</body>
+</html>
