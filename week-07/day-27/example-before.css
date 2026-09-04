@@ -1,0 +1,15 @@
+/* A real stylesheet, in the order someone thought of things. It works fine. */
+body{ margin:0; font-family: system-ui, sans-serif; color:#1f2937; }
+.card{ background:#fff; border:1px solid #e5e7eb; padding:16px; }
+.site-header{ display:flex; justify-content:space-between; align-items:center; }
+.card h3{ margin:0 0 8px; }
+a{ color:#4338ca; }
+.cards{ display:flex; gap:16px; }
+.site-header{ padding:16px; background:#fff; }
+.btn{ background:#4338ca; color:#fff; border:none; padding:8px 16px; border-radius:8px; }
+.card p{ margin:0; color:#4b5563; }
+.foot{ border-top:1px solid #e5e7eb; padding:24px 0; }
+.btn:hover{ background:#3730a3; }
+.nav a{ color:#4338ca; margin-left:16px; }
+.card{ border-radius:8px; }
+.foot p{ color:#6b7280; margin:0; }
