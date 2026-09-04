@@ -1,0 +1,72 @@
+/* ============================================================
+   states.css — three states, three gaps to fill.
+   Rule for this course: every time you write :hover, you write
+   :focus. Tab through the page before you call it finished.
+   ============================================================ */
+
+body{
+  margin: 0; padding: 32px 16px;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1f2937; background: #f9fafb; line-height: 1.6;
+}
+main{ max-width: 40rem; margin: 0 auto; }
+h1{ font-size: 1.6rem; margin: 0 0 8px; }
+p{ color: #4b5563; margin: 0 0 24px; }
+.tip{ font-size: .92rem; color: #6b7280; }
+.row{ display: flex; gap: 16px; align-items: center; margin-bottom: 24px; }
+
+.btn{
+  font: inherit;
+  background: #4338ca;
+  color: #fff;
+  border: 2px solid #4338ca;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.link{ color: #4338ca; font-weight: 600; text-decoration: none; }
+
+
+/* ---- 1. HOVER -------------------------------------------
+   What changes when the mouse is over it? Pick something you
+   can actually see from across the room.
+   --------------------------------------------------------- */
+
+.btn:hover{
+  /* YOUR CODE HERE */
+}
+
+.link:hover{
+  /* YOUR CODE HERE */
+}
+
+
+/* ---- 2. FOCUS -------------------------------------------
+   This is the keyboard user's hover. If you remove the default
+   outline you owe them a visible replacement.
+   --------------------------------------------------------- */
+
+.btn:focus-visible{
+  /* YOUR CODE HERE */
+}
+
+.link:focus-visible{
+  /* YOUR CODE HERE */
+}
+
+
+/* ---- 3. ACTIVE ------------------------------------------
+   The moment the button is held down. Small is right here —
+   a couple of pixels of movement is enough.
+   --------------------------------------------------------- */
+
+.btn:active{
+  /* YOUR CODE HERE */
+}
+
+
+/* ---- 4. TRANSITION --------------------------------------
+   Add it to .btn and .link so the changes above are not a jump
+   cut. Name the property you are animating — not `all`.
+   --------------------------------------------------------- */
