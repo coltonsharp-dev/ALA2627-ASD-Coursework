@@ -3,92 +3,166 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>App &amp; Software Design — Coursework</title>
-<meta name="description" content="Work through it in the browser, then download your work and turn it in.">
-<meta name="color-scheme" content="light dark">
+<title>App &amp; Software Design — ALA Vistancia</title>
+<meta name="description" content="Coursework for App &amp; Software Design at American Leadership Academy, Vistancia. Open the day, do the work in the browser, turn in your live page.">
+<link rel="stylesheet" href="assets/ala.css">
 <style>
-:root{--ink:#111827;--soft:#4b5563;--faint:#6b7280;--line:#e5e7eb;--card:#fff;--bg:#f9fafb;--accent:#4338ca}
-@media(prefers-color-scheme:dark){:root{--ink:#e5e7eb;--soft:#c7cbd4;--faint:#9096a3;--line:#2a2f3a;--card:#171b24;--bg:#0f1218;--accent:#a5b4fc}}
+/* The landing page's own layout. Colour, type and spacing all come from
+   assets/ala.css so this page and every lesson page stay one system. */
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);padding:2rem 1rem 5rem;
- font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif}
-.wrap{max-width:44rem;margin:0 auto}
-h1{font-size:clamp(1.8rem,6vw,2.6rem);line-height:1.1;letter-spacing:-.02em;margin:0 0 .4rem}
-.sub{color:var(--soft);font-size:1.05rem;margin:0 0 2rem}
-.how{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.35rem;margin:0 0 2rem}
-.how h2{font-size:1rem;margin:0 0 .7rem;color:var(--accent);letter-spacing:.02em}
-.how ol{margin:0;padding-left:1.3rem}.how li{margin:0 0 .45rem}.how li:last-child{margin:0}
-h2.sec{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin:0 0 .8rem}
-.work{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;
- padding:1.2rem 1.35rem;margin:0 0 .9rem;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
-.work:hover{border-color:var(--accent);transform:translateY(-1px)}
-.work .tag{display:inline-block;font:600 .72rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;
- letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
-.work h2{font-size:1.25rem;margin:0 0 .35rem;letter-spacing:-.01em}
-.work .blurb{color:var(--soft);margin:0 0 .6rem;font-size:.97rem}
-.work .meta{font:600 .78rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint)}
-.none{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:1.4rem;color:var(--faint);text-align:center}
-footer{margin-top:2.5rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--faint);font-size:.85rem}
+body{margin:0;background:var(--ss-void);color:var(--ss-bone);
+  font:16px/1.65 var(--ss-body);padding:0 0 5rem}
+.wrap{max-width:74rem;margin:0 auto;padding:0 1.15rem}
+
+/* ── masthead ──────────────────────────────────────────────────────────── */
+.mast{position:relative;overflow:hidden;border-bottom:3px solid var(--ala-red);
+  background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.012));
+  padding:3.2rem 0 2.6rem;margin:0 0 2.4rem}
+.mast::before{content:"";position:absolute;right:-3%;top:-38%;width:38%;height:190%;
+  background:url('assets/ala-monogram.png') no-repeat center/contain;opacity:.055;pointer-events:none}
+.mast .wrap{position:relative;z-index:1}
+.school{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.3em;
+  font-size:.7rem;font-weight:500;color:var(--ala-red);margin:0 0 .75rem}
+.mast h1{font-family:var(--ss-display);text-transform:uppercase;font-weight:500;
+  font-size:clamp(2rem,6.2vw,4.1rem);line-height:.98;letter-spacing:.02em;margin:0 0 .55rem}
+.mast .lede{font-family:'Aleo',Georgia,serif;font-size:clamp(1.02rem,1.9vw,1.3rem);
+  color:var(--ala-steel);margin:0;max-width:44rem}
+
+/* ── section headings ──────────────────────────────────────────────────── */
+h2.sec{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.24em;
+  font-size:.76rem;font-weight:500;color:var(--ala-steel-dim);margin:2.6rem 0 1rem;
+  display:flex;align-items:center;gap:.9rem}
+h2.sec::after{content:"";flex:1;height:1px;background:var(--ala-navy-athletic)}
+
+/* ── how it works ──────────────────────────────────────────────────────── */
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:11px}
+.step{position:relative;border:1px solid var(--ala-navy-athletic);border-radius:16px;
+  padding:1.1rem 1.2rem 1.2rem;background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015))}
+.step .n{font-family:var(--ss-display);font-size:2rem;font-weight:500;line-height:1;
+  color:var(--ala-red);opacity:.85;margin:0 0 .45rem}
+.step h3{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.1em;
+  font-size:.88rem;font-weight:500;margin:0 0 .35rem}
+.step p{margin:0;font-size:.93rem;color:var(--ala-steel)}
+
+/* ── the week ──────────────────────────────────────────────────────────── */
+.week{border:1px solid var(--ala-navy-athletic);border-left:3px solid var(--ala-red);
+  border-radius:16px;padding:1.15rem 1.3rem 1.35rem;margin:0 0 1rem;
+  background:linear-gradient(160deg,rgba(255,255,255,.045),rgba(255,255,255,.012))}
+.week .wk{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.2em;
+  font-size:.72rem;font-weight:500;color:var(--ala-red);margin:0 0 .3rem}
+.week h3{font-family:var(--ss-display);text-transform:uppercase;font-weight:500;
+  letter-spacing:.04em;font-size:1.5rem;margin:0 0 .25rem}
+.week .unit{color:var(--ala-steel-dim);font-size:.92rem;margin:0 0 1.15rem}
+.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(15.5rem,1fr));gap:10px}
+a.day{display:block;text-decoration:none;color:inherit;border:1px solid var(--ala-navy-athletic);
+  border-radius:13px;padding:.95rem 1.05rem 1.05rem;background:rgba(255,255,255,.022);
+  transition:border-color .16s,transform .16s,background .16s}
+a.day:hover{border-color:var(--ala-red);transform:translateY(-2px);background:rgba(212,0,41,.06)}
+a.day .d{font-family:var(--ss-mono);font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ala-red);font-weight:700;margin:0 0 .4rem}
+a.day h4{font-family:var(--ss-body);font-size:1.02rem;font-weight:700;margin:0 0 .3rem;line-height:1.25}
+a.day p{margin:0;font-size:.87rem;color:var(--ala-steel-dim)}
+a.day .go{display:block;margin-top:.7rem;font-family:var(--ss-display);text-transform:uppercase;
+  letter-spacing:.14em;font-size:.68rem;color:var(--ala-silver)}
+
+/* ── terminal ──────────────────────────────────────────────────────────── */
+.term{border:1px solid var(--ala-navy-athletic);border-radius:16px;overflow:hidden;margin:0 0 1rem}
+.term .bar{background:rgba(255,255,255,.04);padding:.55rem .95rem;font-family:var(--ss-mono);
+  font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ala-steel-dim);
+  border-bottom:1px solid var(--ala-navy-athletic)}
+.term pre{margin:0;padding:1rem 1.1rem;background:#050D1B;overflow-x:auto;
+  font:.86rem/1.7 var(--ss-mono);color:var(--ala-paper)}
+.term .c{color:var(--ala-steel-dim)}
+.term .hl{color:var(--ala-red);font-weight:700}
+
+.note{border:1px solid var(--ala-navy-athletic);border-left:3px solid var(--ala-silver);
+  border-radius:13px;padding:1rem 1.15rem;color:var(--ala-steel);font-size:.94rem;margin:0 0 1rem}
+.note b{color:var(--ala-paper)}
+footer{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--ala-navy-athletic);
+  color:var(--ala-steel-dim);font-size:.84rem}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <h1>App &amp; Software Design</h1>
-  <p class="sub">Everything you need is on this page. Open a piece of work, do it in the browser, then download it and turn it in.</p>
 
+<header class="mast">
+  <div class="wrap">
+    <p class="school">American Leadership Academy &middot; Vistancia</p>
+    <h1>App &amp; Software Design</h1>
+    <p class="lede">Open the day. Do the work in the browser. Turn in the live link to your own page.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <h2 class="sec">How this works</h2>
   <div class="how">
-    <h2>How this works</h2>
-    <ol>
-      <li>Click the work you have been assigned.</li>
-      <li>Do one step at a time. Each step opens the next when you get it right.</li>
-      <li>Wrong answers are fine and cost you nothing — you get a hint and try again.</li>
-      <li>When you reach the end, press <strong>Download my work</strong>.</li>
-      <li>Upload that downloaded file to the assignment. That file is your grade.</li>
-    </ol>
+    <div class="step"><p class="n">1</p><h3>Open the day</h3>
+      <p>Each day has its own page: what you are learning, the plan, the files, and a place to try it before you build.</p></div>
+    <div class="step"><p class="n">2</p><h3>Get the files</h3>
+      <p>Pull them into your Codespace with one line in the terminal, or download the folder. Both are on the day page.</p></div>
+    <div class="step"><p class="n">3</p><h3>Build it</h3>
+      <p>Work in your own repo. Getting it wrong costs you nothing — that is what the practice box on each page is for.</p></div>
+    <div class="step"><p class="n">4</p><h3>Turn in your link</h3>
+      <p>Submit the live URL of your page. Not a file. The page itself is what gets graded.</p></div>
   </div>
 
-  <h2 class="sec">Lessons</h2>
+  <h2 class="sec">This week</h2>
 
-    <a class="work" href="week-07/day-24/">
-      <span class="tag">Week 7 &middot; Tuesday 8 September</span>
-      <h2>Lay out your page with flexbox</h2>
-      <p class="blurb">Unit 02 — Make it look good</p>
-      <span class="meta">Instructions, files and the plan for the day</span>
-    </a>
+  <section class="week">
+    <p class="wk">Week 7 &middot; 8&ndash;11 September</p>
+    <h3>Make it look good</h3>
+    <p class="unit">Unit 02 &mdash; layout, spacing, states, and CSS you can still read next month.</p>
 
-    <a class="work" href="week-07/day-25/">
-      <span class="tag">Week 7 &middot; Wednesday 9 September</span>
-      <h2>Spacing and visual rhythm</h2>
-      <p class="blurb">Unit 02 — Make it look good</p>
-      <span class="meta">Instructions, files and the plan for the day</span>
-    </a>
+    <div class="days">
+      <a class="day" href="week-07/day-24/">
+        <p class="d">Tue 8 Sep</p>
+        <h4>Lay out your page with flexbox</h4>
+        <p>Put the parts of your page where you want them, on purpose.</p>
+        <span class="go">Open &rarr;</span></a>
 
-    <a class="work" href="week-07/day-26/">
-      <span class="tag">Week 7 &middot; Thursday 10 September</span>
-      <h2>Hover, focus and active states</h2>
-      <p class="blurb">Unit 02 — Make it look good</p>
-      <span class="meta">Instructions, files and the plan for the day</span>
-    </a>
+      <a class="day" href="week-07/day-25/">
+        <p class="d">Wed 9 Sep</p>
+        <h4>Spacing and visual rhythm</h4>
+        <p>Pick three spacing values and use only those. Stop inventing numbers.</p>
+        <span class="go">Open &rarr;</span></a>
 
-    <a class="work" href="week-07/day-27/">
-      <span class="tag">Week 7 &middot; Friday 11 September</span>
-      <h2>Refactor your CSS into sections</h2>
-      <p class="blurb">Unit 02 — Make it look good</p>
-      <span class="meta">Instructions, files and the plan for the day</span>
-    </a>
+      <a class="day" href="week-07/day-26/">
+        <p class="d">Thu 10 Sep</p>
+        <h4>Hover and active states</h4>
+        <p>If it can be clicked, it has to say so &mdash; before and during the click.</p>
+        <span class="go">Open &rarr;</span></a>
 
-  <h2 class="sec">Practice &amp; classwork</h2>
+      <a class="day" href="week-07/day-27/">
+        <p class="d">Fri 11 Sep</p>
+        <h4>Refactor your CSS into sections</h4>
+        <p>Group it, name it, delete what nothing uses. Then turn in your link.</p>
+        <span class="go">Open &rarr;</span></a>
+    </div>
+  </section>
 
-    <a class="work" href="saving-up.html">
-      <span class="tag">Project 1 &middot; Week 5</span>
-      <h2>Saving Up</h2>
-      <p class="blurb">Pick something you want. Work out how long it takes to afford it.</p>
-      <span class="meta">5 parts &middot; 30 steps</span>
-    </a>
+  <h2 class="sec">Getting the files</h2>
+  <div class="term">
+    <div class="bar">Terminal &middot; in your Codespace</div>
+<pre><span class="c"># pull one day's files into your repo — no clone, no git history to untangle</span>
+npx degit coltonsharp-dev/ALA2627-ASD-Coursework/<span class="hl">week-07/day-24</span> day-24
+cd day-24</pre>
+  </div>
+  <div class="note">Change the highlighted part to whichever day you are on. If the terminal is
+    not co-operating, every day page also has a <b>download the folder</b> link &mdash; use that
+    and keep going. Do not lose a period to a command.</div>
+
+  <h2 class="sec">Practice</h2>
+  <div class="days">
+    <a class="day" href="saving-up.html">
+      <p class="d">Anytime</p>
+      <h4>Saving Up</h4>
+      <p>A short build you can do whenever you want more practice.</p>
+      <span class="go">Open &rarr;</span></a>
+  </div>
 
   <footer>
-    Your progress is saved in this browser only. If you switch computers you start over, so finish a piece of work in one sitting where you can.<br>
-    Nothing you type here is sent anywhere — the file you download is the only copy.
+    App &amp; Software Design &middot; Mr. Sharp &middot; American Leadership Academy, Vistancia<br>
+    Everything on these pages runs in your browser. Nothing you type here is sent anywhere.
   </footer>
 </div>
 </body>

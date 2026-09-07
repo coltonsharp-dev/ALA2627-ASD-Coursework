@@ -1,0 +1,81 @@
+/* ============================================================
+   Trailhead — solution.css        TEACHER COPY
+   The finished layout for Tuesday, Week 7. Project this.
+
+   This is styles.css with the three layout jobs done. Nothing
+   else changed — same base styling the students already have,
+   so the only difference on screen is the flexbox.
+   ============================================================ */
+
+body{
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #1f2937;
+  background: #f9fafb;
+  line-height: 1.6;
+}
+
+main{ max-width: 60rem; margin: 0 auto; padding: 2rem 1.25rem; }
+
+
+/* ------------------------------------------------------------
+   1. THE HEADER ROW
+   The header is the CONTAINER, so display:flex goes on it.
+   Direction is row by default, so the main axis runs across —
+   justify-content spreads the logo and nav to the two ends, and
+   align-items centres them through the middle of the row.
+   ------------------------------------------------------------ */
+.site-header{
+  display: flex;
+  justify-content: space-between;   /* logo hard left, nav hard right */
+  align-items: center;              /* both lined up through the middle */
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.logo{ font-weight: 700; font-size: 1.15rem; }
+
+/* The nav is ALSO a flex container — its links are the items.
+   gap here rather than a margin on every link: one property, one
+   place to change it. */
+.nav{
+  display: flex;
+  gap: 1.5rem;
+}
+.nav a{ color: #374151; text-decoration: none; }
+.nav a:hover{ color: #111827; }
+
+
+/* ------------------------------------------------------------
+   2. THE CARD ROW
+   .cards is the container; each .card is an item. Equal widths
+   come from flex:1 on the items, not from a width on each one.
+   ------------------------------------------------------------ */
+.cards{
+  display: flex;
+  gap: 1.25rem;
+  align-items: stretch;   /* all three cards match the tallest */
+}
+
+.card{
+  flex: 1;                /* share the row evenly */
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.15rem 1.25rem;
+}
+
+.card h2{ margin: 0 0 .5rem; font-size: 1.1rem; }
+.card p{ margin: 0; color: #4b5563; }
+
+
+/* ------------------------------------------------------------
+   3. NARROW SCREENS
+   One property flips the main axis. Everything else still works,
+   which is the point worth saying out loud when you project this.
+   ------------------------------------------------------------ */
+@media (max-width: 40rem){
+  .cards{ flex-direction: column; }
+  .site-header{ flex-direction: column; gap: .75rem; align-items: flex-start; }
+}

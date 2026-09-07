@@ -1,0 +1,114 @@
+/* ============================================================================
+   ala.css — American Leadership Academy, Vistancia.
+   App & Software Design coursework site.
+
+   HOW THIS RE-SKINS THE LESSON PAGES WITHOUT TOUCHING THEM.
+   Every lesson page was written against tokens — var(--ss-void, #0d1322) and so
+   on — with the Stratosyn dark palette only as a FALLBACK. So defining those
+   tokens here re-skins all four day pages in the brand without editing a single
+   rule inside them, and without a specificity fight. That is why this file is
+   linked BEFORE each page's own <style>: the page consumes what is set here.
+
+   COLOURS ARE THE SAMPLED ONES, not approximations. Every hex below is from
+   web/ala-brand/brand.json, taken from flat vector fills in official ALA
+   documents. Do not eyeball new ones — add them to brand.json first.
+   ========================================================================= */
+
+@font-face{font-family:'Oswald';src:url('fonts/oswald-500.woff2') format('woff2');
+  font-weight:500;font-display:swap}
+@font-face{font-family:'Carlito';src:url('fonts/carlito-400.woff2') format('woff2');
+  font-weight:400;font-display:swap}
+@font-face{font-family:'Carlito';src:url('fonts/carlito-700.woff2') format('woff2');
+  font-weight:700;font-display:swap}
+@font-face{font-family:'Cinzel';src:url('fonts/cinzel-700.woff2') format('woff2');
+  font-weight:700;font-display:swap}
+@font-face{font-family:'Aleo';src:url('fonts/aleo-400.woff2') format('woff2');
+  font-weight:400;font-display:swap}
+
+:root{
+  /* ── the brand, exactly as sampled ─────────────────────────────────────── */
+  --ala-navy:#002D62;          /* institutional — wordmark letters, formal rules */
+  --ala-navy-athletic:#1D3160; /* athletic navy — bear outlines, pill bars       */
+  --ala-red:#D40029;           /* athletic red — the energetic accent            */
+  --ala-crimson:#AE2734;       /* print crimson — cover shapes, paper headings   */
+  --ala-silver:#D0D2D3;        /* defender silver — bear body, secondary fills   */
+  --ala-paper:#F8F8F8;
+  --ala-ghost:#E4E4E6;         /* the oversized watermark monogram              */
+  --ala-ink:#1A1A1A;
+  /* Two steels from the kit's own athletic register (registers/b-athletic). */
+  --ala-steel:#C9D2E4;
+  --ala-steel-dim:#8FA0C0;
+  /* Deep field, mixed down from athletic navy rather than invented. */
+  --ala-field:#08152B;
+
+  /* ── the tokens the lesson pages already consume ───────────────────────── */
+  --ss-void:var(--ala-field);
+  --ss-ink:var(--ala-ink);
+  --ss-bone:var(--ala-paper);
+  --ss-mist:var(--ala-steel);
+  --ss-faint:var(--ala-steel-dim);
+  --ss-border:var(--ala-navy-athletic);
+
+  /* Accents. The hero and every primary control ride --ss-cyan, so that is the
+     athletic red. The three summary tiles need to stay distinguishable from it
+     and from each other, so they take silver, steel and crimson. */
+  --ss-cyan:var(--ala-red);
+  --ss-gold:var(--ala-silver);
+  --ss-peri:var(--ala-steel);
+  --ss-rose:var(--ala-crimson);
+
+  /* --ss-green is the lesson pages' name for the LAB accent — the interactive
+     playground tile and the live values in its readout. It marks nothing as
+     correct, so there is no reason to hold an off-brand green for it. Defender
+     silver: bright on the navy field, unmistakably ALA, and distinct from the
+     red the hero and its controls already own. */
+  --ss-green:var(--ala-silver);
+
+  --ss-display:'Oswald','Cinzel',system-ui,sans-serif;
+  --ss-body:'Carlito',Calibri,system-ui,sans-serif;
+  --ss-mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ss-ease:cubic-bezier(.2,.7,.3,1);
+}
+
+/* ── the athletic voice ────────────────────────────────────────────────────
+   ALA's own covers set display type as condensed caps on wide tracking. The
+   lesson pages set their h1 in --ss-display at a normal case, so the register
+   is applied here rather than by rewriting each page. */
+.hero h1{font-family:var(--ss-display);text-transform:uppercase;
+  letter-spacing:.045em!important;font-weight:500;line-height:1.02!important}
+.k,.eyebrow,a.back,.tag,.cn{font-family:var(--ss-display)!important;
+  text-transform:uppercase;letter-spacing:.22em!important;font-weight:500}
+button.b{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.14em;
+  font-weight:500}
+
+/* A red hairline under the hero, the way the wordmark carries one on paper. */
+.hero{border-top:3px solid var(--ala-red)}
+
+/* The ghost monogram. brand.json documents this as the house pattern — an
+   oversized watermark behind cover content — so it is used, not invented. */
+.hero::before{content:"";position:absolute;right:-4%;top:-28%;width:52%;height:170%;
+  background:url('ala-monogram.png') no-repeat center/contain;
+  opacity:.05;pointer-events:none;z-index:0}
+
+/* Pull quotes and the "what you are learning" prose take the slab. */
+.hero .slo{font-family:'Aleo',Georgia,serif;font-weight:400}
+
+/* Code stays monospace and gains a navy field so it reads as a terminal. */
+.code,pre.code{background:#050D1B!important;border-color:var(--ala-navy-athletic)!important}
+
+/* Focus ring — visible, branded, and never removed. Students tab these pages. */
+:where(button,a,input,select,summary):focus-visible{
+  outline:2px solid var(--ala-red);outline-offset:2px;border-radius:4px}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ── code: property and value must stay tellable apart ─────────────────────
+   That distinction IS the CSS lesson — a student who cannot see where the
+   property stops and the value starts is reading soup. --ss-green now carries
+   the lab accent (silver), and silver against the steel used for properties is
+   too close to read at a glance, so the changing values take athletic red:
+   highest contrast on the near-black code field, and it pulls the eye to
+   exactly the words the controls are changing. */
+.readout .v,.code .v{color:var(--ala-red)!important;font-weight:700}
+.readout .p,.code b{color:var(--ala-steel)!important}
