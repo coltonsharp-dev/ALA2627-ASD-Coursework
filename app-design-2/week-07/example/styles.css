@@ -88,6 +88,46 @@ p:last-child{margin-bottom:0}
 .row .what b{display:block}
 .row .what span{font-size:var(--t-small);color:var(--soft)}
 
+/* ── the tool collection ───────────────────────────────────────────────────
+   Icons, not logo images. Each one is an inlined SVG with fill:currentColor, so
+   it takes the page's text colour and flips with the theme for free — which a
+   PNG logo cannot do. That is the whole argument for an icon set: one shape,
+   any size, any colour, a few hundred bytes.
+   VEX publishes no icon in the set, so those two chips are set in type instead
+   of faking a mark that does not exist. */
+.tools{list-style:none;display:flex;flex-wrap:wrap;gap:var(--s-2);padding:0;margin:0}
+.tool{display:inline-flex;align-items:center;gap:var(--s-2);
+  border:1px solid var(--line);border-radius:999px;background:var(--card);
+  padding:6px 14px 6px 10px;font-size:var(--t-small);font-weight:600;
+  transition:border-color .15s ease, color .15s ease}
+.tool:hover{border-color:var(--accent);color:var(--accent)}
+.ic{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center}
+.ic svg{width:18px;height:18px;display:block}
+.ic-t{font-size:.68rem;font-weight:800;letter-spacing:.02em;
+  border:1.5px solid currentColor;border-radius:4px;width:22px;height:18px}
+
+/* ── institution badges ───────────────────────────────────────────────────
+   The four logos arrive at different aspect ratios — two wide wordmarks, a
+   square monogram, a stacked mark. Fixing the HEIGHT and letting width follow
+   is what makes a mixed set look deliberate; fixing the width would leave the
+   square one tiny and the wordmarks enormous.
+
+   The white chip is not decoration. These marks are dark artwork on a
+   transparent background, so on the dark theme they would disappear entirely.
+   The chip gives them the background they were drawn for, in both themes. */
+/* FIXED width, not min-width. With min-width the chips sized to their own artwork and every
+   row started its text at a different x — four ragged left edges reading as an accident.
+   One width for all four is what makes the column a column. */
+.badge{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+  background:#fff;border:1px solid var(--line);border-radius:8px;
+  padding:6px 10px;width:150px;height:44px}
+.badge img{height:28px;width:auto;max-width:132px;object-fit:contain;display:block}
+@media (max-width:34rem){
+  .badge{height:38px;width:112px;padding:5px 8px}
+  .badge img{height:24px;max-width:104px}
+}
+.src{font-size:var(--t-small);color:var(--faint);margin:var(--s-3) 0 0}
+
 /* ── contact ─────────────────────────────────────────────────────────────── */
 .contact a{display:inline-block;margin:0 var(--s-3) var(--s-2) 0;font-weight:700;
   text-decoration:none;border-bottom:2px solid var(--accent);padding-bottom:2px;
