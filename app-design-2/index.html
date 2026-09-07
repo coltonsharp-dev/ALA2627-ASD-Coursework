@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>App Design 2 — ALA Vistancia</title>
+<meta name="description" content="App Design 2 at American Leadership Academy, Vistancia. A professional portfolio of the projects you code.">
+<link rel="stylesheet" href="../assets/ala.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--ss-void);color:var(--ss-bone);font:16px/1.65 var(--ss-body);padding:0 0 5rem}
+.wrap{max-width:70rem;margin:0 auto;padding:0 1.15rem}
+.mast{position:relative;overflow:hidden;border-bottom:3px solid var(--ala-red);
+ background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.012));
+ padding:3rem 0 2.4rem;margin:0 0 2.2rem}
+.mast::before{content:"";position:absolute;right:-3%;top:-36%;width:36%;height:190%;
+ background:url('../assets/ala-monogram.png') no-repeat center/contain;opacity:.055}
+.mast .wrap{position:relative;z-index:1}
+.school{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.3em;
+ font-size:.7rem;color:var(--ala-red);margin:0 0 .7rem}
+h1{font-family:var(--ss-display);text-transform:uppercase;font-weight:500;
+ font-size:clamp(2rem,6vw,3.9rem);line-height:.99;letter-spacing:.02em;margin:0 0 .55rem}
+.lede{font-family:'Aleo',Georgia,serif;font-size:clamp(1.02rem,1.9vw,1.28rem);
+ color:var(--ala-steel);margin:0;max-width:44rem}
+h2.sec{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.24em;font-size:.75rem;
+ color:var(--ala-steel-dim);margin:2.4rem 0 1rem;display:flex;align-items:center;gap:.9rem}
+h2.sec::after{content:"";flex:1;height:1px;background:var(--ala-navy-athletic)}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:11px}
+.step{border:1px solid var(--ala-navy-athletic);border-radius:16px;padding:1.05rem 1.15rem 1.15rem;
+ background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015))}
+.step .n{font-family:var(--ss-display);font-size:2rem;font-weight:500;line-height:1;
+ color:var(--ala-red);opacity:.85;margin:0 0 .4rem}
+.step h3{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.1em;
+ font-size:.86rem;font-weight:500;margin:0 0 .3rem}
+.step p{margin:0;font-size:.92rem;color:var(--ala-steel)}
+.week{border:1px solid var(--ala-navy-athletic);border-left:3px solid var(--ala-red);
+ border-radius:16px;padding:1.1rem 1.3rem 1.3rem;
+ background:linear-gradient(160deg,rgba(255,255,255,.045),rgba(255,255,255,.012))}
+.week .wk{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.2em;
+ font-size:.72rem;color:var(--ala-red);margin:0 0 .3rem}
+.week h3{font-family:var(--ss-display);text-transform:uppercase;font-weight:500;
+ letter-spacing:.04em;font-size:1.45rem;margin:0 0 .25rem}
+.week .unit{color:var(--ala-steel-dim);font-size:.92rem;margin:0 0 1.1rem}
+.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:10px}
+a.day{display:block;text-decoration:none;color:inherit;border:1px solid var(--ala-navy-athletic);
+ border-radius:13px;padding:.9rem 1rem 1rem;background:rgba(255,255,255,.022);
+ transition:border-color .16s,transform .16s,background .16s}
+a.day:hover{border-color:var(--ala-red);transform:translateY(-2px);background:rgba(212,0,41,.06)}
+a.day .d{font-family:var(--ss-mono);font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;
+ color:var(--ala-red);font-weight:700;margin:0 0 .35rem}
+a.day h4{font-size:1rem;font-weight:700;margin:0 0 .28rem;line-height:1.25}
+a.day p{margin:0;font-size:.86rem;color:var(--ala-steel-dim)}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:11px}
+.note{border:1px solid var(--ala-navy-athletic);border-left:3px solid var(--ala-silver);
+ border-radius:13px;padding:1rem 1.15rem;color:var(--ala-steel);font-size:.94rem}
+.note b{color:var(--ala-paper)}
+.term{border:1px solid var(--ala-navy-athletic);border-radius:14px;overflow:hidden;margin:0 0 1rem}
+.term .bar{background:rgba(255,255,255,.04);padding:.55rem .95rem;font-family:var(--ss-mono);
+ font-size:.71rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ala-steel-dim);
+ border-bottom:1px solid var(--ala-navy-athletic)}
+.term pre{margin:0;padding:1rem 1.1rem;background:#050D1B;overflow-x:auto;
+ font:.85rem/1.7 var(--ss-mono);color:var(--ala-paper)}
+.term .c{color:var(--ala-steel-dim)}.term .hl{color:var(--ala-red);font-weight:700}
+footer{margin-top:2.8rem;padding-top:1.2rem;border-top:1px solid var(--ala-navy-athletic);
+ color:var(--ala-steel-dim);font-size:.84rem}
+</style>
+</head>
+<body>
+
+<header class="mast"><div class="wrap">
+  <p class="school">American Leadership Academy &middot; Vistancia</p>
+  <h1>App Design 2</h1>
+  <p class="lede">A professional portfolio of the things you build. Every project this year lands
+  in one place, under your own name, at a link you can send to anyone.</p>
+</div></header>
+
+<div class="wrap">
+
+  <h2 class="sec">How this course works</h2>
+  <div class="how">
+    <div class="step"><p class="n">1</p><h3>One repo, all year</h3>
+      <p>Your own copy of the class repo. Every assignment is a new folder you pull into it &mdash;
+      the work accumulates instead of scattering.</p></div>
+    <div class="step"><p class="n">2</p><h3>Build in the Codespace</h3>
+      <p>Everything runs in the browser. Nothing to install, and the same environment every day.</p></div>
+    <div class="step"><p class="n">3</p><h3>Choose your agent mode</h3>
+      <p>Five words decide how much help you take. You record which one you used in the commit.</p></div>
+    <div class="step"><p class="n">4</p><h3>Turn in your link</h3>
+      <p>Your live URL, once. It never changes &mdash; the work behind it grows.</p></div>
+  </div>
+
+  <h2 class="sec">This week</h2>
+  <section class="week">
+    <p class="wk">Week 7 &middot; 8&ndash;11 September</p>
+    <h3>The profile page</h3>
+    <p class="unit">The front door of the portfolio &mdash; the professional version of the
+    <i>This Is Me</i> page you already have.</p>
+    <div class="days">
+      <a class="day" href="week-07/day-24/"><p class="d">Tue 8 Sep</p>
+        <h4>The content, before any of the styling</h4>
+        <p>You cannot design your way out of having nothing to say.</p></a>
+      <a class="day" href="week-07/day-25/"><p class="d">Wed 9 Sep</p>
+        <h4>Structure and type</h4>
+        <p>One type scale, one spacing scale, a clear reading order.</p></a>
+      <a class="day" href="week-07/day-26/"><p class="d">Thu 10 Sep</p>
+        <h4>Movement that earns its place</h4>
+        <p>Motion that helps someone read &mdash; and nothing that makes them wait.</p></a>
+      <a class="day" href="week-07/day-27/"><p class="d">Fri 11 Sep</p>
+        <h4>The coherence pass, then ship</h4>
+        <p>Read it as a stranger, fix what does not hold, publish.</p></a>
+    </div>
+  </section>
+
+  <h2 class="sec">What you are aiming at</h2>
+  <div class="pair">
+    <a class="day" href="week-07/example/"><p class="d">The example</p>
+      <h4>Mr. Sharp&rsquo;s profile</h4>
+      <p>Built for this week so there is something to look at. Read the stylesheet &mdash; it is
+      commented, and it is the whole system in 90 lines.</p></a>
+    <a class="day" href="week-07/starters/"><p class="d">Your starter</p>
+      <h4>Your own words, carried over</h4>
+      <p>Everything from <i>This Is Me</i> is already in it. Not blank, not finished &mdash; the
+      gap between it and the example is the assignment.</p></a>
+  </div>
+
+  <h2 class="sec">The agent</h2>
+  <div class="note"><b>Five words: EXPLAIN, REVIEW, DEBUG, PAIR, SPEC.</b> Start a message with one
+  and the agent works that way for the reply &mdash; you are choosing how much of the thinking you
+  keep. The prompts and the full explanation are on
+  <a href="week-07/" style="color:var(--ala-red)">this week&rsquo;s page</a>, and the mode you used
+  goes at the end of every commit.</div>
+
+  <h2 class="sec">Getting the files</h2>
+  <div class="term"><div class="bar">Terminal &middot; in your Codespace</div>
+<pre><span class="c"># pull a week into your own repo — no clone, no history to untangle</span>
+npx degit coltonsharp-dev/ALA2627-ASD-Coursework/<span class="hl">app-design-2/week-07</span> profile
+cd profile</pre></div>
+
+  <footer>App Design 2 &middot; Mr. Sharp &middot; Room 703 &middot; American Leadership Academy, Vistancia<br>
+  Everything on these pages runs in your browser. Nothing you type here is sent anywhere.</footer>
+</div>
+</body>
+</html>
