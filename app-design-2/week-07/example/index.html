@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Colton Sharp — CTE Software &amp; Robotics</title>
+<meta name="description" content="CTE teacher at American Leadership Academy, Vistancia. Robotics, software and app design.">
+<link rel="stylesheet" href="styles.css">
+<!-- Opt in to the reveal only when scripting is available. Without this line the page hides
+     content it might never show. -->
+<script>document.documentElement.className += " js";</script>
+</head>
+<body>
+
+<header class="wrap">
+  <!-- The portrait is 400px for a slot that renders at 200 — twice the size, so it stays sharp
+       on a phone screen and no larger. The original was a 2 MB PNG; this is 23 KB. A photo that
+       makes someone wait is a photo working against you. -->
+  <img class="portrait" src="portrait.jpg" width="400" height="400" alt="Portrait of Colton Sharp"
+       loading="eager" decoding="async">
+  <p class="eyebrow">American Leadership Academy &middot; Vistancia</p>
+  <h1>Colton Sharp</h1>
+  <p class="tagline">I teach students to build software and robots that actually run &mdash; and
+  I build the tools they learn on.</p>
+</header>
+
+<main class="wrap">
+
+  <section class="rise">
+    <h2>What I do</h2>
+    <p>I teach five CTE courses in Room 703: JH Robotics, CTE Robotics I, App Design 1 and 2, and
+    JH Technology I. My students work the way working developers do &mdash; in their own GitHub
+    repositories, in Codespaces, publishing live pages from the first weeks of the year.</p>
+    <p>I build the coursework platform they use, because the curriculum for these pathways mostly
+    did not exist and a table of lesson titles is not a course.</p>
+  </section>
+
+  <section class="rise">
+    <h2>What I build</h2>
+    <div class="grid">
+      <div class="card"><h3>A coursework site</h3>
+        <p>Every lesson as its own page: what you are learning, the plan, the files, and something
+        to try before you build. Students pull each assignment into their own repo with one line.</p></div>
+      <div class="card"><h3>Week packs that can be taught from</h3>
+        <p>Forty-three of them. Lesson plans, whiteboard cards, vocabulary, student handouts and an
+        answer key &mdash; a week a substitute could walk in and run.</p></div>
+      <div class="card"><h3>Class pages for seven classrooms</h3>
+        <p>One page per classroom, each carrying the year, the current week, and every file that
+        goes with it.</p></div>
+    </div>
+  </section>
+
+  <section class="rise">
+    <h2>What I teach with</h2>
+    <div class="row"><span class="when">Software</span>
+      <span class="what"><b>HTML, CSS, JavaScript, Python</b>
+      <span>Students ship real pages, publicly, from week one.</span></span></div>
+    <div class="row"><span class="when">Tooling</span>
+      <span class="what"><b>Git, GitHub, Codespaces</b>
+      <span>Version control as a habit rather than a unit at the end of the year.</span></span></div>
+    <div class="row"><span class="when">Robotics</span>
+      <span class="what"><b>VEX IQ and VEX V5</b>
+      <span>Build, program, sense, compete &mdash; in that order, because it is the order it works in.</span></span></div>
+  </section>
+
+  <section class="rise">
+    <h2>Where I am headed</h2>
+    <div class="row"><span class="when">In progress</span>
+      <span class="what"><b>M.Ed., Mary Lou Fulton Teachers College</b>
+      <span>Arizona State University. Comparative and global education.</span></span></div>
+    <div class="row"><span class="when">This year</span>
+      <span class="what"><b>Every classroom fully built</b>
+      <span>Thirty-nine weeks per course, each one runnable rather than scaffolded.</span></span></div>
+  </section>
+
+  <section class="rise contact">
+    <h2>Get in touch</h2>
+    <p>Room 703 &middot; American Leadership Academy, Vistancia</p>
+    <p><a href="mailto:REPLACE-WITH-YOUR-ALA-ADDRESS@alaschools.org">Email me at school</a>
+       <a href="https://github.com/coltonsharp-dev">GitHub</a></p>
+  </section>
+
+</main>
+
+<footer class="wrap">Built by hand. Type set in four sizes, spacing in five values, one animation.</footer>
+
+<script>
+/* The reveal. IntersectionObserver rather than a scroll listener — the browser tells us when an
+   element arrives instead of us asking hundreds of times a second.
+   If someone has asked their system for reduced motion we do not observe at all: everything is
+   simply shown. The CSS handles it too, but doing it here as well means no work is even queued. */
+const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const items = document.querySelectorAll(".rise");
+if (reduce || !("IntersectionObserver" in window)) {
+  items.forEach(el => el.classList.add("in"));
+} else {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("in");
+      io.unobserve(e.target);          /* once it is in, stop watching it */
+    });
+  }, { rootMargin: "0px 0px -10% 0px" });
+  items.forEach(el => io.observe(el));
+}
+</script>
+</body>
+</html>
