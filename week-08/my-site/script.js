@@ -3,7 +3,7 @@
 
 // ─────────────── DAY 1 · Say hello ───────────────
 // TODO: make JavaScript print a message in the console.
-//       To see the console: right-click the preview page, choose Inspect, then Console.
+//       Your message shows in the Console panel at the bottom of your page.
 //       Remove the two slashes at the start of the next line, then save and reload.
 // console.log("script.js is connected");
 
