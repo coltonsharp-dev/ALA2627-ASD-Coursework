@@ -161,6 +161,10 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
 .devcon .ok{color:#e5e7eb}.devcon .ok::before{content:"› ";color:var(--ss-faint,#74809a)}
 .devcon .err{color:#fca5a5;background:rgba(244,63,94,.12);border-radius:5px;padding:0 .35rem}
 
+/* ── Bell work ──────────────────────────────────────────────────────────── */
+.bellq{margin:.2rem 0 0;padding-left:1.4rem;font-size:clamp(1rem,1.5vw,1.2rem);font-weight:600;line-height:1.45}
+.bellq li{margin:.35rem 0;padding-left:.25rem}
+
 /* ── Ask Copilot Chat ───────────────────────────────────────────────────── */
 .t-prompt pre.code{white-space:pre-wrap}
 .t-prompt .rules{margin:.7rem 0 0;padding-left:1.15rem;font-size:.88rem;color:var(--ss-mist,#9aabd0)}
@@ -182,6 +186,11 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
         <button class="b" data-open="m-files" type="button">Files &amp; terminal</button>
       </div>
     </section>
+    <section class="tl w4 t-bell" style="--acc:var(--ss-gold,#f5c842)">
+      <span class="k">Bell work — do this first</span>
+      <ol class="bellq"><li>A variable is like a ___ that holds a value.</li><li>If count is 3 and the code runs count = count + 1, what is count now?</li></ol>
+      <p class="hint">Answer in your notes. We go over them together before anything else.</p>
+    </section>
     <section class="tl lab w4" id="lab" data-lab="state">
       <span class="k">Try it</span>
       <div class="stage col">
@@ -202,7 +211,7 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
     </section>
     <section class="tl t-plan" style="--acc:var(--ss-peri,#818cf8)">
       <span class="k">Today's plan</span>
-      <ul class="plan"><li><span class="m">5m</span><span>Bell work. One question on the board.</span></li><li><span class="m">8m</span><span>Watch: a counter that remembers — one variable, one function, one click.</span></li><li><span class="m">7m</span><span>Together: pick the pattern that fits your feature — a counter, an on/off switch, or a list of messages.</span></li><li><span class="m">23m</span><span>You: build the feature from your contract in the Day 3 section of script.js.</span></li><li><span class="m">5m</span><span>Save point and exit: commit, push, and show your neighbour your feature on the live link.</span></li></ul>
+      <ul class="plan"><li><span class="m">5m</span><span>Bell work: answer the questions in the Bell work box at the top of this page, in your notes.</span></li><li><span class="m">8m</span><span>Watch: a counter that remembers — one variable, one function, one click.</span></li><li><span class="m">7m</span><span>Together: pick the pattern that fits your feature — a counter, an on/off switch, or a list of messages.</span></li><li><span class="m">23m</span><span>You: build the feature from your contract in the Day 3 section of script.js.</span></li><li><span class="m">5m</span><span>Save point and exit: commit, push, and show your neighbour your feature on the live link.</span></li></ul>
     </section>
     <section class="tl t-clo" style="--acc:var(--ss-gold,#f5c842)">
       <span class="k">Course outcome</span><p>I can make a web page respond to the person using it — a click, a change, a page that remembers.</p>
@@ -372,9 +381,17 @@ if (document.querySelector('[data-lab="console"]')) {
   document.getElementById("crun").addEventListener("click", function(){
     var msg = cin.value;
     if (state["quotes"] === "forgot") {
-      var word = (msg.split(" ")[0] || "message");
-      logLine("Uncaught ReferenceError: " + word + " is not defined", true);
-      axis.innerHTML = "Red. Without quotes JavaScript thinks <b>" + escH(word) + "</b> is the name of something, and nothing has that name. Quotes mean <b>this is text</b>.";
+      /* the real browser error, not a made-up one: one word is a name nobody defined;
+         several words are not even valid code, so the browser stops before running it */
+      var parts = msg.trim().split(" ").filter(function(w){ return w.length; });
+      if (parts.length > 1) {
+        logLine("Uncaught SyntaxError: missing ) after argument list", true);
+        axis.innerHTML = "Red. Without quotes, JavaScript reads <b>" + escH(parts[0]) + " " + escH(parts[1]) + "</b> as code, and that is not valid code &mdash; so nothing in the file runs. Quotes mean <b>this is text</b>.";
+      } else {
+        var word = parts[0] || "message";
+        logLine("Uncaught ReferenceError: " + word + " is not defined", true);
+        axis.innerHTML = "Red. Without quotes JavaScript thinks <b>" + escH(word) + "</b> is the name of something, and nothing has that name. Quotes mean <b>this is text</b>.";
+      }
     } else {
       logLine(msg, false);
       axis.innerHTML = "It printed. That is JavaScript talking back to you &mdash; every day this week starts here.";

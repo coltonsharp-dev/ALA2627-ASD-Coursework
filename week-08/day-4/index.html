@@ -161,6 +161,10 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
 .devcon .ok{color:#e5e7eb}.devcon .ok::before{content:"› ";color:var(--ss-faint,#74809a)}
 .devcon .err{color:#fca5a5;background:rgba(244,63,94,.12);border-radius:5px;padding:0 .35rem}
 
+/* ── Bell work ──────────────────────────────────────────────────────────── */
+.bellq{margin:.2rem 0 0;padding-left:1.4rem;font-size:clamp(1rem,1.5vw,1.2rem);font-weight:600;line-height:1.45}
+.bellq li{margin:.35rem 0;padding-left:.25rem}
+
 /* ── Ask Copilot Chat ───────────────────────────────────────────────────── */
 .t-prompt pre.code{white-space:pre-wrap}
 .t-prompt .rules{margin:.7rem 0 0;padding-left:1.15rem;font-size:.88rem;color:var(--ss-mist,#9aabd0)}
@@ -182,6 +186,11 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
         <button class="b" data-open="m-files" type="button">Files &amp; terminal</button>
       </div>
     </section>
+    <section class="tl w4 t-bell" style="--acc:var(--ss-gold,#f5c842)">
+      <span class="k">Bell work — do this first</span>
+      <ol class="bellq"><li>Name one thing on your site that a stranger would know was yours.</li><li>Why check the live link and not just the preview?</li></ol>
+      <p class="hint">Answer in your notes. We go over them together before anything else.</p>
+    </section>
     <section class="tl">
       <span class="k">You have met it when</span>
       <ul class="sc"><li><label><input type="checkbox" data-sc="0"><span>I made one upgrade and I can explain every line of it</span></label></li><li><label><input type="checkbox" data-sc="1"><span>My button has a hover state and a focus state</span></label></li><li><label><input type="checkbox" data-sc="2"><span>There is no starter text left anywhere on my page</span></label></li><li><label><input type="checkbox" data-sc="3"><span>My feature works on the live link, not just in the preview</span></label></li><li><label><input type="checkbox" data-sc="4"><span>I turned in my live link</span></label></li></ul>
@@ -189,7 +198,7 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
     </section>
     <section class="tl t-plan" style="--acc:var(--ss-peri,#818cf8)">
       <span class="k">Today's plan</span>
-      <ul class="plan"><li><span class="m">5m</span><span>Bell work. One question on the board.</span></li><li><span class="m">7m</span><span>Watch: one upgrade done properly — asked for well, then explained — and what a clone site looks like.</span></li><li><span class="m">23m</span><span>You: one upgrade, then the polish pass — hover, focus, spacing, and every last bit of starter text gone.</span></li><li><span class="m">8m</span><span>Check: swap with a neighbour. They open your live link and try your feature without you telling them how.</span></li><li><span class="m">5m</span><span>Turn in your live link.</span></li></ul>
+      <ul class="plan"><li><span class="m">5m</span><span>Bell work: answer the questions in the Bell work box at the top of this page, in your notes.</span></li><li><span class="m">7m</span><span>Watch: one upgrade done properly — asked for well, then explained — and what a clone site looks like.</span></li><li><span class="m">23m</span><span>You: one upgrade, then the polish pass — hover, focus, spacing, and every last bit of starter text gone.</span></li><li><span class="m">8m</span><span>Check: swap with a neighbour. They open your live link and try your feature without you telling them how.</span></li><li><span class="m">5m</span><span>Turn in your live link.</span></li></ul>
     </section>
     <section class="tl t-clo" style="--acc:var(--ss-gold,#f5c842)">
       <span class="k">Course outcome</span><p>I can make a web page respond to the person using it — a click, a change, a page that remembers.</p>
@@ -368,9 +377,17 @@ if (document.querySelector('[data-lab="console"]')) {
   document.getElementById("crun").addEventListener("click", function(){
     var msg = cin.value;
     if (state["quotes"] === "forgot") {
-      var word = (msg.split(" ")[0] || "message");
-      logLine("Uncaught ReferenceError: " + word + " is not defined", true);
-      axis.innerHTML = "Red. Without quotes JavaScript thinks <b>" + escH(word) + "</b> is the name of something, and nothing has that name. Quotes mean <b>this is text</b>.";
+      /* the real browser error, not a made-up one: one word is a name nobody defined;
+         several words are not even valid code, so the browser stops before running it */
+      var parts = msg.trim().split(" ").filter(function(w){ return w.length; });
+      if (parts.length > 1) {
+        logLine("Uncaught SyntaxError: missing ) after argument list", true);
+        axis.innerHTML = "Red. Without quotes, JavaScript reads <b>" + escH(parts[0]) + " " + escH(parts[1]) + "</b> as code, and that is not valid code &mdash; so nothing in the file runs. Quotes mean <b>this is text</b>.";
+      } else {
+        var word = parts[0] || "message";
+        logLine("Uncaught ReferenceError: " + word + " is not defined", true);
+        axis.innerHTML = "Red. Without quotes JavaScript thinks <b>" + escH(word) + "</b> is the name of something, and nothing has that name. Quotes mean <b>this is text</b>.";
+      }
     } else {
       logLine(msg, false);
       axis.innerHTML = "It printed. That is JavaScript talking back to you &mdash; every day this week starts here.";
