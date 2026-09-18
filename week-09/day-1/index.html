@@ -38,9 +38,11 @@ a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82re
   .bento > .t-plan, .bento > .t-clo{grid-column:span 6}}
 @media (min-width:1500px){.bento{grid-template-columns:repeat(8,minmax(0,1fr))}
   .bento > *{grid-column:span 2} .bento > .w1{grid-column:span 2} .bento > .w4{grid-column:span 8}
-  /* the lab keeps six columns and the criteria ride alongside it, so the widest
-     screen gains density rather than gaining empty space */
-  .bento > .lab{grid-column:span 6} .bento > .lab + *{grid-column:span 2}
+  /* The lab carries w4 and is full width at every size now, so it needs no special case.
+     The adjacent-sibling rule that used to sit beside it is gone: it was positional, so it
+     silently narrowed whatever tile happened to follow the lab — which after the reorder
+     was the success criteria, at 376px on a 1600px screen.
+     NOTE: this whole block lives inside a template literal. No backticks in here. */
   /* The plan and the course outcome are a pair: the list of what happens, and the one
      sentence it is all for. They share a row at every width above a phone, and the
      outcome is set as display type so it earns the height rather than padding it. */
@@ -78,6 +80,11 @@ a.b{display:inline-block;text-decoration:none}
 
 /* success criteria */
 .sc{list-style:none;margin:0;padding:0}
+/* Full width, so the criteria go two-up rather than running as one long column with a
+   screen of empty gradient beside them. Columns, not a grid, so a long criterion keeps
+   its neighbours' rhythm instead of forcing every row to its height. */
+@media (min-width:900px){.t-sc .sc{columns:2;column-gap:2.2rem}
+  .t-sc .sc li{break-inside:avoid}}
 .sc li{border-bottom:1px solid var(--ss-border,#2a3142)}
 .sc li:last-child{border-bottom:0}
 .sc label{display:flex;gap:.7rem;align-items:flex-start;padding:.62rem 0;cursor:pointer;font-size:1.02rem;line-height:1.5}
@@ -360,7 +367,7 @@ Give me the steps in order, in plain English. Do not write the code — I am typ
       <p class="axis" id="axis"></p>
       <p class="hint">This is your button, before you build it. Change what it does — the code under it is the code you are about to write. Then try all three events on it, because that is the choice your prompt is about to make you argue for: click waits to be pressed, dblclick needs two in a row, mouseenter fires the moment the pointer arrives and never waits for anything.</p>
     </section>
-    <section class="tl">
+    <section class="tl w4 t-sc">
       <span class="k">You have met it when</span>
       <ul class="sc"><li><label><input type="checkbox" data-sc="0"><span>I answered every question at the top of this page — the written ones in full sentences</span></label></li><li><label><input type="checkbox" data-sc="1"><span>My answers say what MY site does — a neighbour could not have written them</span></label></li><li><label><input type="checkbox" data-sc="2"><span>I used at least three words from this week's vocabulary in my prompt</span></label></li><li><label><input type="checkbox" data-sc="3"><span>I got back a plan I understand, and I typed the code myself</span></label></li><li><label><input type="checkbox" data-sc="4"><span>I read all three events on my own feature and chose one on purpose — I can say why it beat the other two</span></label></li><li><label><input type="checkbox" data-sc="5"><span>Using my button changes something I can see on the page</span></label></li><li><label><input type="checkbox" data-sc="6"><span>I turned in my live link on Canvas</span></label></li></ul>
       <div class="prog"><div class="bar"><i id="scbar"></i></div><b id="scnum">0/7</b></div>
