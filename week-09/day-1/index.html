@@ -188,13 +188,37 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
 .specq textarea.done{border-color:rgba(62,255,160,.45);background:rgba(62,255,160,.07)}
 .spec-note{margin:.85rem 0 0;font-size:.86rem;color:var(--ss-mist,#9aabd0)}
 
+/* Multiple choice. Pointed questions beat open ones for a spec — a student who cannot
+   describe what their button should change can still recognise it in a list of four. */
+.ch{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.ch button{cursor:pointer;font:inherit;font-size:.87rem;line-height:1.3;text-align:left;
+  padding:.5rem .7rem;border-radius:.55rem;color:var(--ss-mist,#9aabd0);
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04)}
+.ch button:hover{border-color:rgba(255,255,255,.34);color:var(--ss-bone,#e8ecf3)}
+.ch button[aria-pressed=true]{border-color:rgba(62,255,160,.55);background:rgba(62,255,160,.13);
+  color:var(--ss-bone,#e8ecf3);font-weight:600}
+
+/* Sliders, for the questions that are a number rather than a choice. The readout is the
+   point — a number they can see is a number they can put in the prompt. */
+.sl{display:flex;align-items:center;gap:.75rem;margin-top:.55rem}
+.sl input[type=range]{flex:1;accent-color:var(--ss-green,#3effa0);height:1.5rem}
+.sl .val{flex:none;min-width:3.4rem;text-align:center;font:700 1rem/1 var(--ss-mono,ui-monospace,monospace);
+  color:var(--ss-green,#3effa0);background:rgba(62,255,160,.12);border-radius:.45rem;padding:.45rem .3rem}
+.sl-ends{display:flex;justify-content:space-between;margin-top:.3rem;font-size:.76rem;
+  color:var(--ss-faint,#74809a)}
+
+/* Sync — the last thing on the page, and the only thing that reaches the outside world. */
+.t-sync ol{margin:.6rem 0 0;padding-left:1.25rem;font-size:.92rem;line-height:1.6}
+.t-sync ol li{margin:.4rem 0}
+.t-sync .why{margin:.8rem 0 0;font-size:.85rem;color:var(--ss-mist,#9aabd0)}
+
 /* ── Ask Copilot Chat ───────────────────────────────────────────────────── */
 .t-prompt pre.code{white-space:pre-wrap}
 .t-prompt .rules{margin:.7rem 0 0;padding-left:1.15rem;font-size:.88rem;color:var(--ss-mist,#9aabd0)}
 .t-prompt .rules li{margin:.2rem 0}
 /* An unfilled slot looks like a slot. A filled one looks like their own words —
    that contrast is the nudge to go back and finish the spec. */
-.fill{border-radius:.3rem;padding:0 .25rem;font-style:normal}
+.fill{border-radius:.3rem;padding:.05rem .15rem;margin:0 -.05rem;font-style:normal}
 .fill.empty{background:rgba(245,200,66,.18);color:var(--ss-gold,#f5c842);font-weight:600}
 .fill.set{background:rgba(62,255,160,.14);color:var(--ss-bone,#e8ecf3)}
 </style>
@@ -215,22 +239,18 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
       </div>
     </section>
     <section class="tl w4 t-bell" style="--acc:var(--ss-gold,#f5c842)">
-      <span class="k">Bell work — say what you want</span>
-      <p>Answer these three in the boxes, in full sentences. They are not for a notebook — they drop straight into your prompt further down this page.</p>
-      <ol class="specq"><li>
-        <div class="q">What is your site about, and who opens it?</div>
-        <textarea data-spec="1" rows="2" placeholder="Skateboarding, for someone picking their first board — not just &quot;skateboarding&quot;."
-          aria-label="Answer 1"></textarea>
-      </li><li>
-        <div class="q">Name one thing a visitor should be able to DO on it. A verb, not a noun.</div>
-        <textarea data-spec="2" rows="2" placeholder="Flip through my top five boards. Not &quot;look at it&quot; — that is reading, not doing."
-          aria-label="Answer 2"></textarea>
-      </li><li>
-        <div class="q">When they do it, what changes on the screen? Name the exact part, and what it becomes.</div>
-        <textarea data-spec="3" rows="2" placeholder="The heading changes to the next board's name and the picture swaps."
-          aria-label="Answer 3"></textarea>
-      </li></ol>
-      <p class="spec-note">Written once, used once. When all three boxes are green, scroll to the prompt: your words are already in it, and the Copy button sends the finished thing to the chat.</p>
+      <span class="k">Bell work — build your prompt</span>
+      <p>Answer these in the boxes and buttons below. Everything you pick appears in the prompt further down as you go — you are writing your prompt by answering, not by typing it.</p>
+      <ol class="specq"><li><div class="q">What is your site about, and who opens it?</div><textarea data-spec="1" rows="2" placeholder="Skateboarding, for someone picking their first board."
+            aria-label="Answer 1"></textarea></li><li><div class="q">What kind of site is it?</div><div class="ch" data-spec="2" role="group" aria-label="Answer 2"><button type="button" aria-pressed="false" data-v="a collection or list">a collection or list</button><button type="button" aria-pressed="false" data-v="a guide or how-to">a guide or how-to</button><button type="button" aria-pressed="false" data-v="a profile or portfolio">a profile or portfolio</button><button type="button" aria-pressed="false" data-v="a tracker or tool">a tracker or tool</button></div></li><li><div class="q">Name one thing a visitor should be able to DO on it. A verb, not a noun.</div><textarea data-spec="3" rows="2" placeholder="flip through my top five boards"
+            aria-label="Answer 3"></textarea></li><li><div class="q">When they do it, what changes?</div><div class="ch" data-spec="4" role="group" aria-label="Answer 4"><button type="button" aria-pressed="false" data-v="the words on the page">the words on the page</button><button type="button" aria-pressed="false" data-v="an image">an image</button><button type="button" aria-pressed="false" data-v="a section shows or hides">a section shows or hides</button><button type="button" aria-pressed="false" data-v="the colours">the colours</button></div></li><li><div class="q">Name the exact part that changes, and what it becomes.</div><textarea data-spec="5" rows="2" placeholder="the heading becomes the next board's name, and the picture under it swaps"
+            aria-label="Answer 5"></textarea></li><li><div class="q">How many different things should it cycle through?</div><div class="sl">
+              <input type="range" data-spec="6" min="2" max="10" value="5"
+                data-unit="" aria-label="Answer 6">
+              <span class="val" data-val-for="6">5</span>
+            </div>
+            <div class="sl-ends"><span>2 — just on and off</span><span>10 — a long list</span></div></li><li><div class="q">Where should the button sit?</div><div class="ch" data-spec="7" role="group" aria-label="Answer 7"><button type="button" aria-pressed="false" data-v="right under the heading">right under the heading</button><button type="button" aria-pressed="false" data-v="beside the thing it changes">beside the thing it changes</button><button type="button" aria-pressed="false" data-v="at the bottom of the page">at the bottom of the page</button></div></li></ol>
+      <p class="spec-note">When every answer is filled in, scroll to the prompt and press Copy. Do not highlight it by hand — the button takes the version with your answers already in it.</p>
     </section>
     <section class="tl lab w4" id="lab" data-lab="console">
       <span class="k">Try it</span>
@@ -262,17 +282,32 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
       <span class="k">Turning it in</span><p>Turn in your live link on Canvas — your github.io address with /week-09/my-site/ on the end. Commit and push first, then open it in a new tab and click your own button to check it works there. A link ending in github.dev is your private preview and nobody else can open it. You turn in the same link every day this week; only what it shows gets better.</p>
     </section>
     <section class="tl w4 t-prompt" style="--acc:var(--ss-violet,#a78bfa)">
-      <span class="k">Your prompt — built from your three answers</span>
-      <p>Your three answers are already in this prompt — they went in as you typed them, so there is nothing to copy across by hand. Press the Copy button, then paste it into the chat. The last line is the one that decides how useful this is: it names the technique using this week's words, and vague words get vague code.</p>
-      <div class="codewrap"><button class="cp" type="button">Copy</button><pre class="code">My site is about <span class="fill empty" data-fill="1">[ANSWER 1 — what your site is and who opens it]</span>.
-I want a visitor to be able to <span class="fill empty" data-fill="2">[ANSWER 2 — the one thing they should be able to DO]</span>.
-When they do it, <span class="fill empty" data-fill="3">[ANSWER 3 — exactly what changes on the screen]</span>.
+      <span class="k">Your prompt — built from your answers</span>
+      <p>Every answer above is already in this prompt. Press the Copy button, then paste it into the chat. Notice the first three lines: they tell it exactly which folder and which files you are working in, so it cannot go and edit the wrong site. Never delete those lines.</p>
+      <div class="codewrap"><button class="cp" type="button">Copy</button><pre class="code">I am working in the folder week-09/my-site in my coursework Codespace.
+The files I am editing are week-09/my-site/index.html and week-09/my-site/script.js.
+Do not suggest changes to any file outside week-09/my-site.
 
-I am building this with an event listener on a click, using querySelector to find the element by its id.
+My site is about <span class="fill empty" data-fill="1">[ANSWER 1 — what it is and who opens it]</span>. It is <span class="fill empty" data-fill="2">[ANSWER 2 — what kind of site]</span>.
+I want a visitor to be able to <span class="fill empty" data-fill="3">[ANSWER 3 — the thing they should be able to do]</span>.
+When they do it, <span class="fill empty" data-fill="4">[ANSWER 4 — what changes]</span> — specifically, <span class="fill empty" data-fill="5">[ANSWER 5 — the exact part and what it becomes]</span>.
+It should cycle through <span class="fill empty" data-fill="6">[ANSWER 6]</span> different things.
+The button should sit <span class="fill empty" data-fill="7">[ANSWER 7 — where it goes]</span>.
 
-Tell me: which element should carry the id, what the listener should change, and what to call it.
+I am adding this with an event listener on a click, using querySelector to find the element by its id.
+
+Tell me which element needs an id and what to name it, what the click listener should change,
+and what to call the variable that remembers which one I am on.
 Give me the steps in order, in plain English. Do not write the code — I am typing it myself.</pre></div>
-      <ul class="rules"><li>Still see [ANSWER 2] in the prompt? That box at the top is empty. Go up and fill it — a slot left unfilled gets you the same reply as everyone else in the room.</li><li>Use the Copy button, not highlight-and-copy. The button takes the version with your answers in it.</li><li>Use this week's words in the last line — event listener, element, id, click. Count them: three or more.</li><li>It plans, you type. If it gives you code anyway, read it, close it, and write your own.</li><li>Answer not useful? Do not start again — tell it what was wrong with the one you got. That is the whole skill.</li></ul>
+      <ul class="rules"><li>Still see [ANSWER 5] in the prompt? That question above is unanswered. Go back and fill it — an unfilled slot gets you the same reply as everyone else in the room.</li><li>Use the Copy button, not highlight-and-copy. The button takes the version with your answers in it.</li><li>Never delete the first three lines. They are what stop it editing the wrong folder.</li><li>It plans, you type. If it hands you finished code, read it, close it, and write your own — you will be asked to explain it.</li><li>Answer not useful? Do not start again — tell it what was wrong with the one you got. That is the whole skill.</li></ul>
+    </section>
+    <section class="tl w4 t-sync" style="--acc:var(--ss-green,#3effa0)">
+      <span class="k">Last — sync your work</span>
+      <p>Nothing you have done today leaves your Codespace until you do this. Five steps, same five every day.</p>
+      <ol><li>Save every file — Ctrl+S, or Cmd+S on a Mac.</li><li>Open Source Control on the left toolbar — the icon that looks like a branching line.</li><li>Look at the list of changed files. Everything in it should start with week-09/my-site. If something else is in there, ask before you commit.</li><li>Copy the message below and paste it into the message box at the top of that panel.</li><li>Press Commit, then Sync Changes. Then open your live link in a new tab and click your own button to check it works there.</li></ol>
+      <p style="margin:.9rem 0 0"><b>Your commit message — press Copy, then paste it into the message box:</b></p>
+      <div class="codewrap"><button class="cp" type="button">Copy</button><pre class="code">week-09 day-1 — added a button so a visitor can <span class="fill empty" data-fill="3">[ANSWER 3 — the thing they can do]</span></pre></div>
+      <p class="why">Keep the start of that message exactly as it is written. It is how I can see which day you are on without opening your work — and it is how you will find your own way back to today when something breaks on Thursday.</p>
     </section>
   </div>
   <footer>Your work stays on your machine. Nothing on this page sends anything anywhere.</footer>
@@ -330,33 +365,62 @@ scSync();
    the prompt mirrors it, so the copy button below sends the finished thing to the chat.
    Kept in localStorage per day so a reload mid-period does not lose the spec. */
 (function(){
-  var boxes = document.querySelectorAll("textarea[data-spec]");
-  if (!boxes.length) return;
   var KEY = "spec:" + location.pathname;
   var saved = {};
   try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { saved = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e) {} }
 
-  function paint(n, v){
-    var slot = document.querySelector('.fill[data-fill="' + n + '"]');
-    if (!slot) return;
-    var text = (v || "").trim();
-    if (text) { slot.textContent = text; slot.className = "fill set"; }
-    else { slot.textContent = slot.getAttribute("data-tpl"); slot.className = "fill empty"; }
-  }
+  // Every slot remembers its own placeholder so clearing an answer restores the prompt
+  // to a readable template rather than a blank gap.
   document.querySelectorAll(".fill[data-fill]").forEach(function(s){
     s.setAttribute("data-tpl", s.textContent);
   });
-  boxes.forEach(function(b){
+  // One answer can appear in more than one place — the prompt AND the commit message.
+  function paint(n, v){
+    var text = (v == null ? "" : String(v)).trim();
+    document.querySelectorAll('.fill[data-fill="' + n + '"]').forEach(function(slot){
+      if (text) { slot.textContent = text; slot.className = "fill set"; }
+      else { slot.textContent = slot.getAttribute("data-tpl"); slot.className = "fill empty"; }
+    });
+  }
+
+  document.querySelectorAll("textarea[data-spec]").forEach(function(b){
     var n = b.getAttribute("data-spec");
     if (saved[n]) { b.value = saved[n]; b.classList.add("done"); }
     paint(n, b.value);
     b.addEventListener("input", function(){
-      var v = b.value;
-      b.classList.toggle("done", !!v.trim());
-      paint(n, v);
-      saved[n] = v;
-      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e) {}
+      b.classList.toggle("done", !!b.value.trim());
+      saved[n] = b.value; paint(n, b.value); save();
     });
+  });
+
+  document.querySelectorAll('.ch[data-spec]').forEach(function(g){
+    var n = g.getAttribute("data-spec");
+    function pick(v){
+      g.querySelectorAll("button").forEach(function(x){
+        x.setAttribute("aria-pressed", String(x.getAttribute("data-v") === v));
+      });
+      saved[n] = v; paint(n, v); save();
+    }
+    if (saved[n]) pick(saved[n]); else paint(n, "");
+    g.querySelectorAll("button").forEach(function(x){
+      x.addEventListener("click", function(){ pick(x.getAttribute("data-v")); });
+    });
+  });
+
+  document.querySelectorAll('input[type=range][data-spec]').forEach(function(r){
+    var n = r.getAttribute("data-spec"), unit = r.getAttribute("data-unit") || "";
+    var out = document.querySelector('[data-val-for="' + n + '"]');
+    function show(){
+      if (out) out.textContent = r.value;
+      // A slider always has a value, so it is always "answered" — it goes into the prompt
+      // from the moment the page loads rather than waiting to be touched.
+      saved[n] = r.value + (unit ? " " + unit : "");
+      paint(n, saved[n]); save();
+    }
+    if (saved[n]) { var num = parseInt(saved[n], 10); if (!isNaN(num)) r.value = num; }
+    show();
+    r.addEventListener("input", show);
   });
 })();
 

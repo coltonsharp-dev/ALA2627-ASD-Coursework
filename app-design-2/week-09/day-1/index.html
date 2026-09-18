@@ -188,13 +188,37 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
 .specq textarea.done{border-color:rgba(62,255,160,.45);background:rgba(62,255,160,.07)}
 .spec-note{margin:.85rem 0 0;font-size:.86rem;color:var(--ss-mist,#9aabd0)}
 
+/* Multiple choice. Pointed questions beat open ones for a spec — a student who cannot
+   describe what their button should change can still recognise it in a list of four. */
+.ch{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.ch button{cursor:pointer;font:inherit;font-size:.87rem;line-height:1.3;text-align:left;
+  padding:.5rem .7rem;border-radius:.55rem;color:var(--ss-mist,#9aabd0);
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04)}
+.ch button:hover{border-color:rgba(255,255,255,.34);color:var(--ss-bone,#e8ecf3)}
+.ch button[aria-pressed=true]{border-color:rgba(62,255,160,.55);background:rgba(62,255,160,.13);
+  color:var(--ss-bone,#e8ecf3);font-weight:600}
+
+/* Sliders, for the questions that are a number rather than a choice. The readout is the
+   point — a number they can see is a number they can put in the prompt. */
+.sl{display:flex;align-items:center;gap:.75rem;margin-top:.55rem}
+.sl input[type=range]{flex:1;accent-color:var(--ss-green,#3effa0);height:1.5rem}
+.sl .val{flex:none;min-width:3.4rem;text-align:center;font:700 1rem/1 var(--ss-mono,ui-monospace,monospace);
+  color:var(--ss-green,#3effa0);background:rgba(62,255,160,.12);border-radius:.45rem;padding:.45rem .3rem}
+.sl-ends{display:flex;justify-content:space-between;margin-top:.3rem;font-size:.76rem;
+  color:var(--ss-faint,#74809a)}
+
+/* Sync — the last thing on the page, and the only thing that reaches the outside world. */
+.t-sync ol{margin:.6rem 0 0;padding-left:1.25rem;font-size:.92rem;line-height:1.6}
+.t-sync ol li{margin:.4rem 0}
+.t-sync .why{margin:.8rem 0 0;font-size:.85rem;color:var(--ss-mist,#9aabd0)}
+
 /* ── Ask Copilot Chat ───────────────────────────────────────────────────── */
 .t-prompt pre.code{white-space:pre-wrap}
 .t-prompt .rules{margin:.7rem 0 0;padding-left:1.15rem;font-size:.88rem;color:var(--ss-mist,#9aabd0)}
 .t-prompt .rules li{margin:.2rem 0}
 /* An unfilled slot looks like a slot. A filled one looks like their own words —
    that contrast is the nudge to go back and finish the spec. */
-.fill{border-radius:.3rem;padding:0 .25rem;font-style:normal}
+.fill{border-radius:.3rem;padding:.05rem .15rem;margin:0 -.05rem;font-style:normal}
 .fill.empty{background:rgba(245,200,66,.18);color:var(--ss-gold,#f5c842);font-weight:600}
 .fill.set{background:rgba(62,255,160,.14);color:var(--ss-bone,#e8ecf3)}
 </style>
@@ -215,22 +239,18 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
       </div>
     </section>
     <section class="tl w4 t-bell" style="--acc:var(--ss-gold,#f5c842)">
-      <span class="k">Bell work — say what you want</span>
-      <p>Answer these three in the boxes, in full sentences. They are not for a notebook — they drop straight into your prompt further down this page.</p>
-      <ol class="specq"><li>
-        <div class="q">What is your API for? What does the project it serves actually do?</div>
-        <textarea data-spec="1" rows="2" placeholder="A backend for my skatepark finder — it hands the page a list of parks near a city."
-          aria-label="Answer 1"></textarea>
-      </li><li>
-        <div class="q">Someone asks &quot;is your server working right now?&quot; — what one fact should /api/health tell them?</div>
-        <textarea data-spec="2" rows="2" placeholder="That the server is up and answering, and which version of my API is running."
-          aria-label="Answer 2"></textarea>
-      </li><li>
-        <div class="q">What should the JSON say? Name each key and what it holds.</div>
-        <textarea data-spec="3" rows="2" placeholder="status holds the word ok. service holds my API's name. version holds the number I am on."
-          aria-label="Answer 3"></textarea>
-      </li></ol>
-      <p class="spec-note">Written once, used once. When all three boxes are green, scroll to the prompt: your words are already in it, and the Copy button sends the finished thing to the chat.</p>
+      <span class="k">Bell work — build your prompt</span>
+      <p>Answer these in the boxes and buttons below. Everything you pick appears in the prompt further down as you go — you are writing your prompt by answering, not by typing it.</p>
+      <ol class="specq"><li><div class="q">What is your API for? What does the project it serves actually do?</div><textarea data-spec="1" rows="2" placeholder="a skatepark finder — the backend hands the page a list of parks near a city"
+            aria-label="Answer 1"></textarea></li><li><div class="q">What does your backend mainly serve?</div><div class="ch" data-spec="2" role="group" aria-label="Answer 2"><button type="button" aria-pressed="false" data-v="a list of things">a list of things</button><button type="button" aria-pressed="false" data-v="one profile or record">one profile or record</button><button type="button" aria-pressed="false" data-v="a calculator or tool">a calculator or tool</button><button type="button" aria-pressed="false" data-v="a log of events">a log of events</button></div></li><li><div class="q">Someone asks &quot;is your server working right now?&quot; — what one fact should /api/health confirm?</div><textarea data-spec="3" rows="2" placeholder="that the server is up and answering, and which version is running"
+            aria-label="Answer 3"></textarea></li><li><div class="q">What should the status key hold?</div><div class="ch" data-spec="4" role="group" aria-label="Answer 4"><button type="button" aria-pressed="false" data-v="the word ok">the word ok</button><button type="button" aria-pressed="false" data-v="the word healthy">the word healthy</button><button type="button" aria-pressed="false" data-v="true or false">true or false</button><button type="button" aria-pressed="false" data-v="a timestamp">a timestamp</button></div></li><li><div class="q">How many keys should your health JSON have?</div><div class="sl">
+              <input type="range" data-spec="5" min="2" max="6" value="3"
+                data-unit="keys" aria-label="Answer 5">
+              <span class="val" data-val-for="5">3</span>
+            </div>
+            <div class="sl-ends"><span>2 — the bare minimum</span><span>6 — a lot for a health check</span></div></li><li><div class="q">If the server is NOT healthy, what status code should it send?</div><div class="ch" data-spec="6" role="group" aria-label="Answer 6"><button type="button" aria-pressed="false" data-v="500 — something broke">500 — something broke</button><button type="button" aria-pressed="false" data-v="503 — up but not ready">503 — up but not ready</button><button type="button" aria-pressed="false" data-v="200 with a flag in the JSON">200 with a flag in the JSON</button></div></li><li><div class="q">Name your keys and what each one holds.</div><textarea data-spec="7" rows="2" placeholder="status holds ok. service holds my API's name. version holds the number I am on."
+            aria-label="Answer 7"></textarea></li></ol>
+      <p class="spec-note">When every answer is filled in, scroll to the prompt and press Copy. Do not highlight it by hand — the button takes the version with your answers already in it.</p>
     </section>
     <section class="tl">
       <span class="k">You have met it when</span>
@@ -248,17 +268,32 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
       <span class="k">Turning it in</span><p>Turn in your live link on Canvas — your forwarded address with /api/health on the end. Two things have to be true before it counts: the port has to be Public in the Ports panel, and your Codespace has to be running when I open it, so submit it before you close the tab. Commit and push as well. The link is what I check today; the code is what survives after the Codespace goes to sleep.</p>
     </section>
     <section class="tl w4 t-prompt" style="--acc:var(--ss-violet,#a78bfa)">
-      <span class="k">Your prompt — built from your three answers</span>
-      <p>Your three answers are already in this prompt — they went in as you typed them, so there is nothing to copy across by hand. Press the Copy button, then paste it into the chat. The line that decides how useful this is is the one naming the technique: it uses this week's words, and vague words get vague answers.</p>
-      <div class="codewrap"><button class="cp" type="button">Copy</button><pre class="code">I am building a backend for <span class="fill empty" data-fill="1">[ANSWER 1 — what your API is for]</span>.
-My /api/health route needs to tell someone <span class="fill empty" data-fill="2">[ANSWER 2 — the one fact it should confirm]</span>.
-The JSON it returns should have these keys: <span class="fill empty" data-fill="3">[ANSWER 3 — your keys and what each one holds]</span>.
+      <span class="k">Your prompt — built from your answers</span>
+      <p>Every answer above is already in this prompt. Press the Copy button, then paste it into the chat. Notice the first three lines: they say exactly which folder and which file you are working in, so it cannot go and edit the wrong server. Never delete those lines.</p>
+      <div class="codewrap"><button class="cp" type="button">Copy</button><pre class="code">I am working in the folder week-09/my-api in my coursework Codespace.
+The file I am editing is week-09/my-api/app.py.
+Do not suggest changes to any file outside week-09/my-api.
 
-I am writing a Flask GET route that returns jsonify with a 200 status code.
+I am building a Flask backend for <span class="fill empty" data-fill="1">[ANSWER 1 — what your API is for]</span>.
+It mainly serves <span class="fill empty" data-fill="2">[ANSWER 2 — what kind of data]</span>.
+My /api/health route needs to confirm <span class="fill empty" data-fill="3">[ANSWER 3 — the one fact]</span>.
+Its status key should hold <span class="fill empty" data-fill="4">[ANSWER 4 — what status holds]</span>.
+The JSON should have about <span class="fill empty" data-fill="5">[ANSWER 5]</span>, and they are: <span class="fill empty" data-fill="7">[ANSWER 7 — your keys and what each holds]</span>.
+If the server is not healthy it should answer <span class="fill empty" data-fill="6">[ANSWER 6 — the status code]</span>.
 
-Tell me what each key should hold, and which status code to send if the server is NOT healthy.
+I am writing a Flask GET route that returns jsonify with a 200 status code when all is well.
+
+Tell me what each key should hold and how to send a different status code when it is not healthy.
 Give me the steps in plain English. Do not write the route — I am typing it myself.</pre></div>
-      <ul class="rules"><li>Still see [ANSWER 2] in the prompt? That box at the top is empty. Go up and fill it — a slot left unfilled gets you the same reply as everyone else in the room.</li><li>Use the Copy button, not highlight-and-copy. The button takes the version with your answers in it.</li><li>Use this week's words — route, endpoint, GET, JSON, status code. Count them: three or more.</li><li>It plans, you type. If it hands you a finished route, read it, close it, and write your own — you will be asked to explain it.</li><li>Answer not useful? Do not start again — tell it what was wrong with the one you got. That is the whole skill.</li></ul>
+      <ul class="rules"><li>Still see [ANSWER 3] in the prompt? That question above is unanswered. Go back and fill it — an unfilled slot gets you the same reply as everyone else in the room.</li><li>Use the Copy button, not highlight-and-copy. The button takes the version with your answers in it.</li><li>Never delete the first three lines. They are what stop it editing the wrong folder.</li><li>It plans, you type. If it hands you a finished route, read it, close it, and write your own — you will be asked to explain it.</li><li>Answer not useful? Do not start again — tell it what was wrong with the one you got. That is the whole skill.</li></ul>
+    </section>
+    <section class="tl w4 t-sync" style="--acc:var(--ss-green,#3effa0)">
+      <span class="k">Last — sync your work</span>
+      <p>Nothing you have done today leaves your Codespace until you do this. Five steps, same five every day.</p>
+      <ol><li>Save every file — Ctrl+S, or Cmd+S on a Mac.</li><li>Open Source Control on the left toolbar — the icon that looks like a branching line.</li><li>Look at the list of changed files. Everything in it should start with week-09/my-api. If something else is in there, ask before you commit.</li><li>Copy the message below and paste it into the message box at the top of that panel.</li><li>Press Commit, then Sync Changes. Then open your forwarded link with /api/health on the end and check the JSON is really there.</li></ol>
+      <p style="margin:.9rem 0 0"><b>Your commit message — press Copy, then paste it into the message box:</b></p>
+      <div class="codewrap"><button class="cp" type="button">Copy</button><pre class="code">week-09 day-1 — added /api/health, returns <span class="fill empty" data-fill="5">[ANSWER 5]</span> and status <span class="fill empty" data-fill="4">[ANSWER 4]</span></pre></div>
+      <p class="why">Keep the start of that message exactly as it is written. It is how I can see which day you are on without opening your work — and it is how you will find your own way back to today when something breaks on Wednesday.</p>
     </section>
   </div>
   <footer>Your work stays on your machine. Nothing on this page sends anything anywhere.</footer>
@@ -316,33 +351,62 @@ scSync();
    the prompt mirrors it, so the copy button below sends the finished thing to the chat.
    Kept in localStorage per day so a reload mid-period does not lose the spec. */
 (function(){
-  var boxes = document.querySelectorAll("textarea[data-spec]");
-  if (!boxes.length) return;
   var KEY = "spec:" + location.pathname;
   var saved = {};
   try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { saved = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e) {} }
 
-  function paint(n, v){
-    var slot = document.querySelector('.fill[data-fill="' + n + '"]');
-    if (!slot) return;
-    var text = (v || "").trim();
-    if (text) { slot.textContent = text; slot.className = "fill set"; }
-    else { slot.textContent = slot.getAttribute("data-tpl"); slot.className = "fill empty"; }
-  }
+  // Every slot remembers its own placeholder so clearing an answer restores the prompt
+  // to a readable template rather than a blank gap.
   document.querySelectorAll(".fill[data-fill]").forEach(function(s){
     s.setAttribute("data-tpl", s.textContent);
   });
-  boxes.forEach(function(b){
+  // One answer can appear in more than one place — the prompt AND the commit message.
+  function paint(n, v){
+    var text = (v == null ? "" : String(v)).trim();
+    document.querySelectorAll('.fill[data-fill="' + n + '"]').forEach(function(slot){
+      if (text) { slot.textContent = text; slot.className = "fill set"; }
+      else { slot.textContent = slot.getAttribute("data-tpl"); slot.className = "fill empty"; }
+    });
+  }
+
+  document.querySelectorAll("textarea[data-spec]").forEach(function(b){
     var n = b.getAttribute("data-spec");
     if (saved[n]) { b.value = saved[n]; b.classList.add("done"); }
     paint(n, b.value);
     b.addEventListener("input", function(){
-      var v = b.value;
-      b.classList.toggle("done", !!v.trim());
-      paint(n, v);
-      saved[n] = v;
-      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e) {}
+      b.classList.toggle("done", !!b.value.trim());
+      saved[n] = b.value; paint(n, b.value); save();
     });
+  });
+
+  document.querySelectorAll('.ch[data-spec]').forEach(function(g){
+    var n = g.getAttribute("data-spec");
+    function pick(v){
+      g.querySelectorAll("button").forEach(function(x){
+        x.setAttribute("aria-pressed", String(x.getAttribute("data-v") === v));
+      });
+      saved[n] = v; paint(n, v); save();
+    }
+    if (saved[n]) pick(saved[n]); else paint(n, "");
+    g.querySelectorAll("button").forEach(function(x){
+      x.addEventListener("click", function(){ pick(x.getAttribute("data-v")); });
+    });
+  });
+
+  document.querySelectorAll('input[type=range][data-spec]').forEach(function(r){
+    var n = r.getAttribute("data-spec"), unit = r.getAttribute("data-unit") || "";
+    var out = document.querySelector('[data-val-for="' + n + '"]');
+    function show(){
+      if (out) out.textContent = r.value;
+      // A slider always has a value, so it is always "answered" — it goes into the prompt
+      // from the moment the page loads rather than waiting to be touched.
+      saved[n] = r.value + (unit ? " " + unit : "");
+      paint(n, saved[n]); save();
+    }
+    if (saved[n]) { var num = parseInt(saved[n], 10); if (!isNaN(num)) r.value = num; }
+    show();
+    r.addEventListener("input", show);
   });
 })();
 
