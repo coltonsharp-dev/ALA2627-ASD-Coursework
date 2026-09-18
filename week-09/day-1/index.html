@@ -207,6 +207,27 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
 .sl-ends{display:flex;justify-content:space-between;margin-top:.3rem;font-size:.76rem;
   color:var(--ss-faint,#74809a)}
 
+/* ── the request lab ─────────────────────────────────────────────────────────
+   A request going out and a response coming back, which is the one thing a
+   backend student on a locked-down Chromebook can never actually watch. */
+.reqline{font:700 .92rem/1.4 var(--ss-mono,ui-monospace,monospace);color:var(--ss-bone,#e8ecf3);
+  background:rgba(255,255,255,.05);border:1px solid var(--ss-border,#2a3142);
+  border-radius:9px;padding:.6rem .8rem}
+.resp{border:1px solid var(--ss-border,#2a3142);border-radius:9px;overflow:hidden}
+.resp .status{font:700 .88rem/1 var(--ss-mono,ui-monospace,monospace);padding:.6rem .8rem;
+  letter-spacing:.04em}
+.resp .status.ok{background:rgba(62,255,160,.16);color:var(--ss-green,#3effa0)}
+.resp .status.bad{background:rgba(255,93,93,.16);color:var(--ss-red,#ff5d5d)}
+.resp .status.warn{background:rgba(251,191,36,.16);color:var(--ss-amber,#fbbf24)}
+.resp .rbody{margin:0;padding:.7rem .8rem;background:rgba(0,0,0,.3);white-space:pre-wrap;
+  font:.85rem/1.55 var(--ss-mono,ui-monospace,monospace);color:var(--ss-mist,#9aabd0)}
+.termline{margin-top:.8rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline}
+.termline .tk{font:600 .66rem/1 var(--ss-mono,ui-monospace,monospace);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ss-faint,#74809a)}
+.termline code{flex:1;min-width:14rem;font:.78rem/1.5 var(--ss-mono,ui-monospace,monospace);
+  color:var(--ss-bone,#e8ecf3);background:rgba(0,0,0,.34);border-radius:7px;padding:.45rem .6rem;
+  overflow-x:auto}
+
 /* Sync — the last thing on the page, and the only thing that reaches the outside world. */
 .t-sync ol{margin:.6rem 0 0;padding-left:1.25rem;font-size:.92rem;line-height:1.6}
 .t-sync ol li{margin:.4rem 0}
@@ -252,28 +273,33 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
             <div class="sl-ends"><span>2 — just on and off</span><span>10 — a long list</span></div></li><li><div class="q">Where should the button sit?</div><div class="ch" data-spec="7" role="group" aria-label="Answer 7"><button type="button" aria-pressed="false" data-v="right under the heading">right under the heading</button><button type="button" aria-pressed="false" data-v="beside the thing it changes">beside the thing it changes</button><button type="button" aria-pressed="false" data-v="at the bottom of the page">at the bottom of the page</button></div></li></ol>
       <p class="spec-note">When every answer is filled in, scroll to the prompt and press Copy. Do not highlight it by hand — the button takes the version with your answers already in it.</p>
     </section>
-    <section class="tl lab w4" id="lab" data-lab="console">
-      <span class="k">Try it</span>
-      <div class="stage col"><div class="jsrow">
-        <input class="jsin" id="cin" type="text" value="Hello from my site" aria-label="Your message">
-        <button class="demo" id="crun" type="button">Run it</button>
-      </div></div>
-      <div class="ctrls"><div class="ctrl"><div class="cn">quotes</div><div class="seg" data-prop="quotes">
-      <button type="button" data-v="with" aria-pressed="true">with quotes</button><button type="button" data-v="forgot" aria-pressed="false">forgot the quotes</button>
-    </div></div></div>
+    <section class="tl lab w4" id="lab" data-lab="click">
+      <span class="k">Try it — this is what you are building</span>
+      <div class="stage col">
+        <button class="demo" id="cbtn" type="button">Click me</button>
+        <p class="val" id="ctext" style="font-size:1.05rem;margin:0">Nothing has happened yet.</p>
+      </div>
+      <div class="ctrls">
+        <div class="ctrl"><div class="cn">event</div><div class="seg" data-prop="event">
+      <button type="button" data-v="click" aria-pressed="true">click</button><button type="button" data-v="dblclick" aria-pressed="false">dblclick</button><button type="button" data-v="mouseenter" aria-pressed="false">mouseenter</button>
+    </div></div>
+        <div class="ctrl"><div class="cn">does</div><div class="seg" data-prop="does">
+      <button type="button" data-v="log" aria-pressed="false">log a message</button><button type="button" data-v="text" aria-pressed="true">change the text</button><button type="button" data-v="colour" aria-pressed="false">change the colour</button>
+    </div></div>
+      </div>
       <div class="readout" id="ro"></div>
       <div class="devcon" id="cout"><div class="hd">Console</div></div>
-      <p class="axis" id="axis">Press <b>Run it</b> and watch the console.</p>
-      <p class="hint">The three steps every interactive thing is built from — name the element, find it, say what happens on click. Run it, then change the id to one that is not on the page and watch what null looks like.</p>
+      <p class="axis" id="axis"></p>
+      <p class="hint">This is your button, before you build it. Leave it on click and change what it does — the code under it is the code you are about to write, and &quot;change the text&quot; is the one most of you picked upstairs. Then switch the event to mouseenter and see why click is the one you want.</p>
     </section>
     <section class="tl">
       <span class="k">You have met it when</span>
-      <ul class="sc"><li><label><input type="checkbox" data-sc="0"><span>I answered all three questions in the boxes at the top of this page, in full sentences</span></label></li><li><label><input type="checkbox" data-sc="1"><span>My answers say what MY site does — a neighbour could not have written them</span></label></li><li><label><input type="checkbox" data-sc="2"><span>I used at least three words from this week's vocabulary in my prompt</span></label></li><li><label><input type="checkbox" data-sc="3"><span>I got back a plan I understand, and I typed the code myself</span></label></li><li><label><input type="checkbox" data-sc="4"><span>Clicking my button changes something I can see on the page</span></label></li><li><label><input type="checkbox" data-sc="5"><span>I turned in my live link on Canvas</span></label></li></ul>
+      <ul class="sc"><li><label><input type="checkbox" data-sc="0"><span>I answered every question at the top of this page — the written ones in full sentences</span></label></li><li><label><input type="checkbox" data-sc="1"><span>My answers say what MY site does — a neighbour could not have written them</span></label></li><li><label><input type="checkbox" data-sc="2"><span>I used at least three words from this week's vocabulary in my prompt</span></label></li><li><label><input type="checkbox" data-sc="3"><span>I got back a plan I understand, and I typed the code myself</span></label></li><li><label><input type="checkbox" data-sc="4"><span>Clicking my button changes something I can see on the page</span></label></li><li><label><input type="checkbox" data-sc="5"><span>I turned in my live link on Canvas</span></label></li></ul>
       <div class="prog"><div class="bar"><i id="scbar"></i></div><b id="scnum">0/6</b></div>
     </section>
     <section class="tl t-plan" style="--acc:var(--ss-peri,#818cf8)">
       <span class="k">Today's plan</span>
-      <ul class="plan"><li><span class="m">6m</span><span>Bell work: type your answers into the three boxes at the top of this page. They build your prompt for you.</span></li><li><span class="m">5m</span><span>Get the week: everyone runs the one command together. This is the only pull this week.</span></li><li><span class="m">4m</span><span>Carry your site across: copy your Week 8 index.html and style.css into week-09/my-site.</span></li><li><span class="m">7m</span><span>Watch: the same question asked two ways — vague, then specific — and what comes back each time.</span></li><li><span class="m">19m</span><span>You: press Copy on your prompt, paste it into the chat, read the plan it gives you, then type the button yourself.</span></li><li><span class="m">4m</span><span>Save point: commit and push, open your live link and check it loads, then turn it in on Canvas.</span></li><li><span class="m">3m</span><span>Exit: read your neighbour's answer to question 2. Could you build it from what they wrote?</span></li></ul>
+      <ul class="plan"><li><span class="m">6m</span><span>Bell work: answer the seven questions at the top of this page. They build your prompt for you.</span></li><li><span class="m">5m</span><span>Get the week: everyone runs the one command together. This is the only pull this week.</span></li><li><span class="m">4m</span><span>Carry your site across: copy your Week 8 index.html and style.css into week-09/my-site.</span></li><li><span class="m">7m</span><span>Watch: the same question asked two ways — vague, then specific — and what comes back each time.</span></li><li><span class="m">19m</span><span>You: press Copy on your prompt, paste it into the chat, read the plan it gives you, then type the button yourself.</span></li><li><span class="m">4m</span><span>Save point: commit and push, open your live link and check it loads, then turn it in on Canvas.</span></li><li><span class="m">3m</span><span>Exit: read your neighbour's answer to question 2. Could you build it from what they wrote?</span></li></ul>
     </section>
     <section class="tl t-clo" style="--acc:var(--ss-gold,#f5c842)">
       <span class="k">Course outcome</span><p>I can make my page react to a click, decide what to do, repeat work without repeating myself, and show or hide what the person needs to see.</p>
@@ -314,7 +340,7 @@ Give me the steps in order, in plain English. Do not write the code — I am typ
 </div>
 
   <dialog id="m-read"><div class="sheet"><button class="x" data-close type="button">Close</button>
-    <h3>What am I learning?</h3><p>This week your site starts doing things. But before you build anything, you have to be able to say what you want — and that turns out to be the hard part.</p><p>Here is how today works. The three questions at the top of this page are your bell work, and you type your answers into the boxes underneath them — not in your notebook, and not in the chat. As you type, your words appear inside the prompt further down this page. You write them once and the prompt builds itself.</p><p>When all three boxes have gone green, scroll down to the prompt and press the Copy button on it. Do not highlight the text and copy it by hand — the button copies the finished version with your answers already in it, and hand-copying is how you end up sending the chat a prompt that still says ANSWER 2.</p><p>Then the thing worth learning: you get back exactly what you asked for. Ask for &quot;make my site better&quot; and you get something generic that fits anybody. Ask for &quot;a click event listener on my #next button that changes the heading text to the next item in my array&quot; and you get the thing you actually wanted — because every one of those words told it something.</p><p>That is why the vocabulary list matters this week. Those words are not there to be memorised for a quiz. They are the words that make you understood. The more of them you use correctly, the closer the answer lands to what is in your head.</p><p>Last rule, and it does not change all year: it plans, you type. You never paste code you cannot explain. You will be asked.</p><p>Your project has a console panel along the bottom of the page. School Chromebooks block the browser's own console, so that panel is where JavaScript talks to you — every console.log and every red error line shows up there.</p></div></dialog>
+    <h3>What am I learning?</h3><p>This week your site starts doing things. But before you build anything, you have to be able to say what you want — and that turns out to be the hard part.</p><p>Here is how today works. The seven questions at the top of this page are your bell work. Some you type, some you pick from a list, one is a slider — and none of them go in your notebook. As you answer them your choices appear inside the prompt further down this page. You answer once and the prompt builds itself.</p><p>When they are all answered, scroll down to the prompt and press the Copy button on it. Do not highlight the text and copy it by hand — the button copies the finished version with your answers already in it, and hand-copying is how you end up sending the chat a prompt that still says ANSWER 2.</p><p>Then the thing worth learning: you get back exactly what you asked for. Ask for &quot;make my site better&quot; and you get something generic that fits anybody. Ask for &quot;a click event listener on my #next button that changes the heading text to the next item in my array&quot; and you get the thing you actually wanted — because every one of those words told it something.</p><p>That is why the vocabulary list matters this week. Those words are not there to be memorised for a quiz. They are the words that make you understood. The more of them you use correctly, the closer the answer lands to what is in your head.</p><p>Last rule, and it does not change all year: it plans, you type. You never paste code you cannot explain. You will be asked.</p><p>Your project has a console panel along the bottom of the page. School Chromebooks block the browser's own console, so that panel is where JavaScript talks to you — every console.log and every red error line shows up there.</p></div></dialog>
 
   
 
@@ -541,6 +567,53 @@ if (document.querySelector('[data-lab="console"]')) {
       axis.innerHTML = "It printed. That is JavaScript talking back to you &mdash; every day this week starts here.";
     }
   });
+}
+
+if (document.querySelector('[data-lab="request"]')) {
+  // Three cases, and they are the three they will hit today in this order: the route that
+  // works, the path typed wrong, and the method the address bar cannot send. The terminal
+  // line is Flask's real log format, because reading it is today's success criterion.
+  var RQ = {
+    "GET /api/health": { code: 200, label: "200 OK", cls: "ok",
+      body: '{\n  "status": "ok",\n  "service": "my-api",\n  "version": "1.0"\n}',
+      why: "It worked. <b>200</b> means the server found the route and answered. The JSON is what your function returned." },
+    "GET /api/helth": { code: 404, label: "404 Not Found", cls: "bad",
+      body: "<!doctype html>\n<title>404 Not Found</title>\n<h1>Not Found</h1>",
+      why: "<b>404</b> means the server looked and has nothing at that path. Your route is fine &mdash; the <b>spelling</b> is wrong. Notice it answered with a web page, not JSON, because Flask wrote that page, not you." },
+    "GET /": { code: 200, label: "200 OK", cls: "ok",
+      body: "<!doctype html>\n<h1>My API</h1>",
+      why: "<b>200</b>, but look at the body &mdash; that is HTML, not JSON. A route can succeed and still send the wrong <b>kind</b> of thing." },
+    "POST /api/health": { code: 405, label: "405 Method Not Allowed", cls: "warn",
+      body: '{\n  "error": "The method is not allowed for the requested URL."\n}',
+      why: "<b>405</b> means the path exists but will not take a POST. Your route only accepts GET &mdash; and the address bar can only ever send a GET, which is why you will need <b>curl</b> on Wednesday." },
+    "POST /api/helth": { code: 404, label: "404 Not Found", cls: "bad",
+      body: "<!doctype html>\n<title>404 Not Found</title>\n<h1>Not Found</h1>",
+      why: "<b>404</b> beats 405 &mdash; if the path does not exist, the method never gets considered." },
+    "POST /": { code: 405, label: "405 Method Not Allowed", cls: "warn",
+      body: '{\n  "error": "The method is not allowed for the requested URL."\n}',
+      why: "<b>405</b>. The path exists but only answers GET." },
+  };
+  var rq = document.getElementById("reqline"), rs = document.getElementById("rstatus"),
+      rb = document.getElementById("rbody"), rl = document.getElementById("rlog"),
+      rax = document.getElementById("axis");
+  var stamp = function(){
+    var d = new Date();
+    var mm = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+    var p2 = function(n){ return (n < 10 ? "0" : "") + n; };
+    return p2(d.getDate()) + "/" + mm + "/" + d.getFullYear() + " " +
+           p2(d.getHours()) + ":" + p2(d.getMinutes()) + ":" + p2(d.getSeconds());
+  };
+  var rdo = function(){
+    var key = state["method"] + " " + state["path"];
+    var r = RQ[key] || RQ["GET /api/health"];
+    rq.textContent = key;
+    rs.textContent = r.label; rs.className = "status " + r.cls;
+    rb.textContent = r.body;
+    rax.innerHTML = r.why;
+    rl.textContent = '127.0.0.1 - - [' + stamp() + '] "' + key + ' HTTP/1.1" ' + r.code + ' -';
+  };
+  segWire(rdo);
+  rdo();
 }
 
 if (document.querySelector('[data-lab="click"]')) {
