@@ -10,7 +10,7 @@
   --copy-ico:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><rect x='9' y='9' width='11' height='11' rx='2'/><path d='M5 15V5a2 2 0 0 1 2-2h10'/></svg>")}
 *{box-sizing:border-box}
 body{margin:0;background:var(--ss-void,#0d1322);color:var(--ss-bone,#e8ecf3);
-  font:16px/1.6 var(--ss-body,"Inter",system-ui,sans-serif);padding:1.4rem 1rem 5rem}
+  font:17.5px/1.62 var(--ss-body,"Inter",system-ui,sans-serif);padding:1.4rem 1rem 5rem}
 .wrap{max-width:96rem;margin:0 auto}
 a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82rem/1 var(--ss-mono,ui-monospace,monospace);
   letter-spacing:.1em;text-transform:uppercase;margin:0 0 1rem}
@@ -20,6 +20,9 @@ a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82re
 .bento > *{grid-column:span 2}
 .bento > .w1{grid-column:span 1}
 .bento > .w4{grid-column:span 4}
+/* The course outcome is one sentence sitting next to a seven-row plan. Stretched to match
+   it, that is most of a screen of empty gradient — so it takes only the height it needs. */
+.bento > .t-clo{align-self:start}
 /* Height-matching only helps when the tiles in a row are already close. On a phone
    two tiles share a row and one of them is a five-item plan — stretched, its short
    neighbour grew 729px of empty gradient. Ragged is correct at this size. */
@@ -46,7 +49,7 @@ a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82re
 .tl::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
   background:radial-gradient(125% 85% at 12% 122%, var(--acc) 0%, transparent 66%);opacity:.30}
 .tl > *{position:relative;z-index:1}
-.k{display:block;font:600 .68rem/1 var(--ss-mono,ui-monospace,monospace);letter-spacing:.16em;
+.k{display:block;font:600 .76rem/1 var(--ss-mono,ui-monospace,monospace);letter-spacing:.15em;
   text-transform:uppercase;color:var(--acc);margin:0 0 .55rem}
 
 /* hero */
@@ -70,7 +73,7 @@ a.b{display:inline-block;text-decoration:none}
 .sc{list-style:none;margin:0;padding:0}
 .sc li{border-bottom:1px solid var(--ss-border,#2a3142)}
 .sc li:last-child{border-bottom:0}
-.sc label{display:flex;gap:.65rem;align-items:flex-start;padding:.55rem 0;cursor:pointer;font-size:.93rem}
+.sc label{display:flex;gap:.7rem;align-items:flex-start;padding:.62rem 0;cursor:pointer;font-size:1.02rem;line-height:1.5}
 .sc input{margin-top:.28rem;width:1.05rem;height:1.05rem;accent-color:var(--acc);flex:none}
 .sc input:checked + span{color:var(--ss-faint,#74809a);text-decoration:line-through}
 .prog{display:flex;align-items:center;gap:.6rem;margin-top:.7rem}
@@ -80,13 +83,13 @@ a.b{display:inline-block;text-decoration:none}
 
 /* plan */
 .plan{list-style:none;margin:0;padding:0}
-.plan li{display:flex;gap:.75rem;padding:.5rem 0;border-bottom:1px solid var(--ss-border,#2a3142);font-size:.92rem}
+.plan li{display:flex;gap:.8rem;padding:.62rem 0;border-bottom:1px solid var(--ss-border,#2a3142);font-size:1.02rem;line-height:1.55}
 .plan li:last-child{border-bottom:0}
-.plan .m{flex:none;width:3.2rem;font:700 .8rem/1.55 var(--ss-mono,ui-monospace,monospace);color:var(--acc)}
+.plan .m{flex:none;width:3.3rem;font:700 .88rem/1.62 var(--ss-mono,ui-monospace,monospace);color:var(--acc)}
 
 /* generic tile text */
-.tl p{margin:0 0 .7rem;font-size:.94rem}.tl p:last-child{margin:0}
-.tl .big{font-size:1.02rem;line-height:1.5}
+.tl p{margin:0 0 .75rem;font-size:1.02rem;line-height:1.62}.tl p:last-child{margin:0}
+.tl .big{font-size:1.1rem;line-height:1.55}
 
 /* ── the lab ────────────────────────────────────────────────────────────── */
 .lab{--acc:var(--ss-green,#3effa0)}
@@ -200,22 +203,22 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
    below, live, so the answer is written once and never transcribed. */
 .specq{list-style:none;margin:.5rem 0 0;padding:0;counter-reset:sq}
 .specq li{counter-increment:sq;margin:.9rem 0 0}
-.specq .q{display:flex;gap:.6rem;font-size:clamp(.98rem,1.4vw,1.12rem);font-weight:600;line-height:1.4}
+.specq .q{display:flex;gap:.65rem;font-size:clamp(1.08rem,1.5vw,1.24rem);font-weight:600;line-height:1.4}
 .specq .q::before{content:counter(sq);flex:none;width:1.45rem;height:1.45rem;border-radius:50%;
   display:grid;place-items:center;font-size:.8rem;font-weight:700;
   background:var(--ss-gold,#f5c842);color:#0d1322}
-.specq textarea{width:100%;margin-top:.45rem;min-height:3.1rem;resize:vertical;
-  font:inherit;font-size:.95rem;line-height:1.45;color:inherit;padding:.6rem .7rem;
+.specq textarea{width:100%;margin-top:.5rem;min-height:3.4rem;resize:vertical;
+  font:inherit;font-size:1.04rem;line-height:1.5;color:inherit;padding:.7rem .8rem;
   border-radius:.6rem;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
 .specq textarea:focus{outline:0;border-color:var(--ss-gold,#f5c842);background:rgba(255,255,255,.09)}
 .specq textarea.done{border-color:rgba(62,255,160,.45);background:rgba(62,255,160,.07)}
-.spec-note{margin:.85rem 0 0;font-size:.86rem;color:var(--ss-mist,#9aabd0)}
+.spec-note{margin:.95rem 0 0;font-size:.98rem;line-height:1.55;color:var(--ss-mist,#9aabd0)}
 
 /* Multiple choice. Pointed questions beat open ones for a spec — a student who cannot
    describe what their button should change can still recognise it in a list of four. */
 .ch{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
-.ch button{cursor:pointer;font:inherit;font-size:.87rem;line-height:1.3;text-align:left;
-  padding:.5rem .7rem;border-radius:.55rem;color:var(--ss-mist,#9aabd0);
+.ch button{cursor:pointer;font:inherit;font-size:.98rem;line-height:1.3;text-align:left;
+  padding:.6rem .85rem;border-radius:.55rem;color:var(--ss-mist,#9aabd0);
   border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04)}
 .ch button:hover{border-color:rgba(255,255,255,.34);color:var(--ss-bone,#e8ecf3)}
 .ch button[aria-pressed=true]{border-color:rgba(62,255,160,.55);background:rgba(62,255,160,.13);
@@ -225,9 +228,9 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
    point — a number they can see is a number they can put in the prompt. */
 .sl{display:flex;align-items:center;gap:.75rem;margin-top:.55rem}
 .sl input[type=range]{flex:1;accent-color:var(--ss-green,#3effa0);height:1.5rem}
-.sl .val{flex:none;min-width:3.4rem;text-align:center;font:700 1rem/1 var(--ss-mono,ui-monospace,monospace);
+.sl .val{flex:none;min-width:3.7rem;text-align:center;font:700 1.12rem/1 var(--ss-mono,ui-monospace,monospace);
   color:var(--ss-green,#3effa0);background:rgba(62,255,160,.12);border-radius:.45rem;padding:.45rem .3rem}
-.sl-ends{display:flex;justify-content:space-between;margin-top:.3rem;font-size:.76rem;
+.sl-ends{display:flex;justify-content:space-between;margin-top:.35rem;font-size:.86rem;
   color:var(--ss-faint,#74809a)}
 
 /* ── the request lab ─────────────────────────────────────────────────────────
@@ -252,14 +255,14 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
   overflow-x:auto}
 
 /* Sync — the last thing on the page, and the only thing that reaches the outside world. */
-.t-sync ol{margin:.6rem 0 0;padding-left:1.25rem;font-size:.92rem;line-height:1.6}
-.t-sync ol li{margin:.4rem 0}
-.t-sync .why{margin:.8rem 0 0;font-size:.85rem;color:var(--ss-mist,#9aabd0)}
+.t-sync ol{margin:.7rem 0 0;padding-left:1.3rem;font-size:1.02rem;line-height:1.65}
+.t-sync ol li{margin:.5rem 0}
+.t-sync .why{margin:.9rem 0 0;font-size:.97rem;line-height:1.58;color:var(--ss-mist,#9aabd0)}
 
 /* ── Ask Copilot Chat ───────────────────────────────────────────────────── */
 .t-prompt pre.code{white-space:pre-wrap}
-.t-prompt .rules{margin:.7rem 0 0;padding-left:1.15rem;font-size:.88rem;color:var(--ss-mist,#9aabd0)}
-.t-prompt .rules li{margin:.2rem 0}
+.t-prompt .rules{margin:.85rem 0 0;padding-left:1.2rem;font-size:.99rem;line-height:1.6;color:var(--ss-mist,#9aabd0)}
+.t-prompt .rules li{margin:.38rem 0}
 /* An unfilled slot looks like a slot. A filled one looks like their own words —
    that contrast is the nudge to go back and finish the spec. */
 .fill{border-radius:.3rem;padding:.05rem .15rem;margin:0 -.05rem;font-style:normal}
@@ -286,10 +289,8 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
       <span class="k">Today's plan</span>
       <ul class="plan"><li><span class="m">6m</span><span>Bell work: answer the eight questions at the top of this page. They build your prompt for you.</span></li><li><span class="m">5m</span><span>Get the week: everyone runs the one command together. This is the only pull this week.</span></li><li><span class="m">4m</span><span>Carry your site across: copy your Week 8 index.html and style.css into week-09/my-site.</span></li><li><span class="m">7m</span><span>Watch: the same question asked two ways — vague, then specific — and what comes back each time. Then: why the event you pick is a decision, not a default.</span></li><li><span class="m">19m</span><span>You: press Copy on your prompt, paste it into the chat, read the plan it gives you, then type the button yourself.</span></li><li><span class="m">4m</span><span>Save point: commit and push, open your live link and check it loads, then turn it in on Canvas.</span></li><li><span class="m">3m</span><span>Exit: read your neighbour's answer to question 2. Could you build it from what they wrote?</span></li></ul>
     </section>
-    <section class="tl">
-      <span class="k">You have met it when</span>
-      <ul class="sc"><li><label><input type="checkbox" data-sc="0"><span>I answered every question at the top of this page — the written ones in full sentences</span></label></li><li><label><input type="checkbox" data-sc="1"><span>My answers say what MY site does — a neighbour could not have written them</span></label></li><li><label><input type="checkbox" data-sc="2"><span>I used at least three words from this week's vocabulary in my prompt</span></label></li><li><label><input type="checkbox" data-sc="3"><span>I got back a plan I understand, and I typed the code myself</span></label></li><li><label><input type="checkbox" data-sc="4"><span>I read all three events on my own feature and chose one on purpose — I can say why it beat the other two</span></label></li><li><label><input type="checkbox" data-sc="5"><span>Using my button changes something I can see on the page</span></label></li><li><label><input type="checkbox" data-sc="6"><span>I turned in my live link on Canvas</span></label></li></ul>
-      <div class="prog"><div class="bar"><i id="scbar"></i></div><b id="scnum">0/7</b></div>
+    <section class="tl t-clo" style="--acc:var(--ss-gold,#f5c842)">
+      <span class="k">Course outcome</span><p>I can make my page react to a click, decide what to do, repeat work without repeating myself, and show or hide what the person needs to see.</p>
     </section>
     <section class="tl w4 t-bell" style="--acc:var(--ss-gold,#f5c842)">
       <span class="k">Bell work — build your prompt</span>
@@ -304,31 +305,6 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
             </div>
             <div class="sl-ends"><span>2 — just on and off</span><span>10 — a long list</span></div></li><li><div class="q">Where should the button sit?</div><div class="ch" data-spec="7" role="group" aria-label="Answer 7"><button type="button" aria-pressed="false" data-v="right under the heading">right under the heading</button><button type="button" aria-pressed="false" data-v="beside the thing it changes">beside the thing it changes</button><button type="button" aria-pressed="false" data-v="at the bottom of the page">at the bottom of the page</button></div></li><li><div class="q">Last one — which event do you think you need? Guess. The chat is going to show you all three and tell you if you were right.</div><div class="ch" data-spec="8" role="group" aria-label="Answer 8"><button type="button" aria-pressed="false" data-v="click">click</button><button type="button" aria-pressed="false" data-v="dblclick">dblclick</button><button type="button" aria-pressed="false" data-v="mouseenter">mouseenter</button></div></li></ol>
       <p class="spec-note">When every answer is filled in, scroll to the prompt and press Copy. Do not highlight it by hand — the button takes the version with your answers already in it.</p>
-    </section>
-    <section class="tl lab w4" id="lab" data-lab="click">
-      <span class="k">Try it — this is what you are building</span>
-      <div class="stage col">
-        <button class="demo" id="cbtn" type="button">Click me</button>
-        <p class="val" id="ctext" style="font-size:1.05rem;margin:0">Nothing has happened yet.</p>
-      </div>
-      <div class="ctrls">
-        <div class="ctrl"><div class="cn">event</div><div class="seg" data-prop="event">
-      <button type="button" data-v="click" aria-pressed="true">click</button><button type="button" data-v="dblclick" aria-pressed="false">dblclick</button><button type="button" data-v="mouseenter" aria-pressed="false">mouseenter</button>
-    </div></div>
-        <div class="ctrl"><div class="cn">does</div><div class="seg" data-prop="does">
-      <button type="button" data-v="log" aria-pressed="false">log a message</button><button type="button" data-v="text" aria-pressed="true">change the text</button><button type="button" data-v="colour" aria-pressed="false">change the colour</button>
-    </div></div>
-      </div>
-      <div class="readout" id="ro"></div>
-      <div class="devcon" id="cout"><div class="hd">Console</div></div>
-      <p class="axis" id="axis"></p>
-      <p class="hint">This is your button, before you build it. Change what it does — the code under it is the code you are about to write. Then try all three events on it, because that is the choice your prompt is about to make you argue for: click waits to be pressed, dblclick needs two in a row, mouseenter fires the moment the pointer arrives and never waits for anything.</p>
-    </section>
-    <section class="tl t-clo" style="--acc:var(--ss-gold,#f5c842)">
-      <span class="k">Course outcome</span><p>I can make my page react to a click, decide what to do, repeat work without repeating myself, and show or hide what the person needs to see.</p>
-    </section>
-    <section class="tl t-turn" style="--acc:var(--ss-rose,#f43f5e)">
-      <span class="k">Turning it in</span><p>Turn in your live link on Canvas — your github.io address with /week-09/my-site/ on the end. Commit and push first, then open it in a new tab and click your own button to check it works there. A link ending in github.dev is your private preview and nobody else can open it. You turn in the same link every day this week; only what it shows gets better.</p>
     </section>
     <section class="tl w4 t-prompt" style="--acc:var(--ss-violet,#a78bfa)">
       <span class="k">Your prompt — built from your answers</span>
@@ -354,6 +330,33 @@ After that: which element needs an id and what to name it, what the listener sho
 and what to call the variable that remembers which one I am on.
 Give me the steps in order, in plain English. Do not write the code — I am typing it myself.</pre></div>
       <ul class="rules"><li>Still see [ANSWER 5] in the prompt? That question above is unanswered. Go back and fill it — an unfilled slot gets you the same reply as everyone else in the room.</li><li>Use the Copy button, not highlight-and-copy. The button takes the version with your answers in it.</li><li>Never delete the first three lines. They are what stop it editing the wrong folder.</li><li>Read all three events before you build. If it only shows you the one you guessed, ask again for the other two — you are choosing, not confirming.</li><li>It plans, you type. If it hands you finished code, read it, close it, and write your own — you will be asked to explain it.</li><li>Answer not useful? Do not start again — tell it what was wrong with the one you got. That is the whole skill.</li></ul>
+    </section>
+    <section class="tl t-turn" style="--acc:var(--ss-rose,#f43f5e)">
+      <span class="k">Turning it in</span><p>Turn in your live link on Canvas — your github.io address with /week-09/my-site/ on the end. Commit and push first, then open it in a new tab and click your own button to check it works there. A link ending in github.dev is your private preview and nobody else can open it. You turn in the same link every day this week; only what it shows gets better.</p>
+    </section>
+    <section class="tl lab w4" id="lab" data-lab="click">
+      <span class="k">Try it — this is what you are building</span>
+      <div class="stage col">
+        <button class="demo" id="cbtn" type="button">Click me</button>
+        <p class="val" id="ctext" style="font-size:1.05rem;margin:0">Nothing has happened yet.</p>
+      </div>
+      <div class="ctrls">
+        <div class="ctrl"><div class="cn">event</div><div class="seg" data-prop="event">
+      <button type="button" data-v="click" aria-pressed="true">click</button><button type="button" data-v="dblclick" aria-pressed="false">dblclick</button><button type="button" data-v="mouseenter" aria-pressed="false">mouseenter</button>
+    </div></div>
+        <div class="ctrl"><div class="cn">does</div><div class="seg" data-prop="does">
+      <button type="button" data-v="log" aria-pressed="false">log a message</button><button type="button" data-v="text" aria-pressed="true">change the text</button><button type="button" data-v="colour" aria-pressed="false">change the colour</button>
+    </div></div>
+      </div>
+      <div class="readout" id="ro"></div>
+      <div class="devcon" id="cout"><div class="hd">Console</div></div>
+      <p class="axis" id="axis"></p>
+      <p class="hint">This is your button, before you build it. Change what it does — the code under it is the code you are about to write. Then try all three events on it, because that is the choice your prompt is about to make you argue for: click waits to be pressed, dblclick needs two in a row, mouseenter fires the moment the pointer arrives and never waits for anything.</p>
+    </section>
+    <section class="tl">
+      <span class="k">You have met it when</span>
+      <ul class="sc"><li><label><input type="checkbox" data-sc="0"><span>I answered every question at the top of this page — the written ones in full sentences</span></label></li><li><label><input type="checkbox" data-sc="1"><span>My answers say what MY site does — a neighbour could not have written them</span></label></li><li><label><input type="checkbox" data-sc="2"><span>I used at least three words from this week's vocabulary in my prompt</span></label></li><li><label><input type="checkbox" data-sc="3"><span>I got back a plan I understand, and I typed the code myself</span></label></li><li><label><input type="checkbox" data-sc="4"><span>I read all three events on my own feature and chose one on purpose — I can say why it beat the other two</span></label></li><li><label><input type="checkbox" data-sc="5"><span>Using my button changes something I can see on the page</span></label></li><li><label><input type="checkbox" data-sc="6"><span>I turned in my live link on Canvas</span></label></li></ul>
+      <div class="prog"><div class="bar"><i id="scbar"></i></div><b id="scnum">0/7</b></div>
     </section>
     <section class="tl w4 t-sync" style="--acc:var(--ss-green,#3effa0)">
       <span class="k">Last — sync your work</span>
