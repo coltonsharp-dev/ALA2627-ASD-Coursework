@@ -113,6 +113,23 @@ a.b{display:inline-block;text-decoration:none}
    distinction that costs a grade when it is skimmed. */
 .tl.t-turn p{font-size:clamp(1.2rem,1.6vw,1.45rem);line-height:1.55;color:var(--ss-bone,#e8ecf3)}
 
+/* Paste a repo link, get the exact address to submit. Students lose marks handing in a
+   repo root, a github.dev preview or a link with the week folder missing — all three are
+   the same mistake, and none of them is one they can see. */
+.submit{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--ss-border,#2a3142)}
+.submit label{display:block;font:600 .8rem/1.4 var(--ss-mono,ui-monospace,monospace);
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ss-faint,#74809a);margin-bottom:.5rem}
+.submit input{width:100%;font:inherit;font-size:1.02rem;color:inherit;padding:.75rem .85rem;
+  border-radius:.6rem;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05)}
+.submit input:focus{outline:0;border-color:var(--acc);background:rgba(255,255,255,.09)}
+.submit input.ok{border-color:rgba(62,255,160,.5);background:rgba(62,255,160,.07)}
+.submit input.bad{border-color:rgba(255,93,93,.55);background:rgba(255,93,93,.07)}
+.submit-warn{margin:.55rem 0 0;font-size:.95rem;line-height:1.5;color:var(--ss-red,#ff5d5d)}
+.submit-warn[hidden]{display:none}
+.submit-note{margin:.7rem 0 0;font-size:.95rem;line-height:1.55;color:var(--ss-mist,#9aabd0)}
+.submit .codewrap{margin-top:.8rem}
+.submit pre.code{font-size:1rem}
+
 /* generic tile text */
 .tl p{margin:0 0 .75rem;font-size:1.02rem;line-height:1.62}.tl p:last-child{margin:0}
 .tl .big{font-size:1.1rem;line-height:1.55}
@@ -359,6 +376,15 @@ Give me the steps in order, in plain English. Do not write the code — I am typ
     </section>
     <section class="tl w4 t-turn" style="--acc:var(--ss-rose,#f43f5e)">
       <span class="k">Turning it in</span><p>Turn in your live link on Canvas — your github.io address with /week-09/my-site/ on the end. Commit and push first, then open it in a new tab and click your own button to check it works there. A link ending in github.dev is your private preview and nobody else can open it. You turn in the same link every day this week; only what it shows gets better.</p>
+      <div class="submit">
+        <label for="repoin">Paste your repository link — the page works out the rest</label>
+        <input id="repoin" type="url" spellcheck="false" autocomplete="off"
+          data-repo data-path="week-09/my-site/"
+          placeholder="https://github.com/your-name/ALA2627-ASD-Coursework">
+        <p class="submit-warn" id="repowarn" hidden></p>
+        <div class="codewrap big"><button class="cp" type="button">Copy your turn-in link</button><pre class="code" id="turnurl">week-09/my-site/</pre></div>
+        <p class="submit-note">Check it before you submit: open that link in a new tab and click your own button. If it 404s you have not pushed yet, or the page has not finished building — wait a minute and reload before you ask.</p>
+      </div>
     </section>
     <section class="tl lab w4" id="lab" data-lab="click">
       <span class="k">Try it — this is what you are building</span>
@@ -505,6 +531,52 @@ scSync();
     show();
     r.addEventListener("input", show);
   });
+})();
+
+/* ---- turn-in link builder ----
+   They paste whatever they have — the repo page, the clone URL, the Pages root — and the
+   page produces the one address that actually gets marked. Handling all three forms is the
+   point: a student who hands in github.com/... has done the work and lost the marks, and
+   that is not a lesson about anything.
+   Kept in localStorage under a shared key, so it is pasted once in the week and every other
+   day already knows it. */
+(function(){
+  var input = document.querySelector("input[data-repo]");
+  if (!input) return;
+  var out = document.getElementById("turnurl"), warn = document.getElementById("repowarn");
+  var path = (input.getAttribute("data-path") || "").replace(/^\/+/, "");
+  var KEY = "repo:base";
+
+  function build(raw){
+    var v = (raw || "").trim().replace(/\s+/g, "");
+    if (!v) return { url: path, state: "" };
+    v = v.replace(/\.git$/, "").replace(/\/+$/, "");
+    var m;
+    // github.com/USER/REPO  — the tab they are most likely to be looking at
+    if ((m = v.match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([^\/]+)\/([^\/]+)/i)))
+      return { url: "https://" + m[1].toLowerCase() + ".github.io/" + m[2] + "/" + path, state: "ok" };
+    // USER.github.io/REPO — already the right host
+    if ((m = v.match(/^(?:https?:\/\/)?([^.\/]+)\.github\.io(?:\/([^\/]+))?/i)))
+      return { url: "https://" + m[1].toLowerCase() + ".github.io" + (m[2] ? "/" + m[2] : "") + "/" + path, state: "ok" };
+    // anything ending in github.dev is the private preview and will not open for anyone else
+    if (/github\.dev/i.test(v))
+      return { url: path, state: "bad",
+        msg: "That is a github.dev link — your private preview. Nobody else can open it, so it cannot be turned in. Use your repository link or your github.io address." };
+    return { url: path, state: "bad",
+      msg: "That does not look like a GitHub link yet. Paste your repository page, or your github.io address." };
+  }
+
+  function render(){
+    var r = build(input.value);
+    out.textContent = r.url;
+    input.classList.toggle("ok", r.state === "ok");
+    input.classList.toggle("bad", r.state === "bad");
+    if (r.msg) { warn.textContent = r.msg; warn.hidden = false; } else { warn.hidden = true; }
+    if (r.state === "ok") { try { localStorage.setItem(KEY, input.value.trim()); } catch(e) {} }
+  }
+  try { var saved = localStorage.getItem(KEY); if (saved) input.value = saved; } catch(e) {}
+  render();
+  input.addEventListener("input", render);
 })();
 
 /* copy buttons */
