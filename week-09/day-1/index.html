@@ -20,25 +20,32 @@ a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82re
 .bento > *{grid-column:span 2}
 .bento > .w1{grid-column:span 1}
 .bento > .w4{grid-column:span 4}
-/* The course outcome is one sentence sitting next to a seven-row plan. Stretched to match
-   it, that is most of a screen of empty gradient — so it takes only the height it needs. */
-.bento > .t-clo{align-self:start}
+/* The course outcome matches the plan's height on purpose and the sentence is set as
+   display type to earn it. It is the one thing on the page a student should be able to
+   read from the back of the room, and it is what every other tile is in service of. */
+.t-clo{justify-content:center}
+.tl.t-clo p{font-family:var(--ss-display,"Syne",system-ui,sans-serif);
+  font-size:clamp(1.35rem,2.1vw,2rem);font-weight:700;line-height:1.24;
+  letter-spacing:-.018em;color:var(--ss-bone,#e8ecf3)}
 /* Height-matching only helps when the tiles in a row are already close. On a phone
    two tiles share a row and one of them is a five-item plan — stretched, its short
    neighbour grew 729px of empty gradient. Ragged is correct at this size. */
 @media (max-width:760px){.bento{grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;align-items:start}
-  .bento > *{grid-column:span 3} .bento > .w1{grid-column:span 3} .bento > .w4{grid-column:span 6}}
+  .bento > *{grid-column:span 3} .bento > .w1{grid-column:span 3} .bento > .w4{grid-column:span 6}
+  /* At half of a 390px screen the plan is a 190px column and runs to 2,300px tall — seven
+     rows of prose wrapping every three words. Both of these are reading, not glancing, so
+     they take the full width on a phone. */
+  .bento > .t-plan, .bento > .t-clo{grid-column:span 6}}
 @media (min-width:1500px){.bento{grid-template-columns:repeat(8,minmax(0,1fr))}
   .bento > *{grid-column:span 2} .bento > .w1{grid-column:span 2} .bento > .w4{grid-column:span 8}
   /* the lab keeps six columns and the criteria ride alongside it, so the widest
      screen gains density rather than gaining empty space */
   .bento > .lab{grid-column:span 6} .bento > .lab + *{grid-column:span 2}
-  /* The plan is five rows of prose next to two tiles of three lines each. Stretched
-     into one row the short pair inflate into dead space, which looks worse than the
-     raggedness it was fixing. So the plan takes a narrow column two rows tall and the
-     other two stack beside it — the row fills, nothing is padded out to match. */
-  .bento > .t-plan{grid-column:span 3;grid-row:span 2}
-  .bento > .t-clo, .bento > .t-turn{grid-column:span 5}}
+  /* The plan and the course outcome are a pair: the list of what happens, and the one
+     sentence it is all for. They share a row at every width above a phone, and the
+     outcome is set as display type so it earns the height rather than padding it. */
+  .bento > .t-plan{grid-column:span 5}
+  .bento > .t-clo{grid-column:span 3}}
 
 /* ── the tile ───────────────────────────────────────────────────────────── */
 .tl{position:relative;overflow:hidden;border-radius:18px;padding:14px 15px 15px;display:flex;flex-direction:column;
