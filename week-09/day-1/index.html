@@ -23,8 +23,15 @@ a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82re
 /* The course outcome matches the plan's height on purpose and the sentence is set as
    display type to earn it. It is the one thing on the page a student should be able to
    read from the back of the room, and it is what every other tile is in service of. */
-.t-clo{justify-content:center}
-.tl.t-clo p{font-family:var(--ss-display,"Syne",system-ui,sans-serif);
+/* justify-content on the tile centred EVERY child, which pushed the section label into
+   the middle with the sentence. The label belongs in the corner like every other tile's,
+   so only the paragraph centres itself — auto margins take the leftover space above and
+   below it and leave .k where it was. */
+/* .bento on the front is not decoration: .tl.t-clo p ties with .tl p:last-child on
+   specificity and loses on source order, so margin-block:auto was being dropped and the
+   sentence sat at the top. Three classes beats two. */
+.bento .tl.t-clo p{margin-block:auto;
+  font-family:var(--ss-display,"Syne",system-ui,sans-serif);
   font-size:clamp(1.35rem,2.1vw,2rem);font-weight:700;line-height:1.24;
   letter-spacing:-.018em;color:var(--ss-bone,#e8ecf3)}
 /* Height-matching only helps when the tiles in a row are already close. On a phone
