@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Week 9 — Your first backend | App &amp; Software Design</title>
+<meta name="description" content="Week 9: Your first backend. 5 days, one project.">
+<link rel="stylesheet" href="../../assets/ala.css">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:var(--ss-void);color:var(--ss-bone);font:16px/1.65 var(--ss-body);padding:0 0 5rem}
+.wrap{max-width:64rem;margin:0 auto;padding:0 1.15rem}
+a.back{display:inline-block;margin:1.3rem 0 0;font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.2em;font-size:.7rem;color:var(--ala-red);text-decoration:none}
+a.back:hover{text-decoration:underline}
+.mast{position:relative;overflow:hidden;border-bottom:3px solid var(--ala-red);background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.012));padding:1.6rem 0 2.2rem;margin:0 0 2rem}
+.mast .wrap{position:relative;z-index:1}
+.wk{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.28em;font-size:.7rem;color:var(--ala-red);margin:1.1rem 0 .55rem}
+h1{font-family:var(--ss-display);text-transform:uppercase;font-weight:500;font-size:clamp(1.9rem,5.6vw,3.4rem);line-height:1;letter-spacing:.02em;margin:0 0 .5rem}
+.lede{font-family:'Aleo',Georgia,serif;color:var(--ala-steel);margin:0;max-width:42rem;font-size:clamp(1rem,1.8vw,1.2rem)}
+h2.sec{font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.24em;font-size:.74rem;color:var(--ala-steel-dim);margin:2.2rem 0 1rem;display:flex;align-items:center;gap:.9rem}
+h2.sec::after{content:"";flex:1;height:1px;background:var(--ala-navy-athletic)}
+.days{display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:11px}
+a.day{display:block;text-decoration:none;color:inherit;border:1px solid var(--ala-navy-athletic);border-left:3px solid var(--ala-red);border-radius:14px;padding:1rem 1.1rem 1.1rem;background:rgba(255,255,255,.022);transition:border-color .16s,transform .16s,background .16s}
+a.day:hover{transform:translateY(-2px);background:rgba(212,0,41,.06);border-color:var(--ala-red)}
+a.day .d{font-family:var(--ss-mono);font-size:.7rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ala-red);font-weight:700;margin:0 0 .4rem}
+a.day h3{font-size:1.06rem;margin:0 0 .3rem;line-height:1.25}
+a.day p{margin:0;font-size:.88rem;color:var(--ala-steel-dim)}
+a.day .go{display:block;margin-top:.7rem;font-family:var(--ss-display);text-transform:uppercase;letter-spacing:.14em;font-size:.66rem;color:var(--ala-silver)}
+.term{border:1px solid var(--ala-navy-athletic);border-radius:14px;overflow:hidden;margin:0 0 1rem;position:relative}
+.term .bar{background:rgba(255,255,255,.04);padding:.55rem .95rem;font-family:var(--ss-mono);font-size:.71rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ala-steel-dim);border-bottom:1px solid var(--ala-navy-athletic)}
+.term pre{margin:0;padding:1rem 1.1rem;background:#050D1B;overflow-x:auto;font:.85rem/1.7 var(--ss-mono);color:var(--ala-paper)}
+.term .c{color:var(--ala-steel-dim)}.term .hl{color:var(--ala-red);font-weight:700}
+.term .cp{position:absolute;top:.4rem;right:.5rem;cursor:pointer;border:1px solid var(--ala-navy-athletic);background:#0b1830;color:var(--ala-silver);font:600 .68rem/1 var(--ss-mono);letter-spacing:.08em;text-transform:uppercase;padding:.4rem .6rem;border-radius:6px}
+.note{border:1px solid var(--ala-navy-athletic);border-left:3px solid var(--ala-silver);border-radius:13px;padding:1rem 1.15rem;color:var(--ala-steel);font-size:.94rem;margin:0 0 1rem}
+.note b{color:var(--ala-paper)}
+footer{margin-top:2.6rem;padding-top:1.1rem;border-top:1px solid var(--ala-navy-athletic);color:var(--ala-steel-dim);font-size:.83rem}
+</style>
+</head>
+<body>
+<header class="mast"><div class="wrap">
+<a class="back" href="../">&larr; All coursework</a>
+<p class="wk">Week 9 &middot; 21–25 September</p>
+<h1>Your first backend</h1>
+<p class="lede">Before anything else today: the three questions at the top of this page are your bell work, and you type your answers into the boxes underneath them — not in a notebook, and not in the chat. As you type, your words appear inside the prompt further down this page, so you write them once. When all three boxes have gone green, press the Copy button on the prompt rather than highlighting it by hand — the button takes the finished version with your answers already in it.
+
+Your server already answers. This week it starts answering questions, and by Friday it answers badly-asked ones properly too.
+
+Today you add the route every real backend has. A health check does one job: something asks whether the server is up, and the server says yes in the fewest words possible. No page, no design, no data — a small piece of JSON and a 200. Every company you will ever work for has this route, and it is usually the first one written and the last one deleted.
+
+You have two ways to see what your server is doing, and neither of them is the browser console — school Chromebooks block it. The first is the terminal you started the server in. Every request that arrives prints a line there: the method, the path and the status code it answered with. GET /api/health with a 200 on the end means it worked. The same line with a 404 means your server looked for that path and had nothing at it. Read that line before you touch anything else; it usually names the problem.
+
+The second is a browser tab. Your Codespace forwards your server to a real web address — it is in the Ports panel, next to the terminal, and it ends in app.github.dev. Open it, put /api/health on the end, and your JSON is on the screen. That address starts out Private, which means it only opens for you. In the Ports panel, right-click your port and set Port Visibility to Public, or the link you turn in shows me a sign-in page instead of your work.</p>
+</div></header>
+<div class="wrap">
+
+<h2 class="sec">Get the whole week &mdash; once</h2>
+<div class="term"><div class="bar">Terminal &middot; in your Codespace &middot; Monday only</div>
+<button class="cp" type="button" data-copy="npx degit coltonsharp-dev/ALA2627-ASD-Coursework/week-09 week-09
+cd week-09/my-site
+python -m http.server 8000">Copy</button>
+<pre><span class="c"># the whole week in one go &mdash; all 5 days and your project</span>
+npx degit coltonsharp-dev/ALA2627-ASD-Coursework/week-09 week-09
+cd week-09/my-site
+python -m http.server 8000</pre></div>
+<div class="note">The whole week comes down in one go — all five days and the server you build in. Run this once, on Monday, in the terminal at the bottom of your Codespace.</div>
+
+<h2 class="sec">The five days</h2>
+<div class="days">
+<a class="day" href="day-1/">
+<p class="d">Mon 21 Sep &middot; Day 1</p>
+<h3>Prove the server is alive: /api/health</h3>
+<p>Add a route to my Flask server that answers with JSON and a 200, and prove it by opening its address in a browser tab.</p>
+<span class="go">Open the day &rarr;</span></a>
+<a class="day" href="day-2/">
+<p class="d">Tue 22 Sep &middot; Day 2</p>
+<h3>Build: /api/about returns your bio JSON</h3>
+<p>Build a route that returns my own information as nested JSON, and check every key and value by reading the whole response.</p>
+<span class="go">Open the day &rarr;</span></a>
+<a class="day" href="day-3/">
+<p class="d">Wed 23 Sep &middot; Day 3</p>
+<h3>POST routes and the body of a request</h3>
+<p>Write a route that accepts POST, read the JSON body that was sent to it, and test it from the terminal.</p>
+<span class="go">Open the day &rarr;</span></a>
+<a class="day" href="day-4/">
+<p class="d">Thu 24 Sep &middot; Day 4</p>
+<h3>Build: /api/echo sends back what you sent</h3>
+<p>Build a POST route that sends back the data it was given, plus one thing of my own, and prove it is reading the body and not repeating a hard-coded answer.</p>
+<span class="go">Open the day &rarr;</span></a>
+<a class="day" href="day-5/">
+<p class="d">Fri 25 Sep &middot; Day 5</p>
+<h3>Whose fault was it? 400 against 500</h3>
+<p>Tell the caller's mistake apart from my server's mistake, and answer each one with the right status code and a message that says what to do about it.</p>
+<span class="go">Open the day &rarr;</span></a>
+</div>
+
+<h2 class="sec">Turning it in</h2>
+<div class="note">This is the week's turn-in. On Canvas, submit your live link with the four paths listed in the comment box: /api/health, /api/about, and your two POST routes. Port Public and Codespace running, because I open every one of them. Commit and push before you submit — the link shows me it runs, the push is the work. If your Codespace has stopped by the time I get to it, the push is what I grade, so do not skip it.</div>
+
+<footer>App &amp; Software Design &middot; Week 9 &middot; Unit 03 — Your first backend</footer>
+</div>
+<script>
+document.querySelectorAll(".cp").forEach(b => b.addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText(b.dataset.copy); const t = b.textContent;
+        b.textContent = "Copied"; setTimeout(() => b.textContent = t, 1400); } catch (e) {}
+}));
+</script>
+</body>
+</html>
