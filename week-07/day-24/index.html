@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Lay out your page with flexbox — App Design 1</title>
 <meta name="color-scheme" content="dark">
-<link rel="stylesheet" href="../../assets/ala.css">
 <style>
-:root{--acc:var(--ss-cyan,#00e5ff)}
+:root{--acc:var(--ss-cyan,#00e5ff);
+  --copy-ico:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><rect x='9' y='9' width='11' height='11' rx='2'/><path d='M5 15V5a2 2 0 0 1 2-2h10'/></svg>")}
 *{box-sizing:border-box}
 body{margin:0;background:var(--ss-void,#0d1322);color:var(--ss-bone,#e8ecf3);
-  font:16px/1.6 var(--ss-body,"Inter",system-ui,sans-serif);padding:1.4rem 1rem 5rem}
+  font:17.5px/1.62 var(--ss-body,"Inter",system-ui,sans-serif);padding:1.4rem 1rem 5rem}
 .wrap{max-width:96rem;margin:0 auto}
 a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82rem/1 var(--ss-mono,ui-monospace,monospace);
   letter-spacing:.1em;text-transform:uppercase;margin:0 0 1rem}
@@ -20,22 +20,41 @@ a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82re
 .bento > *{grid-column:span 2}
 .bento > .w1{grid-column:span 1}
 .bento > .w4{grid-column:span 4}
+/* The course outcome matches the plan's height on purpose and the sentence is set as
+   display type to earn it. It is the one thing on the page a student should be able to
+   read from the back of the room, and it is what every other tile is in service of. */
+/* justify-content on the tile centred EVERY child, which pushed the section label into
+   the middle with the sentence. The label belongs in the corner like every other tile's,
+   so only the paragraph centres itself — auto margins take the leftover space above and
+   below it and leave .k where it was. */
+/* .bento on the front is not decoration: .tl.t-clo p ties with .tl p:last-child on
+   specificity and loses on source order, so margin-block:auto was being dropped and the
+   sentence sat at the top. Three classes beats two. */
+.bento .tl.t-clo p{margin-block:auto;
+  font-family:var(--ss-display,"Syne",system-ui,sans-serif);
+  font-size:clamp(1.35rem,2.1vw,2rem);font-weight:700;line-height:1.24;
+  letter-spacing:-.018em;color:var(--ss-bone,#e8ecf3)}
 /* Height-matching only helps when the tiles in a row are already close. On a phone
    two tiles share a row and one of them is a five-item plan — stretched, its short
    neighbour grew 729px of empty gradient. Ragged is correct at this size. */
 @media (max-width:760px){.bento{grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;align-items:start}
-  .bento > *{grid-column:span 3} .bento > .w1{grid-column:span 3} .bento > .w4{grid-column:span 6}}
+  .bento > *{grid-column:span 3} .bento > .w1{grid-column:span 3} .bento > .w4{grid-column:span 6}
+  /* At half of a 390px screen the plan is a 190px column and runs to 2,300px tall — seven
+     rows of prose wrapping every three words. Both of these are reading, not glancing, so
+     they take the full width on a phone. */
+  .bento > .t-plan, .bento > .t-clo{grid-column:span 6}}
 @media (min-width:1500px){.bento{grid-template-columns:repeat(8,minmax(0,1fr))}
   .bento > *{grid-column:span 2} .bento > .w1{grid-column:span 2} .bento > .w4{grid-column:span 8}
-  /* the lab keeps six columns and the criteria ride alongside it, so the widest
-     screen gains density rather than gaining empty space */
-  .bento > .lab{grid-column:span 6} .bento > .lab + *{grid-column:span 2}
-  /* The plan is five rows of prose next to two tiles of three lines each. Stretched
-     into one row the short pair inflate into dead space, which looks worse than the
-     raggedness it was fixing. So the plan takes a narrow column two rows tall and the
-     other two stack beside it — the row fills, nothing is padded out to match. */
-  .bento > .t-plan{grid-column:span 3;grid-row:span 2}
-  .bento > .t-clo, .bento > .t-turn{grid-column:span 5}}
+  /* The lab carries w4 and is full width at every size now, so it needs no special case.
+     The adjacent-sibling rule that used to sit beside it is gone: it was positional, so it
+     silently narrowed whatever tile happened to follow the lab — which after the reorder
+     was the success criteria, at 376px on a 1600px screen.
+     NOTE: this whole block lives inside a template literal. No backticks in here. */
+  /* The plan and the course outcome are a pair: the list of what happens, and the one
+     sentence it is all for. They share a row at every width above a phone, and the
+     outcome is set as display type so it earns the height rather than padding it. */
+  .bento > .t-plan{grid-column:span 5}
+  .bento > .t-clo{grid-column:span 3}}
 
 /* ── the tile ───────────────────────────────────────────────────────────── */
 .tl{position:relative;overflow:hidden;border-radius:18px;padding:14px 15px 15px;display:flex;flex-direction:column;
@@ -46,7 +65,7 @@ a.back{display:inline-block;color:var(--acc);text-decoration:none;font:600 .82re
 .tl::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
   background:radial-gradient(125% 85% at 12% 122%, var(--acc) 0%, transparent 66%);opacity:.30}
 .tl > *{position:relative;z-index:1}
-.k{display:block;font:600 .68rem/1 var(--ss-mono,ui-monospace,monospace);letter-spacing:.16em;
+.k{display:block;font:600 .76rem/1 var(--ss-mono,ui-monospace,monospace);letter-spacing:.15em;
   text-transform:uppercase;color:var(--acc);margin:0 0 .55rem}
 
 /* hero */
@@ -68,9 +87,14 @@ a.b{display:inline-block;text-decoration:none}
 
 /* success criteria */
 .sc{list-style:none;margin:0;padding:0}
+/* Full width, so the criteria go two-up rather than running as one long column with a
+   screen of empty gradient beside them. Columns, not a grid, so a long criterion keeps
+   its neighbours' rhythm instead of forcing every row to its height. */
+@media (min-width:900px){.t-sc .sc{columns:2;column-gap:2.2rem}
+  .t-sc .sc li{break-inside:avoid}}
 .sc li{border-bottom:1px solid var(--ss-border,#2a3142)}
 .sc li:last-child{border-bottom:0}
-.sc label{display:flex;gap:.65rem;align-items:flex-start;padding:.55rem 0;cursor:pointer;font-size:.93rem}
+.sc label{display:flex;gap:.7rem;align-items:flex-start;padding:.62rem 0;cursor:pointer;font-size:1.02rem;line-height:1.5}
 .sc input{margin-top:.28rem;width:1.05rem;height:1.05rem;accent-color:var(--acc);flex:none}
 .sc input:checked + span{color:var(--ss-faint,#74809a);text-decoration:line-through}
 .prog{display:flex;align-items:center;gap:.6rem;margin-top:.7rem}
@@ -80,13 +104,35 @@ a.b{display:inline-block;text-decoration:none}
 
 /* plan */
 .plan{list-style:none;margin:0;padding:0}
-.plan li{display:flex;gap:.75rem;padding:.5rem 0;border-bottom:1px solid var(--ss-border,#2a3142);font-size:.92rem}
+.plan li{display:flex;gap:.8rem;padding:.62rem 0;border-bottom:1px solid var(--ss-border,#2a3142);font-size:1.02rem;line-height:1.55}
 .plan li:last-child{border-bottom:0}
-.plan .m{flex:none;width:3.2rem;font:700 .8rem/1.55 var(--ss-mono,ui-monospace,monospace);color:var(--acc)}
+.plan .m{flex:none;width:3.3rem;font:700 .88rem/1.62 var(--ss-mono,ui-monospace,monospace);color:var(--acc)}
+
+/* Turning it in — full width, and set larger than body prose. It is the paragraph that
+   decides whether the day counted, and it carries the github.io against github.dev
+   distinction that costs a grade when it is skimmed. */
+.tl.t-turn p{font-size:clamp(1.2rem,1.6vw,1.45rem);line-height:1.55;color:var(--ss-bone,#e8ecf3)}
+
+/* Paste a repo link, get the exact address to submit. Students lose marks handing in a
+   repo root, a github.dev preview or a link with the week folder missing — all three are
+   the same mistake, and none of them is one they can see. */
+.submit{margin-top:1.1rem;padding-top:1rem;border-top:1px solid var(--ss-border,#2a3142)}
+.submit label{display:block;font:600 .8rem/1.4 var(--ss-mono,ui-monospace,monospace);
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ss-faint,#74809a);margin-bottom:.5rem}
+.submit input{width:100%;font:inherit;font-size:1.02rem;color:inherit;padding:.75rem .85rem;
+  border-radius:.6rem;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05)}
+.submit input:focus{outline:0;border-color:var(--acc);background:rgba(255,255,255,.09)}
+.submit input.ok{border-color:rgba(62,255,160,.5);background:rgba(62,255,160,.07)}
+.submit input.bad{border-color:rgba(255,93,93,.55);background:rgba(255,93,93,.07)}
+.submit-warn{margin:.55rem 0 0;font-size:.95rem;line-height:1.5;color:var(--ss-red,#ff5d5d)}
+.submit-warn[hidden]{display:none}
+.submit-note{margin:.7rem 0 0;font-size:.95rem;line-height:1.55;color:var(--ss-mist,#9aabd0)}
+.submit .codewrap{margin-top:.8rem}
+.submit pre.code{font-size:1rem}
 
 /* generic tile text */
-.tl p{margin:0 0 .7rem;font-size:.94rem}.tl p:last-child{margin:0}
-.tl .big{font-size:1.02rem;line-height:1.5}
+.tl p{margin:0 0 .75rem;font-size:1.02rem;line-height:1.62}.tl p:last-child{margin:0}
+.tl .big{font-size:1.1rem;line-height:1.55}
 
 /* ── the lab ────────────────────────────────────────────────────────────── */
 .lab{--acc:var(--ss-green,#3effa0)}
@@ -125,10 +171,39 @@ pre.code{background:#0b0f18;border:1px solid var(--ss-border,#2a3142);border-rad
   overflow-x:auto;font:.84rem/1.7 var(--ss-mono,ui-monospace,monospace);color:#e5e7eb;margin:.5rem 0;position:relative}
 pre.code b{color:var(--ss-peri,#818cf8);font-weight:400}
 .codewrap{position:relative}
-.codewrap .cp{position:absolute;top:.55rem;right:.55rem;cursor:pointer;border:1px solid #3b4252;background:#1c2230;
+/* z-index and the pre's right padding are both load-bearing. Without them the <pre>
+   paints over the button and swallows the click — the button looked fine, hovered
+   fine, and did nothing, on every day page since these were introduced. Caught by
+   clicking it in a real browser rather than by reading it. */
+.codewrap .cp{position:absolute;top:.55rem;right:.55rem;z-index:2;cursor:pointer;
+  border:1px solid #3b4252;background:#1c2230;
   color:var(--ss-peri,#818cf8);font:600 .72rem/1 var(--ss-mono,ui-monospace,monospace);letter-spacing:.06em;
   text-transform:uppercase;padding:.42rem .65rem;border-radius:6px}
+.codewrap .cp:hover{border-color:var(--ss-peri,#818cf8)}
 .codewrap .cp.ok{background:#064e3b;border-color:#10b981;color:#6ee7b7}
+.codewrap pre.code{padding-right:5.5rem}
+
+/* The two blocks that exist to be copied — the prompt and the commit message — get a real
+   button instead of a grey pill in a corner. A student who highlights and copies by hand
+   ships a prompt still saying ANSWER 2, so this is the one control on the page that cannot
+   afford to be subtle. column-reverse puts it under the code without moving the button
+   after the <pre> in the markup, which would break the copy handler's lookup. */
+.codewrap.big{display:flex;flex-direction:column-reverse}
+.codewrap.big pre.code{padding-right:.8rem}
+.codewrap.big .cp{position:static;margin-top:.7rem;width:100%;
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.85rem 1rem;border-radius:11px;
+  font:700 .95rem/1 var(--ss-body,"Inter",system-ui,sans-serif);
+  letter-spacing:.01em;text-transform:none;
+  background:var(--acc);border-color:var(--acc);color:var(--ss-void,#0d1322);
+  box-shadow:0 6px 20px -10px var(--acc);transition:filter .15s,transform .1s}
+.codewrap.big .cp::before{content:"";width:1.05rem;height:1.05rem;flex:none;
+  background:currentColor;
+  -webkit-mask:var(--copy-ico) center/contain no-repeat;
+  mask:var(--copy-ico) center/contain no-repeat}
+.codewrap.big .cp:hover{filter:brightness(1.1)}
+.codewrap.big .cp:active{transform:translateY(1px)}
+.codewrap.big .cp.ok{background:#10b981;border-color:#10b981;color:#052e21}
 .files{list-style:none;margin:.5rem 0 0;padding:0}
 .files li{padding:.5rem 0;border-top:1px solid var(--ss-border,#2a3142)}
 .files a{color:var(--acc);font:600 .9rem/1.5 var(--ss-mono,ui-monospace,monospace);text-decoration:none}
@@ -141,6 +216,101 @@ pre.code b{color:var(--ss-peri,#818cf8);font-weight:400}
 .who input:focus{outline:none;border-color:var(--acc)}
 .hint{color:var(--ss-faint,#74809a);font-size:.85rem;margin:.6rem 0 0}
 footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-size:.82rem}
+
+/* ── JavaScript labs ────────────────────────────────────────────────────────
+   A JavaScript day has no box to push around; what it has is a console that talks back.
+   So these labs carry a small console, styled like the real one, and every lab's readout
+   is the exact code the student would type into script.js. */
+.lab .jsrow{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;width:100%}
+.lab .jsin{flex:1;min-width:10rem;padding:.65rem .8rem;border-radius:9px;border:1px solid var(--ss-border,#2a3142);
+  background:rgba(0,0,0,.35);color:var(--ss-bone,#e8ecf3);font:.95rem var(--ss-mono,ui-monospace,monospace)}
+.lab .jsin:focus{outline:none;border-color:var(--acc)}
+.lab .demo{font:700 .95rem/1 inherit;background:var(--acc);color:#0d1322;border:2px solid var(--acc);
+  border-radius:10px;padding:.75rem 1.2rem;cursor:pointer;transition:filter .15s,transform .1s}
+.lab .demo:hover{filter:brightness(1.12)}.lab .demo:active{transform:translateY(2px)}
+.lab .demo:focus-visible{outline:none;box-shadow:0 0 0 4px rgba(255,255,255,.35)}
+.lab .val{font:700 clamp(1.3rem,3vw,2.1rem)/1.15 var(--ss-display,system-ui,sans-serif);color:var(--ss-bone,#e8ecf3)}
+.lab .stage.col{flex-direction:column;align-items:flex-start;justify-content:center;gap:.8rem;height:auto;min-height:150px}
+.devcon{margin-top:.8rem;background:#050810;border:1px solid var(--ss-border,#2a3142);border-radius:10px;
+  min-height:4.6rem;max-height:9rem;overflow:auto;padding:.5rem .75rem;font:.8rem/1.6 var(--ss-mono,ui-monospace,monospace)}
+.devcon .hd{color:var(--ss-faint,#74809a);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.25rem}
+.devcon .ok{color:#e5e7eb}.devcon .ok::before{content:"› ";color:var(--ss-faint,#74809a)}
+.devcon .err{color:#fca5a5;background:rgba(244,63,94,.12);border-radius:5px;padding:0 .35rem}
+
+/* ── Bell work ──────────────────────────────────────────────────────────── */
+.bellq{margin:.2rem 0 0;padding-left:1.4rem;font-size:clamp(1rem,1.5vw,1.2rem);font-weight:600;line-height:1.45}
+.bellq li{margin:.35rem 0;padding-left:.25rem}
+
+/* ── The spec ────────────────────────────────────────────────────────────────
+   Bell work that goes somewhere. What they type here lands in the prompt tile
+   below, live, so the answer is written once and never transcribed. */
+.specq{list-style:none;margin:.5rem 0 0;padding:0;counter-reset:sq}
+.specq li{counter-increment:sq;margin:.9rem 0 0}
+.specq .q{display:flex;gap:.65rem;font-size:clamp(1.08rem,1.5vw,1.24rem);font-weight:600;line-height:1.4}
+.specq .q::before{content:counter(sq);flex:none;width:1.45rem;height:1.45rem;border-radius:50%;
+  display:grid;place-items:center;font-size:.8rem;font-weight:700;
+  background:var(--ss-gold,#f5c842);color:#0d1322}
+.specq textarea{width:100%;margin-top:.5rem;min-height:3.4rem;resize:vertical;
+  font:inherit;font-size:1.04rem;line-height:1.5;color:inherit;padding:.7rem .8rem;
+  border-radius:.6rem;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
+.specq textarea:focus{outline:0;border-color:var(--ss-gold,#f5c842);background:rgba(255,255,255,.09)}
+.specq textarea.done{border-color:rgba(62,255,160,.45);background:rgba(62,255,160,.07)}
+.spec-note{margin:.95rem 0 0;font-size:.98rem;line-height:1.55;color:var(--ss-mist,#9aabd0)}
+
+/* Multiple choice. Pointed questions beat open ones for a spec — a student who cannot
+   describe what their button should change can still recognise it in a list of four. */
+.ch{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.5rem}
+.ch button{cursor:pointer;font:inherit;font-size:.98rem;line-height:1.3;text-align:left;
+  padding:.6rem .85rem;border-radius:.55rem;color:var(--ss-mist,#9aabd0);
+  border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04)}
+.ch button:hover{border-color:rgba(255,255,255,.34);color:var(--ss-bone,#e8ecf3)}
+.ch button[aria-pressed=true]{border-color:rgba(62,255,160,.55);background:rgba(62,255,160,.13);
+  color:var(--ss-bone,#e8ecf3);font-weight:600}
+
+/* Sliders, for the questions that are a number rather than a choice. The readout is the
+   point — a number they can see is a number they can put in the prompt. */
+.sl{display:flex;align-items:center;gap:.75rem;margin-top:.55rem}
+.sl input[type=range]{flex:1;accent-color:var(--ss-green,#3effa0);height:1.5rem}
+.sl .val{flex:none;min-width:3.7rem;text-align:center;font:700 1.12rem/1 var(--ss-mono,ui-monospace,monospace);
+  color:var(--ss-green,#3effa0);background:rgba(62,255,160,.12);border-radius:.45rem;padding:.45rem .3rem}
+.sl-ends{display:flex;justify-content:space-between;margin-top:.35rem;font-size:.86rem;
+  color:var(--ss-faint,#74809a)}
+
+/* ── the request lab ─────────────────────────────────────────────────────────
+   A request going out and a response coming back, which is the one thing a
+   backend student on a locked-down Chromebook can never actually watch. */
+.reqline{font:700 .92rem/1.4 var(--ss-mono,ui-monospace,monospace);color:var(--ss-bone,#e8ecf3);
+  background:rgba(255,255,255,.05);border:1px solid var(--ss-border,#2a3142);
+  border-radius:9px;padding:.6rem .8rem}
+.resp{border:1px solid var(--ss-border,#2a3142);border-radius:9px;overflow:hidden}
+.resp .status{font:700 .88rem/1 var(--ss-mono,ui-monospace,monospace);padding:.6rem .8rem;
+  letter-spacing:.04em}
+.resp .status.ok{background:rgba(62,255,160,.16);color:var(--ss-green,#3effa0)}
+.resp .status.bad{background:rgba(255,93,93,.16);color:var(--ss-red,#ff5d5d)}
+.resp .status.warn{background:rgba(251,191,36,.16);color:var(--ss-amber,#fbbf24)}
+.resp .rbody{margin:0;padding:.7rem .8rem;background:rgba(0,0,0,.3);white-space:pre-wrap;
+  font:.85rem/1.55 var(--ss-mono,ui-monospace,monospace);color:var(--ss-mist,#9aabd0)}
+.termline{margin-top:.8rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline}
+.termline .tk{font:600 .66rem/1 var(--ss-mono,ui-monospace,monospace);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ss-faint,#74809a)}
+.termline code{flex:1;min-width:14rem;font:.78rem/1.5 var(--ss-mono,ui-monospace,monospace);
+  color:var(--ss-bone,#e8ecf3);background:rgba(0,0,0,.34);border-radius:7px;padding:.45rem .6rem;
+  overflow-x:auto}
+
+/* Sync — the last thing on the page, and the only thing that reaches the outside world. */
+.t-sync ol{margin:.7rem 0 0;padding-left:1.3rem;font-size:1.02rem;line-height:1.65}
+.t-sync ol li{margin:.5rem 0}
+.t-sync .why{margin:.9rem 0 0;font-size:.97rem;line-height:1.58;color:var(--ss-mist,#9aabd0)}
+
+/* ── Ask Copilot Chat ───────────────────────────────────────────────────── */
+.t-prompt pre.code{white-space:pre-wrap}
+.t-prompt .rules{margin:.85rem 0 0;padding-left:1.2rem;font-size:.99rem;line-height:1.6;color:var(--ss-mist,#9aabd0)}
+.t-prompt .rules li{margin:.38rem 0}
+/* An unfilled slot looks like a slot. A filled one looks like their own words —
+   that contrast is the nudge to go back and finish the spec. */
+.fill{border-radius:.3rem;padding:.05rem .15rem;margin:0 -.05rem;font-style:normal}
+.fill.empty{background:rgba(245,200,66,.18);color:var(--ss-gold,#f5c842);font-weight:600}
+.fill.set{background:rgba(62,255,160,.14);color:var(--ss-bone,#e8ecf3)}
 </style>
 </head>
 <body>
@@ -158,6 +328,22 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
         <button class="b" data-open="m-files" type="button">Files &amp; terminal</button>
       </div>
     </section>
+    <section class="tl t-plan" style="--acc:var(--ss-peri,#818cf8)">
+      <span class="k">Today's plan</span>
+      <ul class="plan"><li><span class="m">5m</span><span>Bell work. One question on the board — answer it in your notes before anything else.</span></li><li><span class="m">10m</span><span>Watch: one container, three boxes. We change one property at a time and you say out loud what moved.</span></li><li><span class="m">10m</span><span>Together: we trace which property moved which box, and why the answer changes when the direction flips.</span></li><li><span class="m">18m</span><span>You: open the starter files and lay out your own header and card row. Get it to match the target picture.</span></li><li><span class="m">5m</span><span>Exit: run the drill. It takes about four minutes and it tells you straight away if the axis idea landed.</span></li></ul>
+    </section>
+    <section class="tl t-clo" style="--acc:var(--ss-gold,#f5c842)">
+      <span class="k">Course outcome</span><p>I can turn a plain HTML page into something that looks designed — colour, type, spacing and layout.</p>
+    </section>
+    <section class="tl w4 t-bell" style="--acc:var(--ss-gold,#f5c842)">
+      <span class="k">Bell work — do this first</span>
+      <ol class="bellq"><li>display: flex goes on the container or on the items?</li><li>Name one thing you had to look up last week.</li></ol>
+      <p class="hint">Answer in your notes. We go over them together before anything else.</p>
+    </section>
+    <section class="tl w4 t-turn" style="--acc:var(--ss-rose,#f43f5e)">
+      <span class="k">Turning it in</span><p>Nothing to hand in today — this one gets checked at your machine while you work. Keep your styles.css, you are building on it for the rest of the week.</p>
+      
+    </section>
     <section class="tl lab w4" id="lab">
       <span class="k">Try it</span>
       <div class="stage"><div class="fx" id="fx">
@@ -174,20 +360,10 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
       <p class="axis" id="axis"></p>
       <p class="hint">Change a value and watch what moves. The CSS underneath is exactly what you would write.</p>
     </section>
-    <section class="tl">
+    <section class="tl w4 t-sc">
       <span class="k">You have met it when</span>
       <ul class="sc"><li><label><input type="checkbox" data-sc="0"><span>I can turn any container into a flex container</span></label></li><li><label><input type="checkbox" data-sc="1"><span>I can say which way the main axis runs, and change it</span></label></li><li><label><input type="checkbox" data-sc="2"><span>I can use justify-content to space items along the main axis</span></label></li><li><label><input type="checkbox" data-sc="3"><span>I can use align-items to place items across the other axis</span></label></li><li><label><input type="checkbox" data-sc="4"><span>I can change flex-direction and predict what happens to both properties</span></label></li></ul>
       <div class="prog"><div class="bar"><i id="scbar"></i></div><b id="scnum">0/5</b></div>
-    </section>
-    <section class="tl t-plan" style="--acc:var(--ss-peri,#818cf8)">
-      <span class="k">Today's plan</span>
-      <ul class="plan"><li><span class="m">5m</span><span>Bell work. One question on the board — answer it in your notes before anything else.</span></li><li><span class="m">10m</span><span>Watch: one container, three boxes. We change one property at a time and you say out loud what moved.</span></li><li><span class="m">10m</span><span>Together: we trace which property moved which box, and why the answer changes when the direction flips.</span></li><li><span class="m">18m</span><span>You: open the starter files and lay out your own header and card row. Get it to match the target picture.</span></li><li><span class="m">5m</span><span>Exit: run the drill. It takes about four minutes and it tells you straight away if the axis idea landed.</span></li></ul>
-    </section>
-    <section class="tl t-clo" style="--acc:var(--ss-gold,#f5c842)">
-      <span class="k">Course outcome</span><p>I can turn a plain HTML page into something that looks designed — colour, type, spacing and layout.</p>
-    </section>
-    <section class="tl t-turn" style="--acc:var(--ss-rose,#f43f5e)">
-      <span class="k">Turning it in</span><p>Nothing to hand in today — this one gets checked at your machine while you work. Keep your styles.css, you are building on it for the rest of the week.</p>
     </section>
   </div>
   <footer>Your work stays on your machine. Nothing on this page sends anything anywhere.</footer>
@@ -203,6 +379,7 @@ footer{max-width:96rem;margin:2rem auto 0;color:var(--ss-faint,#74809a);font-siz
     <h3>Files &amp; terminal</h3>
     <a class="b solid" href="assets.zip" download>Download everything (.zip)</a>
     <ul class="files"><li><a href="starter.html" download>starter.html</a><span>The page you are laying out. Do not change the HTML unless you are asked to.</span></li><li><a href="styles.css" download>styles.css</a><span>Where all your work goes. The comments tell you where each part belongs.</span></li><li><a href="target.png" download>target.png</a><span>What it should look like when you are done.</span></li></ul>
+
     <h3 style="margin-top:1.3rem">Or pull them with git</h3>
     <p>Working in a Codespace or anywhere with a terminal? This gets the same files and keeps working all term.</p>
     <div class="codewrap"><button class="cp" type="button">Copy</button><pre class="code"><b># first time only</b>
@@ -243,15 +420,129 @@ function scSync(){
 scBoxes.forEach(function(b){ b.addEventListener("change", scSync); });
 scSync();
 
+/* ---- the spec feeds the prompt ----
+   Typed once, shown twice. The textarea is the only place the student writes; the slot in
+   the prompt mirrors it, so the copy button below sends the finished thing to the chat.
+   Kept in localStorage per day so a reload mid-period does not lose the spec. */
+(function(){
+  var KEY = "spec:" + location.pathname;
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) { saved = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e) {} }
+
+  // Every slot remembers its own placeholder so clearing an answer restores the prompt
+  // to a readable template rather than a blank gap.
+  document.querySelectorAll(".fill[data-fill]").forEach(function(s){
+    s.setAttribute("data-tpl", s.textContent);
+  });
+  // One answer can appear in more than one place — the prompt AND the commit message.
+  function paint(n, v){
+    var text = (v == null ? "" : String(v)).trim();
+    document.querySelectorAll('.fill[data-fill="' + n + '"]').forEach(function(slot){
+      if (text) { slot.textContent = text; slot.className = "fill set"; }
+      else { slot.textContent = slot.getAttribute("data-tpl"); slot.className = "fill empty"; }
+    });
+  }
+
+  document.querySelectorAll("textarea[data-spec]").forEach(function(b){
+    var n = b.getAttribute("data-spec");
+    if (saved[n]) { b.value = saved[n]; b.classList.add("done"); }
+    paint(n, b.value);
+    b.addEventListener("input", function(){
+      b.classList.toggle("done", !!b.value.trim());
+      saved[n] = b.value; paint(n, b.value); save();
+    });
+  });
+
+  document.querySelectorAll('.ch[data-spec]').forEach(function(g){
+    var n = g.getAttribute("data-spec");
+    function pick(v){
+      g.querySelectorAll("button").forEach(function(x){
+        x.setAttribute("aria-pressed", String(x.getAttribute("data-v") === v));
+      });
+      saved[n] = v; paint(n, v); save();
+    }
+    if (saved[n]) pick(saved[n]); else paint(n, "");
+    g.querySelectorAll("button").forEach(function(x){
+      x.addEventListener("click", function(){ pick(x.getAttribute("data-v")); });
+    });
+  });
+
+  document.querySelectorAll('input[type=range][data-spec]').forEach(function(r){
+    var n = r.getAttribute("data-spec"), unit = r.getAttribute("data-unit") || "";
+    var out = document.querySelector('[data-val-for="' + n + '"]');
+    function show(){
+      if (out) out.textContent = r.value;
+      // A slider always has a value, so it is always "answered" — it goes into the prompt
+      // from the moment the page loads rather than waiting to be touched.
+      saved[n] = r.value + (unit ? " " + unit : "");
+      paint(n, saved[n]); save();
+    }
+    if (saved[n]) { var num = parseInt(saved[n], 10); if (!isNaN(num)) r.value = num; }
+    show();
+    r.addEventListener("input", show);
+  });
+})();
+
+/* ---- turn-in link builder ----
+   They paste whatever they have — the repo page, the clone URL, the Pages root — and the
+   page produces the one address that actually gets marked. Handling all three forms is the
+   point: a student who hands in github.com/... has done the work and lost the marks, and
+   that is not a lesson about anything.
+   Kept in localStorage under a shared key, so it is pasted once in the week and every other
+   day already knows it. */
+(function(){
+  var input = document.querySelector("input[data-repo]");
+  if (!input) return;
+  var out = document.getElementById("turnurl"), warn = document.getElementById("repowarn");
+  var path = (input.getAttribute("data-path") || "").replace(/^\/+/, "");
+  var KEY = "repo:base";
+
+  function build(raw){
+    var v = (raw || "").trim().replace(/\s+/g, "");
+    if (!v) return { url: path, state: "" };
+    v = v.replace(/\.git$/, "").replace(/\/+$/, "");
+    var m;
+    // github.com/USER/REPO  — the tab they are most likely to be looking at
+    if ((m = v.match(/^(?:https?:\/\/)?(?:www\.)?github\.com\/([^\/]+)\/([^\/]+)/i)))
+      return { url: "https://" + m[1].toLowerCase() + ".github.io/" + m[2] + "/" + path, state: "ok" };
+    // USER.github.io/REPO — already the right host
+    if ((m = v.match(/^(?:https?:\/\/)?([^.\/]+)\.github\.io(?:\/([^\/]+))?/i)))
+      return { url: "https://" + m[1].toLowerCase() + ".github.io" + (m[2] ? "/" + m[2] : "") + "/" + path, state: "ok" };
+    // anything ending in github.dev is the private preview and will not open for anyone else
+    if (/github\.dev/i.test(v))
+      return { url: path, state: "bad",
+        msg: "That is a github.dev link — your private preview. Nobody else can open it, so it cannot be turned in. Use your repository link or your github.io address." };
+    return { url: path, state: "bad",
+      msg: "That does not look like a GitHub link yet. Paste your repository page, or your github.io address." };
+  }
+
+  function render(){
+    var r = build(input.value);
+    out.textContent = r.url;
+    input.classList.toggle("ok", r.state === "ok");
+    input.classList.toggle("bad", r.state === "bad");
+    if (r.msg) { warn.textContent = r.msg; warn.hidden = false; } else { warn.hidden = true; }
+    if (r.state === "ok") { try { localStorage.setItem(KEY, input.value.trim()); } catch(e) {} }
+  }
+  try { var saved = localStorage.getItem(KEY); if (saved) input.value = saved; } catch(e) {}
+  render();
+  input.addEventListener("input", render);
+})();
+
 /* copy buttons */
 document.querySelectorAll(".codewrap .cp").forEach(function(b){
   b.addEventListener("click", function(){
     var t = b.parentElement.querySelector("pre").innerText;
+    // Remember each button's own label — the big ones say what they copy, and restoring
+    // every button to the word "Copy" would quietly rename them after first use.
+    var label = b.getAttribute("data-label") || b.textContent;
+    b.setAttribute("data-label", label);
     function done(){ b.textContent = "Copied"; b.classList.add("ok");
-      setTimeout(function(){ b.textContent = "Copy"; b.classList.remove("ok"); }, 1600); }
+      setTimeout(function(){ b.textContent = label; b.classList.remove("ok"); }, 1600); }
     function fb(){ var r = document.createRange(); r.selectNodeContents(b.parentElement.querySelector("pre"));
       var s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Press Ctrl+C";
-      setTimeout(function(){ b.textContent = "Copy"; }, 2200); }
+      setTimeout(function(){ b.textContent = label; }, 2200); }
     if (navigator.clipboard) navigator.clipboard.writeText(t).then(done, fb); else fb();
   });
 });
@@ -322,6 +613,142 @@ if (document.getElementById("dbtn")) {
   ro2.innerHTML = ".btn:hover&nbsp;&nbsp;&nbsp;&nbsp;{ " + '<span class="p">filter</span>: <span class="v">brightness(1.15)</span>;' + " }<br>" +
     ".btn:focus-visible { " + '<span class="p">box-shadow</span>: <span class="v">0 0 0 4px</span>;' + " }<br>" +
     ".btn:active&nbsp;&nbsp;&nbsp;{ " + '<span class="p">transform</span>: <span class="v">translateY(2px)</span>;' + " }";
+}
+
+/* ---- JavaScript labs ---- */
+function escH(t){ return String(t).split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;"); }
+var cout = document.getElementById("cout");
+function logLine(text, bad){
+  if (!cout) return;
+  var row = document.createElement("div"); row.className = bad ? "err" : "ok"; row.textContent = text;
+  cout.appendChild(row); cout.scrollTop = cout.scrollHeight;
+}
+
+if (document.querySelector('[data-lab="console"]')) {
+  var cin = document.getElementById("cin");
+  var cline = function(){
+    var msg = cin.value;
+    return state["quotes"] === "forgot" ? "console.log(" + msg + ");" : 'console.log("' + msg + '");';
+  };
+  segWire(function(){ ro.innerHTML = '<span class="p">// script.js</span><br>' + escH(cline()); });
+  cin.addEventListener("input", function(){ ro.innerHTML = '<span class="p">// script.js</span><br>' + escH(cline()); });
+  document.getElementById("crun").addEventListener("click", function(){
+    var msg = cin.value;
+    if (state["quotes"] === "forgot") {
+      /* the real browser error, not a made-up one: one word is a name nobody defined;
+         several words are not even valid code, so the browser stops before running it */
+      var parts = msg.trim().split(" ").filter(function(w){ return w.length; });
+      if (parts.length > 1) {
+        logLine("Uncaught SyntaxError: missing ) after argument list", true);
+        axis.innerHTML = "Red. Without quotes, JavaScript reads <b>" + escH(parts[0]) + " " + escH(parts[1]) + "</b> as code, and that is not valid code &mdash; so nothing in the file runs. Quotes mean <b>this is text</b>.";
+      } else {
+        var word = parts[0] || "message";
+        logLine("Uncaught ReferenceError: " + word + " is not defined", true);
+        axis.innerHTML = "Red. Without quotes JavaScript thinks <b>" + escH(word) + "</b> is the name of something, and nothing has that name. Quotes mean <b>this is text</b>.";
+      }
+    } else {
+      logLine(msg, false);
+      axis.innerHTML = "It printed. That is JavaScript talking back to you &mdash; every day this week starts here.";
+    }
+  });
+}
+
+if (document.querySelector('[data-lab="request"]')) {
+  // Three cases, and they are the three they will hit today in this order: the route that
+  // works, the path typed wrong, and the method the address bar cannot send. The terminal
+  // line is Flask's real log format, because reading it is today's success criterion.
+  var RQ = {
+    "GET /api/health": { code: 200, label: "200 OK", cls: "ok",
+      body: '{\n  "status": "ok",\n  "service": "my-api",\n  "version": "1.0"\n}',
+      why: "It worked. <b>200</b> means the server found the route and answered. The JSON is what your function returned." },
+    "GET /api/helth": { code: 404, label: "404 Not Found", cls: "bad",
+      body: "<!doctype html>\n<title>404 Not Found</title>\n<h1>Not Found</h1>",
+      why: "<b>404</b> means the server looked and has nothing at that path. Your route is fine &mdash; the <b>spelling</b> is wrong. Notice it answered with a web page, not JSON, because Flask wrote that page, not you." },
+    "GET /": { code: 200, label: "200 OK", cls: "ok",
+      body: "<!doctype html>\n<h1>My API</h1>",
+      why: "<b>200</b>, but look at the body &mdash; that is HTML, not JSON. A route can succeed and still send the wrong <b>kind</b> of thing." },
+    "POST /api/health": { code: 405, label: "405 Method Not Allowed", cls: "warn",
+      body: '{\n  "error": "The method is not allowed for the requested URL."\n}',
+      why: "<b>405</b> means the path exists but will not take a POST. Your route only accepts GET &mdash; and the address bar can only ever send a GET, which is why you will need <b>curl</b> on Wednesday." },
+    "POST /api/helth": { code: 404, label: "404 Not Found", cls: "bad",
+      body: "<!doctype html>\n<title>404 Not Found</title>\n<h1>Not Found</h1>",
+      why: "<b>404</b> beats 405 &mdash; if the path does not exist, the method never gets considered." },
+    "POST /": { code: 405, label: "405 Method Not Allowed", cls: "warn",
+      body: '{\n  "error": "The method is not allowed for the requested URL."\n}',
+      why: "<b>405</b>. The path exists but only answers GET." },
+  };
+  var rq = document.getElementById("reqline"), rs = document.getElementById("rstatus"),
+      rb = document.getElementById("rbody"), rl = document.getElementById("rlog"),
+      rax = document.getElementById("axis");
+  var stamp = function(){
+    var d = new Date();
+    var mm = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+    var p2 = function(n){ return (n < 10 ? "0" : "") + n; };
+    return p2(d.getDate()) + "/" + mm + "/" + d.getFullYear() + " " +
+           p2(d.getHours()) + ":" + p2(d.getMinutes()) + ":" + p2(d.getSeconds());
+  };
+  var rdo = function(){
+    var key = state["method"] + " " + state["path"];
+    var r = RQ[key] || RQ["GET /api/health"];
+    rq.textContent = key;
+    rs.textContent = r.label; rs.className = "status " + r.cls;
+    rb.textContent = r.body;
+    rax.innerHTML = r.why;
+    rl.textContent = '127.0.0.1 - - [' + stamp() + '] "' + key + ' HTTP/1.1" ' + r.code + ' -';
+  };
+  segWire(rdo);
+  rdo();
+}
+
+if (document.querySelector('[data-lab="click"]')) {
+  var kb = document.getElementById("cbtn"), kt = document.getElementById("ctext");
+  var kcol = ["#3effa0", "#f5c842", "#818cf8", "#f43f5e"], kci = 0, kev = null;
+  var kdo = function(){
+    var d = state["does"];
+    if (d === "log") logLine("The button was used (" + state["event"] + ")", false);
+    if (d === "text") kt.textContent = "You did it. The page changed.";
+    if (d === "colour") { kci = (kci + 1) % kcol.length; kb.style.background = kcol[kci]; kb.style.borderColor = kcol[kci]; }
+  };
+  segWire(function(){
+    if (kev) kb.removeEventListener(kev, kdo);
+    kev = state["event"]; kb.addEventListener(kev, kdo);
+    kt.textContent = "Nothing has happened yet."; kb.style.background = ""; kb.style.borderColor = "";
+    var inner = state["does"] === "log" ? 'console.log("The button was used");'
+      : state["does"] === "text" ? 'output.textContent = "You did it. The page changed.";'
+      : 'button.style.background = "gold";';
+    var lines = ['const button = document.querySelector("#action");'];
+    if (state["does"] === "text") lines.push('const output = document.querySelector("#output");');
+    lines.push("");
+    lines.push('button.addEventListener("' + kev + '", function () {');
+    ro.innerHTML = lines.map(escH).join("<br>") + "<br>&nbsp;&nbsp;" + escH(inner) + "<br>" + escH("});");
+    axis.innerHTML = kev === "click" ? "<b>click</b> runs the function once the button is pressed and let go."
+      : kev === "dblclick" ? "<b>dblclick</b> needs two quick clicks. Try one click &mdash; nothing happens now."
+      : "<b>mouseenter</b> runs the moment the pointer arrives. No click at all.";
+  });
+}
+
+if (document.querySelector('[data-lab="state"]')) {
+  var sb = document.getElementById("sbtn"), sv = document.getElementById("sval");
+  var count = 0, isOn = false, spot = 0, msgs = ["Go team!", "Practice starts at 3", "Big game Friday"];
+  var sdraw = function(){
+    var f = state["feature"], code = [];
+    if (f === "counter") { sv.textContent = String(count); sb.textContent = "Add one";
+      code = ["let count = " + count + ";", "", "function addOne() {", "  count = count + 1;", "  output.textContent = count;", "}", "", 'button.addEventListener("click", addOne);']; }
+    if (f === "toggle") { sv.textContent = isOn ? "ON" : "OFF"; sb.textContent = "Switch";
+      code = ["let isOn = " + isOn + ";", "", "function flip() {", "  isOn = !isOn;", '  output.textContent = isOn ? "ON" : "OFF";', "}", "", 'button.addEventListener("click", flip);']; }
+    if (f === "messages") { sv.textContent = msgs[spot]; sb.textContent = "Next";
+      code = ['let messages = ["Go team!", "Practice starts at 3", "Big game Friday"];', "let spot = " + spot + ";", "", "function next() {", "  spot = (spot + 1) % messages.length;", "  output.textContent = messages[spot];", "}", "", 'button.addEventListener("click", next);']; }
+    ro.innerHTML = code.map(function(l){ return escH(l).split("  ").join("&nbsp;&nbsp;"); }).join("<br>");
+  };
+  sb.addEventListener("click", function(){
+    var f = state["feature"];
+    if (f === "counter") count = count + 1;
+    if (f === "toggle") isOn = !isOn;
+    if (f === "messages") spot = (spot + 1) % msgs.length;
+    sdraw();
+    axis.innerHTML = "Look at the first line: the value changed. <b>That is a variable</b> &mdash; the page remembering something between clicks.";
+  });
+  segWire(sdraw);
 }
 
 /* receipt */
