@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Site</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- The console panel: shows console.log messages and errors at the bottom of the page,
+       because school Chromebooks block the browser's own console.
+       Delete this one line before you ship on Friday, so your live site shows only your page. -->
+  <script src="console-panel.js" defer></script>
+  <!-- This line connects your JavaScript. "defer" means: wait until the page has loaded, then run it. Do not delete it. -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!--
+    ALREADY COPIED YOUR WEEK 8 PAGE IN OVER THIS ONE? Good — that was Monday's job.
+    You are missing three things this week needs. Find them below, marked NEW THIS WEEK,
+    and paste them into your own page. Everything else you already have.
+  -->
+
+  <header class="top">
+    <p class="kicker">Week 9 project</p>
+    <h1>Welcome to my site</h1>
+    <p class="tagline">Replace this with one line about your topic.</p>
+  </header>
+
+  <main class="cards">
+    <section class="card">
+      <h2>About</h2>
+      <p>Replace this with two sentences about your topic.</p>
+    </section>
+
+    <section class="card feature">
+      <h2>Try it</h2>
+      <!-- MON · your button. Its id, "action", is how JavaScript finds it. -->
+      <button id="action" type="button">Click me</button>
+      <!-- MON · JavaScript writes into this paragraph. Its id is "output". -->
+      <p id="output">Nothing has happened yet.</p>
+
+      <!-- NEW THIS WEEK 1 · THU — starts hidden, your click makes it appear.
+           It is hidden by the "hidden" class in styles.css, not by JavaScript. -->
+      <div id="details" class="hidden">
+        <p>Replace this with the thing a visitor only sees when they ask for it.</p>
+      </div>
+      <!-- NEW THIS WEEK 2 · THU — the button that shows and hides it. -->
+      <button id="toggle" type="button">Show more</button>
+    </section>
+
+    <section class="card">
+      <h2>My list</h2>
+      <!-- NEW THIS WEEK 3 · WED — your loop fills this. Leave it empty in the HTML:
+           every item in it should arrive from the array in script.js. -->
+      <ul id="list"></ul>
+    </section>
+  </main>
+
+  <footer class="bottom">
+    <p>Built in App Design 1.</p>
+  </footer>
+</body>
+</html>
